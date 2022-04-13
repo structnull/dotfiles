@@ -1,0 +1,55 @@
+* {
+    background-color:           #000000;
+    border-color:               #000000;
+    text-color:                 #46474f;
+    height:                     30px;
+    font:                       "JetBrainsMono Nerd Font Medium 10";
+    prompt-font:                "JetBrainsMono Nerd Font Medium 10";
+    prompt-background:          #131519;
+    prompt-foreground:          #01fdb0;
+    prompt-padding:             6px 10px;
+    selected-normal-background: #131519;
+    selected-normal-foreground: #ffffff;
+}
+window {
+    anchor: north;
+    location: north;
+    width: 99%;
+    height: 30px;
+    y-offset: 6px;
+    children: [ horibox ];
+}
+horibox {
+    orientation: horizontal;
+    children: [ prompt, entry, listview ];
+}
+prompt {
+    padding:          @prompt-padding;
+    background-color: @prompt-background;
+    text-color:       @prompt-foreground;
+    font:             @prompt-font;
+}
+listview {
+    layout: horizontal;
+    lines: 100;
+}
+entry {
+    text-color: #ffffff; 
+    padding: 6px 0px;
+    expand: false;
+    width: 10%;
+}
+element {
+    padding: 6px 8px;
+}
+element selected {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+}
+element-icon{
+    size:2.3ch;
+}
+element-text, element-icon {
+    background-color: inherit;
+    text-color:       inherit;
+}
