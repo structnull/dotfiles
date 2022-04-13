@@ -139,6 +139,8 @@ export BAT_THEME='base16-256'
 #export paths
 export PATH
 export PATH="$HOME/.local/bin:$PATH"
+export PATH=/home/adharsh/.cargo/bin:$PATH
+
 
 # aliases
 alias ls='ls -Gh --color=auto'
