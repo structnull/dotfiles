@@ -354,3 +354,30 @@ zsh
 bashtop
 bashtop
 sudo pamac install gnome-shell-extension-pop-shell
+kill
+ll
+ls
+la
+la
+la
+la
+la
+al
+al
+al
+zsh
+spotdl https://open.spotify.com/track/0cu0rhnlCnJ7JIeHRiLpj3
+spotdl https://open.spotify.com/track/7lQ8MOhq6IN2w8EYcFNSUk https://open.spotify.com/track/4xkOaSrkexMciUUogZKVTS https://open.spotify.com/track/2KYNQpVdHsqC84TgJa5T7O https://open.spotify.com/track/17gqkmWPppwlxIZLxTWzVy https://open.spotify.com/track/0kDgBQBXRO8JR0Mp3x9sXO https://open.spotify.com/track/4ak7xjvBeBOcJGWFDX9w5n https://open.spotify.com/track/6DCZcSspjsKoFjzjrWoCdn https://open.spotify.com/track/2SL6oP2YAEQbqsrkOzRGO4 https://open.spotify.com/track/2DgdHcjWmO3qd50RzuBLgZ https://open.spotify.com/track/3JvKfv6T31zO0ini8iNItO https://open.spotify.com/track/5ZjV4yevHO1QhMw8AjyQbZ https://open.spotify.com/track/2LKOHdMsL0K9KwcPRlJK2v https://open.spotify.com/track/4GRFzKI7jTZ3kbMfouc7bn 
+zsh
+ spotdl "https://open.spotify.com/track/7lQ8MOhq6IN2w8EYcFNSUk https://open.spotify.com/track/4xkOaSrkexMciUUogZKVTS https://open.spotify.com/track/2KYNQpVdHsqC84TgJa5T7O https://open.spotify.com/track/17gqkmWPppwlxIZLxTWzVy https://open.spotify.com/track/0kDgBQBXRO8JR0Mp3x9sXO https://open.spotify.com/track/4ak7xjvBeBOcJGWFDX9w5n https://open.spotify.com/track/6DCZcSspjsKoFjzjrWoCdn https://open.spotify.com/track/2SL6oP2YAEQbqsrkOzRGO4 https://open.spotify.com/track/2DgdHcjWmO3qd50RzuBLgZ https://open.spotify.com/track/3JvKfv6T31zO0ini8iNItO https://open.spotify.com/track/5ZjV4yevHO1QhMw8AjyQbZ https://open.spotify.com/track/2LKOHdMsL0K9KwcPRlJK2v https://open.spotify.com/track/4GRFzKI7jTZ3kbMfouc7bn
+" --st 16 --dt 8
+ spotdl https://open.spotify.com/track/7lQ8MOhq6IN2w8EYcFNSUk https://open.spotify.com/track/4xkOaSrkexMciUUogZKVTS https://open.spotify.com/track/2KYNQpVdHsqC84TgJa5T7O https://open.spotify.com/track/17gqkmWPppwlxIZLxTWzVy https://open.spotify.com/track/0kDgBQBXRO8JR0Mp3x9sXO https://open.spotify.com/track/4ak7xjvBeBOcJGWFDX9w5n https://open.spotify.com/track/6DCZcSspjsKoFjzjrWoCdn https://open.spotify.com/track/2SL6oP2YAEQbqsrkOzRGO4 https://open.spotify.com/track/2DgdHcjWmO3qd50RzuBLgZ https://open.spotify.com/track/3JvKfv6T31zO0ini8iNItO https://open.spotify.com/track/5ZjV4yevHO1QhMw8AjyQbZ https://open.spotify.com/track/2LKOHdMsL0K9KwcPRlJK2v https://open.spotify.com/track/4GRFzKI7jTZ3kbMfouc7bn --st 16 --dt 8
+bash
+man
+ls
+la
+cd
+zsh
+export BAT_THEME='base16-256'
+ranger
+sudo ranger

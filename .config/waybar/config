@@ -1,0 +1,151 @@
+{
+    "spacing": 0, 
+    "layer": "top",
+    // Choose the order of the modules
+    "margin-top": 5,
+    "margin-left": 10,
+    "margin-right": 10,
+    "modules-left": ["wlr/workspaces","hyprland/window",],
+    "modules-center": ["clock","custom/date"],
+    "modules-right": ["tray","custum/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep", "custom/notification", "custom/sep", "battery","custom/space"],
+    "custom/sep": {
+		"format": " | "
+    },
+    "custom/space": {
+		"format": "    "
+    },
+     "hyprland/window":{
+	 "format":"  {}",
+     "max-length":60,
+     "interval":1,
+     "height": 20,
+     },
+    "backlight": {
+        //"device": "intel_backlight",
+        "format": "　{percent}%",
+        "format-icons": ["", ""]
+    },
+	"custom/notification": {
+		"tooltip": false,
+		"format": "{icon}",
+		"format-icons": {
+			"notification": "<span foreground='red'><sup></sup></span>",
+			"none": " ",
+			"dnd-notification": "<span foreground='red'><sup></sup></span>",
+			"dnd-none": " "
+		},
+		"return-type": "json",
+		"exec-if": "which swaync-client",
+		"exec": "swaync-client -swb",
+		"on-click": "swaync-client -t -sw",
+		"on-click-right": "swaync-client -d -sw",
+		"escape": true
+	},
+	"wlr/workspaces": {
+		"disable-scroll": true,
+		"all-outputs": true,
+		"on-click": "activate",
+		"format": "{icon}",
+		"persistent_workspaces": {
+			"1": [],
+			"2": [],
+			"3": [],
+			"4": [],
+			"5": [],
+			"6": [],
+			"7": [],
+			"8": [],
+			"9": [],
+			"10": []
+		},
+		"format-icons": {
+			"1": "一",
+			"2": "二",
+			"3": "三",
+			"4": "四",
+			"5": "五",
+			"6": "六",
+			"7": "七",
+			"8": "八",
+			"9": "九",
+			"10": "〇",
+			"default": "一"
+		}
+	},
+    "tray": {
+        // "icon-size": 21,
+        "spacing": 10
+    },
+	"clock": {
+		"format": "   {:%I:%M %p} ",
+		"interval": 60,
+		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+	},
+    "cpu": {
+        "format": "   {usage}%",
+        "tooltip": false
+    },
+    "memory": {
+        "format": " {}%"
+    },
+    "backlight": {
+        // "device": "acpi_video1",
+        "format": " {icon} {percent}% ",
+        "format-icons": [" ", " ", " ", " ", " ", " ", " ", " ", " "]
+    },
+    "battery": {
+        "states": {
+			   "good": 95,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon}{capacity}%  ",
+        "format-charging": " {capacity}%  ",
+        "format-plugged": " {capacity}%  ",
+        "format-alt": "{icon}{time}  ",
+        // "format-good": "", // An empty format will hide the module
+        // "format-full": "",
+        "format-icons": ["  ", "  ", "  ", "  ", "  "]
+    },
+    "battery#bat2": {
+        "bat": "BAT2"
+    },
+    "network": {
+        // "interface": "wlp2*", // (Optional) To force the use of this interface
+		"format-wifi": "  {essid}",
+		"format-ethernet": "  {ipaddr}",
+		"format-disconnected": " Disconnected",
+		"tooltip-format-wifi": "Signal Strenght: {signalStrength}% | Down Speed: {bandwidthDownBits}, Up Speed: {bandwidthUpBits}",
+        "format-linked": "{ifname} (No IP) ",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "pulseaudio": {
+        // "scroll-step": 1, // %, can be a float
+        "format": "{icon}{volume}%  {format_source}",
+        "format-bluetooth": "{icon}{volume}%  {format_source}",
+        "format-bluetooth-muted": "{icon}  {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": " {volume}%",
+        "format-source-muted": " ",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": [" ", " ", " "]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/media": {
+        "format": "{icon} {}",
+        "return-type": "json",
+        "max-length": 40,
+        "format-icons": {
+            "spotify": "",
+            "default": "🎜"
+        },
+        "escape": true,
+    }
+}

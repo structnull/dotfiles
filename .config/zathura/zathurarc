@@ -19,7 +19,7 @@ set guioptions "hv"
 
 # zathurarc-dark
 
-set font " monospace normal 9"
+set font " Product Sans 12"
 set default-bg rgba(0,0,0,0.7) #00
 set default-fg "#F7F7F6" #01
 
