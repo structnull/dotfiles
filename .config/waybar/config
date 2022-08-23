@@ -7,7 +7,7 @@
     "margin-right": 10,
     "modules-left": ["wlr/workspaces","hyprland/window",],
     "modules-center": ["clock","custom/date"],
-    "modules-right": ["tray","custum/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep", "custom/notification", "custom/sep", "battery","custom/space"],
+    "modules-right": ["tray","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep", "custom/notification", "custom/sep", "battery","custom/space"],
     "custom/sep": {
 		"format": " | "
     },
@@ -118,15 +118,15 @@
 		"tooltip-format-wifi": "Signal Strenght: {signalStrength}% | Down Speed: {bandwidthDownBits}, Up Speed: {bandwidthUpBits}",
         "format-linked": "{ifname} (No IP) ",
         "format-alt": "{ifname}: {ipaddr}/{cidr}"
-    },
-    "pulseaudio": {
+    },  
+	"pulseaudio": {
         // "scroll-step": 1, // %, can be a float
-        "format": "{icon}{volume}%  {format_source}",
-        "format-bluetooth": "{icon}{volume}%  {format_source}",
-        "format-bluetooth-muted": "{icon}  {format_source}",
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
         "format-muted": " {format_source}",
-        "format-source": " {volume}%",
-        "format-source-muted": " ",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -134,9 +134,10 @@
             "phone": "",
             "portable": "",
             "car": "",
-            "default": [" ", " ", " "]
+            "default": ["", "", ""]
         },
         "on-click": "pavucontrol"
+    },
     },
     "custom/media": {
         "format": "{icon} {}",

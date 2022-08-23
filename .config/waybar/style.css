@@ -36,7 +36,7 @@ window#waybar {
 tooltip {
   background: #323437;
   color: #eeeeee;
-  border-radius: 10;
+  border-radius: 10px;
 }
 
 #workspaces {
