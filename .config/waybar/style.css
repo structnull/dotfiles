@@ -1,6 +1,6 @@
-* {
+* { /* `otf-font-awesome` is required to be installed for icons */
     border: none;
-    font-family: Product Sans;
+    font-family: FontAwesome, Product Sans;
     font-size: 14px;
     color: #eeeeee;
     /* border-radius: 20px; */
@@ -10,7 +10,7 @@ window {
 	/*font-weight: bold;*/
 }
 window#waybar {
-    background: rgba(8, 8, 8, .85);
+    background: rgba(8, 8, 8, .45);
 	border-radius: 7px;
     /* background: transparent; */
 }
@@ -22,13 +22,11 @@ window#waybar {
     border-radius: 20px;
 }
 .modules-center {
-	background-color: rgba(8,8,8,0.85);
-    /* background: transparent; */
+    background: transparent; 
     margin: 0 0 0 0;
     border-radius: 20px;
 }
 .modules-left {
-	/* background-color: rgba(8,8,8,0.85); */
     background: transparent;
     margin: 0 0 0 -12px;
     border-radius: 20px;
@@ -67,6 +65,7 @@ tooltip {
 
 #custom-sep {
 	color: #424447;
+	font-size: 18px;
 }
 
 #clock {
