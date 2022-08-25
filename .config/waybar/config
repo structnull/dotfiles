@@ -12,7 +12,7 @@
 		"format": " | "
     },
     "custom/space": {
-		"format": "    "
+		"format": "     "
     },
      "hyprland/window":{
 	 "format":"  {}",
