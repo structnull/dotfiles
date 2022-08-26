@@ -20,7 +20,7 @@ set guioptions "hv"
 # zathurarc-dark
 
 set font " Product Sans 12"
-set default-bg rgba(0,0,0,0.7) #00
+set default-bg rgba(0,0,0,0.9) #00
 set default-fg "#F7F7F6" #01
 
 set statusbar-fg "#B0B0B0" #04

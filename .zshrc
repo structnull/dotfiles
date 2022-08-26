@@ -141,7 +141,6 @@ export PATH
 export PATH="$HOME/.local/bin:$PATH"
 export PATH=/home/adharsh/.cargo/bin:$PATH
 
-
 # aliases
 alias ls='ls -Gh --color=auto'
 alias ll='ls -alF'

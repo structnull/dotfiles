@@ -7,7 +7,7 @@
     "margin-right": 10,
     "modules-left": ["wlr/workspaces","hyprland/window",],
     "modules-center": ["clock"],
-    "modules-right": ["tray","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep", "custom/notification", "custom/sep", "battery","custom/space"],
+    "modules-right": ["tray","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/space"],
     "custom/sep": {
 		"format": " | "
     },
@@ -24,22 +24,6 @@
         "format": "　{percent}%",
         "format-icons": ["", ""]
     },
-	"custom/notification": {
-		"tooltip": false,
-		"format": "{icon}",
-		"format-icons": {
-			"notification": "<span foreground='red'><sup></sup></span>",
-			"none": " ",
-			"dnd-notification": "<span foreground='red'><sup></sup></span>",
-			"dnd-none": " "
-		},
-		"return-type": "json",
-		"exec-if": "which swaync-client",
-		"exec": "swaync-client -swb",
-		"on-click": "swaync-client -t -sw",
-		"on-click-right": "swaync-client -d -sw",
-		"escape": true
-	},
 	"wlr/workspaces": {
 		"disable-scroll": true,
 		"all-outputs": true,
@@ -113,6 +97,12 @@
     "battery#bat2": {
         "bat": "BAT2"
     },
+	"custom/power_profile": {
+    "exec": "sleep 0.3 && /home/adharsh/.scripts/powerprofilecycle.sh -m",
+    "interval": 1,
+    "on-click": "/home/adharsh/.scripts/powerprofilecycle.sh",
+    "exec-on-event": true
+	},
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
 		"format-wifi": "  {essid}",
