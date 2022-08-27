@@ -1,7 +1,7 @@
 #!/bin/sh
 # script used to toggle between two conditions
 
-TOGGLE=$HOME/.toggle_touchpad
+TOGGLE=$HOME/.toggle_Mic
 
 if [ ! -e $TOGGLE ]; then
     touch $TOGGLE
