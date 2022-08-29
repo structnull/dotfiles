@@ -7,7 +7,7 @@
     "margin-right": 10,
     "modules-left": ["wlr/workspaces","hyprland/window",],
     "modules-center": ["clock"],
-    "modules-right": ["tray","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/space"],
+    "modules-right": ["tray","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/sep","custom/session","custom/space"],
     "custom/sep": {
 		"format": " | "
     },
@@ -20,6 +20,14 @@
      "interval":1,
      "height": 20,
      },
+    "custom/session": {
+      "format": "{icon}",
+      "format-icons": {
+        "default": "  "
+      },
+      "toolip": true,
+      "on-click": "wlogout -p layer-shell"
+    },
     "backlight": {
         "format": "　{percent}%",
         "format-icons": ["", ""]
@@ -106,7 +114,7 @@
     "network": {
         // "interface": "wlp2*", // (Optional) To force the use of this interface
 		"format-wifi": "  {essid}",
-		"format-ethernet": "  {ipaddr}",
+		"format-ethernet": "  Connected",
 		"format-disconnected": " Disconnected",
 		"tooltip-format-wifi": "Signal Strenght: {signalStrength}% | Down Speed: {bandwidthDownBits}, Up Speed: {bandwidthUpBits}",
         "format-linked": "{ifname} (No IP) ",

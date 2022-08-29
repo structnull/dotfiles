@@ -1,6 +1,6 @@
 * { /* `otf-font-awesome` is required to be installed for icons */
     border: none;
-    font-family: FontAwesome, Product Sans;
+    font-family: FontAwesome, Product Sans,Jetbrains Mono;
     font-size: 14px;
     color: #eeeeee;
     /* border-radius: 20px; */
