@@ -119,7 +119,7 @@
 		"tooltip-format-wifi": "Signal Strenght: {signalStrength}% | Down Speed: {bandwidthDownBits}, Up Speed: {bandwidthUpBits}",
         "format-linked": "{ifname} (No IP) ",
      
-	"on-click": "kitty -e nmtui"
+	"on-click": "bash './rofi-network-manager.sh'"
 	},
 	"pulseaudio": {
         // "scroll-step": 1, // %, can be a float
