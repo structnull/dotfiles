@@ -49,15 +49,16 @@ ACTION=${1:-usage}
 SUBJECT=${2:-screen}
 FILE=${3:-$(getTargetDirectory)/$(date -Ins).png}
 
-if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "check" ]; then
+if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "copysave" ] && [ "$ACTION" != "check" ]; then
   echo "Usage:"
-  echo "  grimblast [--notify] [--cursor] (copy|save) [active|screen|output|area|window] [FILE|-]"
+  echo "  grimblast [--notify] [--cursor] (copy|save|copysave) [active|screen|output|area|window] [FILE|-]"
   echo "  grimblast check"
   echo "  grimblast usage"
   echo ""
   echo "Commands:"
   echo "  copy: Copy the screenshot data into the clipboard."
   echo "  save: Save the screenshot to a regular file or '-' to pipe to STDOUT."
+  echo "  copysave: Combine the previous 2 options."
   echo "  check: Verify if required tools are installed and exit."
   echo "  usage: Show this message and exit."
   echo ""
@@ -149,23 +150,14 @@ elif [ "$SUBJECT" = "output" ] ; then
   OUTPUT=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)' | jq -r '.name')
   WHAT="$OUTPUT"
 elif [ "$SUBJECT" = "window" ] ; then
-  MONITORS=$(hyprctl monitors -j)
-  CLIENTS=$(hyprctl clients -j)
-  SIZE=$(jq -r 'map(.width,.height)' <<< $MONITORS)
-  WORKSPACES="$(jq -r 'map(.activeWorkspace.id)' <<< $MONITORS)"
-  # Check if user is in fullscreen
-  if [ -z "$(jq -r ".[] | select (.workspace.id == "$(echo $WORKSPACES | jq '.[]')" and .size == $SIZE)" <<< $CLIENTS)" ] ; then
-    WINDOWS="$(jq -r --argjson workspaces "$WORKSPACES" 'map(select([.workspace.id] | inside($workspaces)))' <<< $CLIENTS )"
-    GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp -r)
-    # Check if user exited slurp without selecting the area
-    if [ -z "$GEOM" ]; then
-      exit 1
-    fi
-    WHAT="Window"
-  else
-    GEOM=""
-    WHAT="Screen"
+  WORKSPACES="$(hyprctl monitors -j | jq -r 'map(.activeWorkspace.id)')"
+  WINDOWS="$(hyprctl clients -j | jq -r --argjson workspaces "$WORKSPACES" 'map(select([.workspace.id] | inside($workspaces)))' )"
+  GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp -r)
+  # Check if user exited slurp without selecting the area
+  if [ -z "$GEOM" ]; then
+   exit 1
   fi
+  WHAT="Window"
 else
   die "Unknown subject to take a screen shot from" "$SUBJECT"
 fi
@@ -173,11 +165,19 @@ fi
 if [ "$ACTION" = "copy" ] ; then
   takeScreenshot - "$GEOM" "$OUTPUT" | wl-copy --type image/png || die "Clipboard error"
   notifyOk "$WHAT copied to buffer"
-else
+elif [ "$ACTION" = "save" ] ; then
   if takeScreenshot "$FILE" "$GEOM" "$OUTPUT"; then
     TITLE="Screenshot of $SUBJECT"
     MESSAGE=$(basename "$FILE")
     notifyOk "$MESSAGE" "$TITLE" -i "$FILE"
+    echo "$FILE"
+  else
+    notifyError "Error taking screenshot with grim"
+  fi
+else
+  if [ "$ACTION" = "copysave" ] ; then
+    takeScreenshot - "$GEOM" "$OUTPUT" | tee "$FILE" | wl-copy --type image/png || die "Clipboard error"
+    notifyOk "$WHAT copied to buffer and saved to $FILE"
     echo "$FILE"
   else
     notifyError "Error taking screenshot with grim"
