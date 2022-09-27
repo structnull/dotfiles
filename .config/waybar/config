@@ -1,13 +1,13 @@
 {
     "spacing": 0, 
-    "layer": "top",
+    "layer": "bottom",
     // Choose the order of the modules
     "margin-top": 5,
     "margin-left": 10,
     "margin-right": 10,
     "modules-left": ["wlr/workspaces","hyprland/window",],
     "modules-center": ["clock"],
-    "modules-right": ["tray","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/sep","custom/session","custom/space"],
+    "modules-right": ["tray","custom/sep","idle_inhibitor","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/sep","custom/session","custom/space"],
     "custom/sep": {
 		"format": " | "
     },
@@ -20,10 +20,17 @@
      "interval":1,
      "height": 20,
      },
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated": "",
+        "deactivated": ""
+      }
+    },
     "custom/session": {
       "format": "{icon}",
       "format-icons": {
-        "default": "  "
+        "default": " 💀 "
       },
       "toolip": true,
       "on-click": "wlogout -p layer-shell"
@@ -72,7 +79,7 @@
 		"interval": 60,
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
 	},
-	"clock#date": {
+	"custom/bruh": {
 	    "interval": 60,
 	    "format": "{:  %A %d %b}"
 	  },

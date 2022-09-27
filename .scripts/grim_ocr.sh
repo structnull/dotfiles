@@ -4,7 +4,7 @@
 SCR_IMG=`mktemp`
 trap "rm $SCR_IMG*" EXIT
 
-grim -g "$(slurp)" $SCR_IMG.png 
+grim -l 9 -g "$(slurp)" $SCR_IMG.png 
 # increase image quality with option -q from default 75 to 100
 
 mogrify -modulate 100,0 -resize 400% $SCR_IMG.png 
