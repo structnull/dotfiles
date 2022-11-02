@@ -1,6 +1,7 @@
 local M = {}
 
 local load_override = require("core.utils").load_override
+local utils = require "core.utils"
 
 M.autopairs = function()
   local present1, autopairs = pcall(require, "nvim-autopairs")
@@ -113,8 +114,8 @@ M.luasnip = function()
 
   options = load_override(options, "L3MON4D3/LuaSnip")
   luasnip.config.set_config(options)
-  require("luasnip.loaders.from_vscode").lazy_load()
   require("luasnip.loaders.from_vscode").lazy_load { paths = vim.g.luasnippets_path or "" }
+  require("luasnip.loaders.from_vscode").lazy_load()
 
   vim.api.nvim_create_autocmd("InsertLeave", {
     callback = function()
@@ -145,6 +146,9 @@ M.gitsigns = function()
       topdelete = { hl = "DiffDelete", text = "‾", numhl = "GitSignsDeleteNr" },
       changedelete = { hl = "DiffChangeDelete", text = "~", numhl = "GitSignsChangeNr" },
     },
+    on_attach = function (bufnr)
+      utils.load_mappings("gitsigns", { buffer = bufnr })
+    end
   }
 
   options = load_override(options, "lewis6991/gitsigns.nvim")
