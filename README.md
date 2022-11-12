@@ -18,7 +18,7 @@
 
 
 [hypr]: https://github.com/hyprwm/Hyprland
-[archurl]: archlinux.org/
+[archurl]: https://archlinux.org/
 [kittyurl]: https://github.com/kovidgoyal/kitty
 [rofiurl]: https://github.com/lbonn/rofi
 [waybarurl]: https://github.com/Alexays/Waybar
