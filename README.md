@@ -1,4 +1,4 @@
-#A place to host dotfiles for whatever Window manager I'm currently using.
+# A place to host dotfiles for whatever Window manager I'm currently using.
 
 * WM: Hyprland
  
