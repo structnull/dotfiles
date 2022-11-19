@@ -83,16 +83,28 @@ ex ()
   fi
 }
 
-# Open ranger in current directory:
-run_ranger () {
-    echo
-    ranger --choosedir=$HOME/.rangerdir < $TTY
-    LASTDIR=`cat $HOME/.rangerdir`
-    cd "$LASTDIR"
-    zle reset-prompt
+# USE LF TO SWITCH DIRECTORIES AND BIND IT TO CTRL-O
+lfcd () {
+    tmp="$(mktemp)"
+    lf -last-dir-path="$tmp" "$@"
+    if [ -f "$tmp" ]; then
+        dir="$(cat "$tmp")"
+        rm -f "$tmp"
+        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+    fi
 }
-zle -N run_ranger
-bindkey '^f' run_ranger
+bindkey -s '^f' 'lfcd\n'
+
+# Open ranger in current directory:
+#run_ranger () {
+#    echo
+#    ranger --choosedir=$HOME/.rangerdir < $TTY
+#    LASTDIR=`cat $HOME/.rangerdir`
+#    cd "$LASTDIR"
+#    zle reset-prompt
+#}
+#zle -N run_ranger
+#bindkey '^f' run_ranger
 
 
 ## Options section
@@ -147,8 +159,9 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias ta='tmux attach-session'
 alias l='ls -CF'
-alias vim='nvim'
 alias wiki='vim -c ":VimwikiIndex"'
+alias v='nvim'
+alias vim='nvim'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 alias grep='grep --color=auto'
