@@ -1,80 +1,68 @@
+## ░█▀▀░▀█▀░█▀█░█▀▄░█▀▀░█░█░▀█▀░█▀█
+## ░▀▀█░░█░░█▀█░█▀▄░▀▀█░█▀█░░█░░█▀▀
+## ░▀▀▀░░▀░░▀░▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░░
 
-[battery]
-full_symbol = "🔋"
-charging_symbol = "🔌"
-discharging_symbol = "⚡"
+format = "$directory$all"
+right_format = """$git_branch$git_status$cmd_duration"""
 
-[[battery.display]]
-threshold = 30
-style = "bold red"
+# Disable the blank line at the start of the prompt
+add_newline = false
+
+[line_break]
+disabled = true
 
 [character]
-error_symbol = "[✖](bold red) "
-success_symbol = "[➜](bold green)" # The "success_symbol" is set to "➜" with color "bold green"
-
-[cmd_duration]
-min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
-format = " took [$duration]($style)"
-
-[directory]
-truncation_length = 5
-format = "[$path]($style)[$lock_symbol]($lock_style) "
-
-[git_branch]
-format = " [$symbol$branch]($style) "
-symbol = "🍣 "
-style = "bold yellow"
-
-[git_commit]
-commit_hash_length = 8
-style = "bold white"
-
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-
-[git_status]
-conflicted = "⚔️ "
-ahead = "🏎️ 💨 ×${count}"
-behind = "🐢 ×${count}"
-diverged = "🔱 🏎️ 💨 ×${ahead_count} 🐢 ×${behind_count}"
-untracked = "🛤️  ×${count}"
-stashed = "📦 "
-modified = "📝 ×${count}"
-staged = "🗃️  ×${count}"
-renamed = "📛 ×${count}"
-deleted = "🗑️  ×${count}"
-style = "bright-white"
-format = "$all_status$ahead_behind"
+success_symbol = " [](#6791c9)"
+error_symbol = " [](#df5b61)"
+vicmd_symbol = "[  ](#78b892)"
 
 [hostname]
-ssh_only = false
-format = "<[$hostname]($style)>"
-trim_at = "-"
-style = "bold dimmed white"
-disabled = true
-
-[julia]
-format = "[$symbol$version]($style) "
-symbol = "ஃ "
-style = "bold green"
-
-[memory_usage]
-format = "$symbol[${ram}( | ${swap})]($style) "
-threshold = 70
-style = "bold dimmed white"
+ssh_only = true
+format = "[$hostname](bold blue) "
 disabled = false
 
-[package]
-disabled = true
+[cmd_duration]
+min_time = 1
+format = "[](fg:#1c252c bg:none)[$duration]($style)[](fg:#1c252c bg:#1c252c)[](fg:#bc83e3 bg:#1c252c)[ ](fg:#1c252c bg:#bc83e3)[](fg:#bc83e3 bg:none) "
+disabled = false
+style = "fg:#d9d7d6 bg:#1c252c"
 
-[python]
-format = "[$symbol$version]($style) "
-style = "bold green"
+[directory]
+format = "[](fg:#1c252c bg:none)[$path]($style)[](fg:#1c252c bg:#1c252c)[](fg:#6791c9 bg:#1c252c)[ ](fg:#1c252c bg:#6791c9)[](fg:#6791c9 bg:none)"
+style = "fg:#d9d7d6 bg:#1c252c"
+truncation_length = 3
+truncate_to_repo=false
 
-[rust]
-format = "[$symbol$version]($style) "
-style = "bold green"
+[git_branch]
+format = "[](fg:#1c252c bg:none)[$branch]($style)[](fg:#1c252c bg:#1c252c)[](fg:#78b892 bg:#1c252c)[](fg:#282c34 bg:#78b892)[](fg:#78b892 bg:none) "
+style = "fg:#d9d7d6 bg:#1c252c"
 
-[username]
-style_user = "bold dimmed blue"
-show_always = false 
+[git_status]
+format="[](fg:#1c252c bg:none)[$all_status$ahead_behind]($style)[](fg:#1c252c bg:#1c252c)[](fg:#67afc1 bg:#1c252c)[ ](fg:#1c252c bg:#67afc1)[](fg:#67afc1 bg:none) "
+style = "fg:#d9d7d6 bg:#1c252c"
+conflicted = "="
+ahead =	"⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+up_to_date = ""
+untracked = "?${count}"
+stashed = ""
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "${count}"
+
+[git_commit]
+format = "[\\($hash\\)]($style) [\\($tag\\)]($style)"
+style = "green"
+
+[git_state]
+rebase = "REBASING"
+merge =	"MERGING"
+revert = "REVERTING"
+cherry_pick = "CHERRY-PICKING"
+bisect = "BISECTING"
+am = "AM"
+am_or_rebase = "AM/REBASE"
+style =	"yellow"
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
