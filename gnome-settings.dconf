@@ -1,0 +1,1593 @@
+# use dconf load > gnome-settings.dconf for loading into gnome-shell
+
+[ca/desrt/dconf-editor]
+saved-pathbar-path='/org/gnome/shell/extensions/aylurs-widgets/quick-toggles-style'
+saved-view='/org/gnome/shell/'
+window-height=500
+window-is-maximized=false
+window-width=540
+
+[com/github/johnfactotum/Foliate]
+footer-left='clock'
+footer-right='clock'
+restore-last-file=true
+selection-action-multiple='menu'
+selection-action-single='none'
+translate-target-language='ml'
+use-menubar=false
+use-sidebar=false
+
+[com/github/johnfactotum/Foliate/library]
+height=600
+maximized=false
+opds-action='ask'
+page='library'
+width=800
+
+[com/github/johnfactotum/Foliate/view]
+allow-unsafe=true
+bg-color='#fff'
+fg-color='#000'
+font='Serif 12'
+invert=false
+layout='continuous'
+link-color='blue'
+prefer-dark-theme=false
+skeuomorphism=true
+
+[com/github/johnfactotum/Foliate/window-state]
+fullscreen=false
+height=978
+last-file='/mnt/1284DEF384DED875/sickomode/Computer Programming, For Pupils, For Beginners. (Rose, Jennifer [Rose, Jennifer]) (z-lib.org).epub'
+maximized=true
+width=1896
+
+[com/github/maoschanz/drawing]
+last-active-tool='rect_select'
+last-version='1.0.1'
+maximized=true
+
+[com/github/maoschanz/drawing/tools-options]
+last-active-shape='polygon'
+last-delete-replace='alpha'
+last-font-name='Sans'
+last-left-rgba=['0.0', '0.0', '0.0', '1.0']
+last-right-rgba=['1.0', '1.0', '0.0', '0.5']
+last-shape-filling='empty'
+last-size=14
+last-text-background='outline'
+use-antialiasing=true
+
+[com/github/wwmm/easyeffects]
+last-used-input-preset='Presets'
+last-used-output-preset='Presets'
+window-fullscreen=false
+window-height=429
+window-maximized=true
+window-width=688
+
+[com/github/wwmm/easyeffects/streaminputs]
+input-device='alsa_input.pci-0000_00_1f.3.analog-stereo'
+
+[com/github/wwmm/easyeffects/streamoutputs]
+output-device='alsa_output.pci-0000_00_1f.3.analog-stereo'
+
+[com/rafaelmardojai/Blanket]
+dark-mode=true
+playing=true
+scroll-position=0.0
+volume=0.34761904761904761
+
+[com/rafaelmardojai/Blanket/e52f7134-cff9-463b-9f7d-3740d2cc1d57]
+sounds-mute={'storm': false, 'white-noise': false, 'coffee-shop': false, 'boat': false, 'summer-night': false, 'birds': false, 'rain': false, 'train': false, 'city': false, 'pink-noise': false, 'fireplace': true, 'wind': false, 'waves': false, 'stream': false}
+sounds-volume={'storm': 0.28000000000000003, 'white-noise': 0.0, 'coffee-shop': 0.0, 'boat': 0.0, 'summer-night': 0.0, 'birds': 0.0, 'rain': 0.82999999999999996, 'train': 0.0, 'city': 0.0, 'pink-noise': 0.0, 'fireplace': 0.02, 'wind': 0.0, 'waves': 0.0, 'stream': 0.0}
+
+[de/haeckerfelix/Fragments]
+client-last-connection='00000000-0000-0000-0000-000000000000'
+window-height=700
+window-width=900
+
+[io/elementary/camera/settings]
+delay='10_SEC'
+window-maximized=false
+window-size=(918, 768)
+
+[io/github/celluloid-player/celluloid]
+always-show-title-buttons=false
+always-use-floating-controls=false
+draggable-video-area-enable=true
+mpv-options='--hwdec'
+settings-migrated=true
+
+[io/github/celluloid-player/celluloid/window-state]
+height=903
+loop-playlist=false
+maximized=false
+playlist-width=250
+show-controls=true
+show-playlist=false
+volume=1.0
+width=1440
+
+[io/github/seadve/Kooha]
+capture-mode='monitor-window'
+record-mic=false
+record-speaker=true
+video-format='mp4'
+
+[org/blueman/general]
+window-properties=[908, 830, 36, 104]
+
+[org/cinnamon/desktop/applications/terminal]
+exec='kitty'
+exec-arg='-e'
+
+[org/freedesktop/tracker/miner/files]
+index-recursive-directories=['&DESKTOP', '&DOCUMENTS', '&MUSIC', '&PICTURES', '&VIDEOS', '&DOWNLOAD']
+
+[org/gnome/Calls]
+auto-use-default-origins=true
+autoload-plugins=['mm', 'sip']
+country-code=''
+
+[org/gnome/Connections]
+first-run=false
+
+[org/gnome/Console]
+font-scale=1.3000000000000003
+last-window-size=(1149, 611)
+theme='night'
+
+[org/gnome/Disks]
+image-dir-uri='file:///home/adharsh/Documents'
+
+[org/gnome/Lollypop]
+dark-ui=true
+equalizer-custom=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+force-single-column=true
+hd-artwork=true
+music-uris=['file:///home/adharsh/Music']
+network-access-acl=1048574
+notification-flag=2
+repeat='all'
+suggestions-mask=48
+volume-rate=1.0
+window-maximized=false
+window-position=[102, 102]
+window-size=[1055, 804]
+
+[org/gnome/Music]
+repeat='shuffle'
+window-maximized=false
+window-position=[102, 102]
+window-size=[1436, 852]
+
+[org/gnome/TextEditor]
+restore-session=true
+style-scheme='classic-dark'
+style-variant='dark'
+
+[org/gnome/baobab/ui]
+is-maximized=true
+window-size=(1088, 600)
+window-state=43908
+
+[org/gnome/calculator]
+accuracy=9
+angle-units='degrees'
+base=10
+button-mode='basic'
+number-format='automatic'
+refresh-interval=604800
+show-thousands=false
+show-zeroes=false
+source-currency='USD'
+source-units='degree'
+target-currency='INR'
+target-units='radian'
+window-position=(102, 102)
+word-size=64
+
+[org/gnome/cheese]
+burst-delay=1000
+camera='USB2.0 HD UVC WebCam'
+photo-x-resolution=1280
+photo-y-resolution=720
+video-x-resolution=1280
+video-y-resolution=720
+
+[org/gnome/clocks/state/window]
+maximized=true
+panel-id='world'
+size=(605, 444)
+state=87168
+
+[org/gnome/control-center]
+last-panel='display'
+window-state=(1536, 843, false)
+
+[org/gnome/desktop/a11y/applications]
+screen-reader-enabled=false
+
+[org/gnome/desktop/a11y/keyboard]
+mousekeys-enable=false
+
+[org/gnome/desktop/app-folders]
+folder-children=['Utilities', 'YaST', 'be7863b4-2914-4baa-8b96-1fbde203a430', 'e7f0e279-aead-4052-9b52-599216f28dd1', '9234c6ef-fde6-419c-bc9c-970a70a278ae']
+
+[org/gnome/desktop/app-folders/folders/9234c6ef-fde6-419c-bc9c-970a70a278ae]
+apps=['soundux.desktop', 'noisetorch.desktop']
+name='voice'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/Utilities]
+apps=['gnome-abrt.desktop', 'gnome-system-log.desktop', 'nm-connection-editor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.Connections.desktop', 'org.gnome.DejaDup.desktop', 'org.gnome.Dictionary.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.eog.desktop', 'org.gnome.Evince.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.fonts.desktop', 'org.gnome.seahorse.Application.desktop', 'org.gnome.tweaks.desktop', 'org.gnome.Usage.desktop', 'vinagre.desktop', 'org.gnome.PowerStats.desktop', 'cups.desktop']
+categories=['X-GNOME-Utilities']
+name='GNOME_UTILS'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/YaST]
+categories=['X-SuSE-YaST']
+name='suse-yast.directory'
+translate=true
+
+[org/gnome/desktop/app-folders/folders/be7863b4-2914-4baa-8b96-1fbde203a430]
+apps=['bvnc.desktop', 'bssh.desktop', 'avahi-discover.desktop', 'qv4l2.desktop', 'qvidcap.desktop']
+name='avahi stuff'
+translate=false
+
+[org/gnome/desktop/app-folders/folders/e7f0e279-aead-4052-9b52-599216f28dd1]
+apps=['gog_com-Undertale_1.desktop', 'gog_com-Stardew_Valley_1.desktop', 'gog_com-Hollow_Knight_1.desktop', 'com.lunarclient.LunarClient.desktop', 'com.atlauncher.ATLauncher.desktop', 'sed--Metal Gear Solid 5--1662819642.463096.desktop', 'sed--eldenring--1662816786.278362.desktop', 'sed--sekiro--1662878197.342812.desktop', 'cyberpunkd--Cyberpunk2077--1663167611.117093.desktop', 'sed--eldenring--1663150069.089154.desktop', 'sed--Metal Gear Solid 5--1663150071.532881.desktop', 'spiderman--Spider-Man--1663164704.162217.desktop', "spiderman--Marvel's Spider-Man--1663405713.52376.desktop", "spiderman--Marvel's Spider-Man--1663433894.664808.desktop", 'sed--Metal gear solid 5--1663733617.066749.desktop', 'Gta 5--Grand theft auto 5--1663734319.208649.desktop', 'spiderman--Spider-Man--1663649366.675075.desktop', 'sed--sekiro--1667628594.830646.desktop', 'zelda-oot.desktop', 'hmmm--eldenring--1669827657.40741.desktop', 'hmmm--witcher3--1669827659.068549.desktop', 'seder--Uncharted 4--1669772091.27084.desktop', 'hmmm--sekiro--1669827655.656621.desktop']
+name='games'
+translate=false
+
+[org/gnome/desktop/applications/terminal]
+exec='kitty'
+
+[org/gnome/desktop/background]
+color-shading-type='solid'
+picture-options='zoom'
+picture-uri='file:///home/adharsh/.local/share/backgrounds/2022-02-23-17-38-55-pexels-hristo-fidanov-1252869.jpg'
+picture-uri-dark='file:///home/adharsh/.local/share/backgrounds/2022-02-23-17-38-55-pexels-hristo-fidanov-1252869.jpg'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[org/gnome/desktop/calendar]
+show-weekdate=false
+
+[org/gnome/desktop/input-sources]
+per-window=false
+show-all-sources=true
+sources=[('xkb', 'us')]
+xkb-options=@as []
+
+[org/gnome/desktop/interface]
+clock-format='12h'
+clock-show-seconds=true
+clock-show-weekday=false
+color-scheme='default'
+cursor-theme='McMojave-cursors'
+document-font-name='Google Sans Text Medium, Medium 11'
+enable-animations=true
+enable-hot-corners=false
+font-antialiasing='grayscale'
+font-hinting='slight'
+font-name='Product Sans 11'
+gtk-key-theme='Default'
+gtk-theme='adw-gtk3-dark'
+icon-theme='Colloid-dark'
+locate-pointer=false
+monospace-font-name='JetBrains Mono 10'
+show-battery-percentage=true
+text-scaling-factor=1.0
+toolkit-accessibility=false
+
+[org/gnome/desktop/media-handling]
+autorun-x-content-ignore=@as []
+autorun-x-content-open-folder=@as []
+autorun-x-content-start-app=['x-content/ostree-repository']
+
+[org/gnome/desktop/notifications]
+application-children=['gnome-power-panel', 'firefox', 'gnome-network-panel', 'com-microsoft-teams', 'org-manjaro-pamac-manager', 'discord-canary', 'org-qbittorrent-qbittorrent', 'org-gnome-shell-extensions-gsconnect', 'org-gnome-baobab', 'org-gnome-nautilus', 'io-github-seadve-kooha', 'teams', 'org-gnome-extensions-desktop', 'org-gnome-chromegnomeshell', 'discord', 'org-gnome-evince', 'gimp', 'org-gnome-lollypop', 'com-usebottles-bottles', 'rhythmbox', 'org-gnome-boxes', 'com-heroicgameslauncher-hgl', 'org-gnome-tweaks', 'kitty', 'com-valvesoftware-steam', 'org-gnome-eog', 'org-gnome-settings', 'gparted', 'io-bassi-amberol', 'org-chromium-chromium', 'org-onlyoffice-desktopeditors', 'com-discordapp-discord', 'xdg-desktop-portal-gnome', 'org-gnome-fileroller', 'org-gnome-texteditor', 'com-lunarclient-lunarclient', 'webcord']
+show-banners=true
+
+[org/gnome/desktop/notifications/application/com-discordapp-discord]
+application-id='com.discordapp.Discord.desktop'
+
+[org/gnome/desktop/notifications/application/com-heroicgameslauncher-hgl]
+application-id='com.heroicgameslauncher.hgl.desktop'
+
+[org/gnome/desktop/notifications/application/com-lunarclient-lunarclient]
+application-id='com.lunarclient.LunarClient.desktop'
+
+[org/gnome/desktop/notifications/application/com-microsoft-teams]
+application-id='com.microsoft.Teams.desktop'
+
+[org/gnome/desktop/notifications/application/com-usebottles-bottles]
+application-id='com.usebottles.bottles.desktop'
+
+[org/gnome/desktop/notifications/application/com-valvesoftware-steam]
+application-id='com.valvesoftware.Steam.desktop'
+
+[org/gnome/desktop/notifications/application/discord-canary]
+application-id='discord-canary.desktop'
+
+[org/gnome/desktop/notifications/application/discord]
+application-id='discord.desktop'
+
+[org/gnome/desktop/notifications/application/firefox]
+application-id='firefox.desktop'
+
+[org/gnome/desktop/notifications/application/gimp]
+application-id='gimp.desktop'
+
+[org/gnome/desktop/notifications/application/gnome-network-panel]
+application-id='gnome-network-panel.desktop'
+
+[org/gnome/desktop/notifications/application/gnome-power-panel]
+application-id='gnome-power-panel.desktop'
+
+[org/gnome/desktop/notifications/application/gparted]
+application-id='gparted.desktop'
+
+[org/gnome/desktop/notifications/application/io-bassi-amberol]
+application-id='io.bassi.Amberol.desktop'
+
+[org/gnome/desktop/notifications/application/io-github-seadve-kooha]
+application-id='io.github.seadve.Kooha.desktop'
+
+[org/gnome/desktop/notifications/application/kitty]
+application-id='kitty.desktop'
+
+[org/gnome/desktop/notifications/application/org-chromium-chromium]
+application-id='org.chromium.Chromium.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-baobab]
+application-id='org.gnome.baobab.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-boxes]
+application-id='org.gnome.Boxes.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-chromegnomeshell]
+application-id='org.gnome.ChromeGnomeShell.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-eog]
+application-id='org.gnome.eog.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-evince]
+application-id='org.gnome.Evince.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-extensions-desktop]
+application-id='org.gnome.Extensions.desktop.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-fileroller]
+application-id='org.gnome.FileRoller.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-lollypop]
+application-id='org.gnome.Lollypop.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-nautilus]
+application-id='org.gnome.Nautilus.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-settings]
+application-id='org.gnome.Settings.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-shell-extensions-gsconnect]
+application-id='org.gnome.Shell.Extensions.GSConnect.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-texteditor]
+application-id='org.gnome.TextEditor.desktop'
+
+[org/gnome/desktop/notifications/application/org-gnome-tweaks]
+application-id='org.gnome.tweaks.desktop'
+
+[org/gnome/desktop/notifications/application/org-manjaro-pamac-manager]
+application-id='org.manjaro.pamac.manager.desktop'
+
+[org/gnome/desktop/notifications/application/org-onlyoffice-desktopeditors]
+application-id='org.onlyoffice.desktopeditors.desktop'
+
+[org/gnome/desktop/notifications/application/org-qbittorrent-qbittorrent]
+application-id='org.qbittorrent.qBittorrent.desktop'
+
+[org/gnome/desktop/notifications/application/rhythmbox]
+application-id='rhythmbox.desktop'
+
+[org/gnome/desktop/notifications/application/teams]
+application-id='teams.desktop'
+
+[org/gnome/desktop/notifications/application/webcord]
+application-id='webcord.desktop'
+
+[org/gnome/desktop/notifications/application/xdg-desktop-portal-gnome]
+application-id='xdg-desktop-portal-gnome.desktop'
+
+[org/gnome/desktop/peripherals/keyboard]
+numlock-state=true
+repeat=true
+
+[org/gnome/desktop/peripherals/mouse]
+accel-profile='default'
+natural-scroll=false
+
+[org/gnome/desktop/peripherals/touchpad]
+click-method='fingers'
+edge-scrolling-enabled=false
+send-events='enabled'
+tap-to-click=true
+two-finger-scrolling-enabled=true
+
+[org/gnome/desktop/privacy]
+disable-microphone=false
+old-files-age=uint32 14
+recent-files-max-age=30
+remove-old-temp-files=true
+remove-old-trash-files=true
+
+[org/gnome/desktop/remote-desktop/rdp]
+enable=true
+screen-share-mode='extend'
+tls-cert='/home/adharsh/.local/share/gnome-remote-desktop/rdp-tls.crt'
+tls-key='/home/adharsh/.local/share/gnome-remote-desktop/rdp-tls.key'
+view-only=false
+
+[org/gnome/desktop/screensaver]
+color-shading-type='solid'
+lock-delay=uint32 0
+picture-options='zoom'
+picture-uri='file:///home/adharsh/.local/share/backgrounds/2022-02-23-17-38-55-pexels-hristo-fidanov-1252869.jpg'
+primary-color='#000000000000'
+secondary-color='#000000000000'
+
+[org/gnome/desktop/search-providers]
+sort-order=['org.gnome.Contacts.desktop', 'org.gnome.Documents.desktop', 'org.gnome.Nautilus.desktop']
+
+[org/gnome/desktop/session]
+idle-delay=uint32 300
+
+[org/gnome/desktop/sound]
+event-sounds=true
+theme-name='__custom'
+
+[org/gnome/desktop/wm/keybindings]
+close=['<Shift><Alt>q']
+maximize=@as []
+minimize=['<Super>d']
+move-to-workspace-1=['<Shift><Alt>exclam']
+move-to-workspace-2=['<Shift><Alt>at']
+move-to-workspace-3=['<Shift><Alt>numbersign']
+move-to-workspace-4=['<Shift><Alt>dollar']
+move-to-workspace-down=@as []
+move-to-workspace-up=@as []
+switch-applications=['<Super>Tab']
+switch-applications-backward=['<Shift><Super>Tab']
+switch-input-source=@as []
+switch-input-source-backward=@as []
+switch-to-workspace-1=['<Alt>1']
+switch-to-workspace-2=['<Alt>2']
+switch-to-workspace-3=['<Alt>3']
+switch-to-workspace-4=['<Alt>4']
+switch-to-workspace-down=['<Primary><Super>Down', '<Primary><Super>j']
+switch-to-workspace-up=['<Primary><Super>Up', '<Primary><Super>k']
+switch-windows=['<Alt>Tab']
+switch-windows-backward=['<Shift><Alt>Tab']
+toggle-fullscreen=['F11']
+unmaximize=@as []
+
+[org/gnome/desktop/wm/preferences]
+button-layout=':'
+num-workspaces=4
+titlebar-font='JetBrains Mono 11'
+
+[org/gnome/eog/plugins]
+active-plugins=['statusbar-date']
+
+[org/gnome/eog/ui]
+sidebar=false
+
+[org/gnome/eog/view]
+autorotate=false
+background-color='rgb(0,0,0)'
+use-background-color=true
+
+[org/gnome/epiphany]
+ask-for-default=false
+default-search-engine='DuckDuckGo'
+search-engine-providers=[{'url': <'https://www.bing.com/search?q=%s'>, 'bang': <'!b'>, 'name': <'Bing'>}, {'url': <'https://duckduckgo.com/?q=%s&t=epiphany'>, 'bang': <'!ddg'>, 'name': <'DuckDuckGo'>}, {'url': <'https://www.google.com/search?q=%s'>, 'bang': <'!g'>, 'name': <'Google'>}]
+
+[org/gnome/epiphany/state]
+is-maximized=false
+window-position=(-1, -1)
+window-size=(1024, 768)
+
+[org/gnome/epiphany/web]
+default-zoom-level=1.0
+enable-mouse-gestures=true
+
+[org/gnome/evince]
+document-directory=@ms 'file:///home/adharsh/Documents/class%2012'
+
+[org/gnome/evince/default]
+continuous=true
+dual-page=false
+dual-page-odd-left=false
+enable-spellchecking=true
+fullscreen=false
+inverted-colors=true
+show-sidebar=true
+sidebar-page='thumbnails'
+sidebar-size=194
+sizing-mode='free'
+window-ratio=(2.0442786729107261, 0.88013108703292064)
+zoom=0.94466014487987171
+
+[org/gnome/evolution-data-server]
+migrated=true
+network-monitor-gio-name=''
+
+[org/gnome/evolution]
+default-task-list='system-task-list'
+
+[org/gnome/file-roller/dialogs/extract]
+recreate-folders=true
+skip-newer=false
+
+[org/gnome/file-roller/listing]
+list-mode='as-folder'
+name-column-width=250
+show-path=false
+sort-method='type'
+sort-type='ascending'
+
+[org/gnome/file-roller/ui]
+sidebar-width=200
+window-height=458
+window-width=941
+
+[org/gnome/gedit/plugins]
+active-plugins=['docinfo', 'spell', 'sort', 'modelines', 'pythonconsole', 'externaltools', 'quickopen', 'filebrowser']
+
+[org/gnome/gedit/plugins/filebrowser]
+root='file:///'
+tree-view=true
+virtual-root='file:///home/adharsh/Downloads'
+
+[org/gnome/gedit/preferences/editor]
+highlight-current-line=false
+wrap-last-split-mode='word'
+
+[org/gnome/gedit/preferences/ui]
+show-tabs-mode='auto'
+
+[org/gnome/gedit/state/window]
+bottom-panel-active-page='GeditPythonConsolePanel'
+bottom-panel-size=140
+side-panel-active-page='GeditWindowDocumentsPanel'
+side-panel-size=200
+size=(1920, 1000)
+state=87168
+
+[org/gnome/gnome-screenshot]
+delay=0
+include-pointer=false
+last-save-directory='file:///home/adharsh/Pictures'
+
+[org/gnome/gnome-search-tool]
+default-window-height=1086
+default-window-maximized=false
+default-window-width=1166
+look-in-folder='/home/adharsh'
+search-history={'gsearchtool-file-entry': ['sus', 'damn']}
+
+[org/gnome/gnome-search-tool/select]
+contains-the-text=true
+
+[org/gnome/gnome-system-monitor]
+current-tab='processes'
+maximized=true
+network-total-in-bits=false
+show-dependencies=false
+show-whose-processes='all'
+window-state=(1896, 1025, 0, 0)
+
+[org/gnome/gnome-system-monitor/disktreenew]
+col-6-visible=true
+col-6-width=0
+
+[org/gnome/gnome-system-monitor/openfilestree]
+sort-col=0
+sort-order=0
+
+[org/gnome/gnome-system-monitor/proctree]
+col-0-visible=true
+col-0-width=1074
+columns-order=[0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+sort-col=15
+sort-order=0
+
+[org/gnome/gthumb/browser]
+browser-sidebar-width=285
+fullscreen-sidebar='hidden'
+fullscreen-thumbnails-visible=false
+maximized=true
+properties-visible=false
+sidebar-sections=['GthFileProperties:expanded', 'GthFileComment:expanded', 'GthFileDetails:expanded', 'GthImageHistogram:expanded']
+sidebar-visible=true
+sort-inverse=false
+sort-type='file::mtime'
+startup-current-file='file:///home/adharsh/Pictures/Pictures/linuxcmd.jpg'
+startup-location='file:///home/adharsh/Pictures/Pictures'
+statusbar-visible=true
+thumbnail-list-visible=true
+viewer-sidebar='hidden'
+window-height=810
+window-width=1363
+
+[org/gnome/gthumb/data-migration]
+catalogs-2-10=true
+
+[org/gnome/gthumb/general]
+active-extensions=['23hq', 'bookmarks', 'burn_disc', 'catalogs', 'change_date', 'comments', 'contact_sheet', 'convert_format', 'desktop_background', 'edit_metadata', 'exiv2_tools', 'file_manager', 'find_duplicates', 'flicker', 'gstreamer_tools', 'gstreamer_utils', 'image_print', 'image_rotation', 'importer', 'jpeg_utils', 'list_tools', 'oauth', 'photo_importer', 'raw_files', 'red_eye_removal', 'rename_series', 'resize_images', 'search', 'selections', 'slideshow', 'terminal', 'webalbums']
+
+[org/gnome/mutter]
+black-list=['tim.exe']
+dynamic-workspaces=false
+edge-tiling=false
+experimental-features=['kms-modifiers']
+overlay-key='Super_L'
+round-corners-radius=12
+workspaces-only-on-primary=false
+
+[org/gnome/mutter/keybindings]
+toggle-tiled-left=@as []
+toggle-tiled-right=@as []
+
+[org/gnome/nautilus/compression]
+default-compression-format='zip'
+
+[org/gnome/nautilus/icon-view]
+default-zoom-level='large'
+
+[org/gnome/nautilus/list-view]
+default-zoom-level='large'
+use-tree-view=false
+
+[org/gnome/nautilus/preferences]
+default-folder-viewer='icon-view'
+search-filter-time-type='last_modified'
+search-view='list-view'
+show-create-link=true
+show-delete-permanently=true
+show-image-thumbnails='always'
+
+[org/gnome/nautilus/window-state]
+initial-size=(1086, 650)
+maximized=true
+sidebar-width=211
+
+[org/gnome/nm-applet/eap/23698809-cc41-4184-8438-eb188c8ddd7e]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[org/gnome/nm-applet/eap/4fdc5318-cb53-380e-8633-149501770193]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[org/gnome/nm-applet/eap/605fe10d-33dc-4c2e-a488-1267b46b0058]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[org/gnome/nm-applet/eap/8b686ba3-fa30-3451-98bf-8152a5fc7f2a]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[org/gnome/nm-applet/eap/c0b15d02-bb5a-4c1a-9721-e0ce27ff5b60]
+ignore-ca-cert=false
+ignore-phase2-ca-cert=false
+
+[org/gnome/photos]
+window-maximized=true
+window-position=[102, 102]
+window-size=[960, 600]
+
+[org/gnome/power-manager]
+info-history-type='rate'
+info-last-device='/org/freedesktop/UPower/devices/battery_BAT1'
+info-page-number=2
+info-stats-type='charge-data'
+
+[org/gnome/rhythmbox]
+display-page-tree-visible=true
+maximized=false
+position=(35, 32)
+size=(1440, 750)
+
+[org/gnome/rhythmbox/library]
+layout-filename='%tN - %tt'
+layout-path='%aa/%at'
+
+[org/gnome/rhythmbox/library/encoding]
+media-type='audio/x-vorbis'
+
+[org/gnome/rhythmbox/library/source]
+paned-position=365
+show-browser=true
+sorting=('Time', false)
+
+[org/gnome/rhythmbox/player]
+volume=0.899993896484375
+
+[org/gnome/rhythmbox/plugins]
+active-plugins=['mtpdevice', 'mpris', 'dbus-media-server', 'iradio', 'notification', 'rb', 'artsearch', 'lyrics', 'fmradio', 'generic-player', 'power-manager', 'android', 'audioscrobbler', 'mmkeys', 'soundcloud', 'audiocd']
+seen-plugins=['mtpdevice', 'mpris', 'cd-recorder', 'pythonconsole', 'dbus-media-server', 'grilo', 'notification', 'rb', 'im-status', 'artsearch', 'magnatune', 'ipod', 'rbzeitgeist', 'lyrics', 'rblirc', 'fmradio', 'daap', 'listenbrainz', 'audioscrobbler', 'replaygain', 'webremote', 'soundcloud']
+
+[org/gnome/rhythmbox/plugins/audioscrobbler/Last.fm]
+scrobbling-enabled=true
+
+[org/gnome/rhythmbox/plugins/audioscrobbler/Libre.fm]
+scrobbling-enabled=true
+
+[org/gnome/rhythmbox/plugins/iradio]
+initial-stations-loaded=true
+
+[org/gnome/rhythmbox/plugins/iradio/source]
+show-browser=true
+sorting=('Title', false)
+
+[org/gnome/rhythmbox/podcast]
+download-location='file:///home/adharsh/Music'
+
+[org/gnome/rhythmbox/podcast/source]
+show-browser=true
+
+[org/gnome/rhythmbox/rhythmdb]
+locations=['file:///home/adharsh/Music']
+
+[org/gnome/rhythmbox/sources]
+visible-columns=['post-time', 'duration', 'track-number', 'album', 'genre', 'artist']
+
+[org/gnome/settings-daemon/plugins/color]
+night-light-enabled=false
+night-light-temperature=uint32 1400
+
+[org/gnome/settings-daemon/plugins/media-keys]
+area-screenshot-clip=['<Shift><Super>s']
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/']
+mic-mute=['<Alt>x']
+next=['<Alt>KP_6']
+play=['<Alt>KP_5']
+previous=['<Alt>KP_4']
+rotate-video-lock-static=@as []
+terminal=['<Super>t']
+volume-down=['<Alt>KP_Subtract']
+volume-mute=['<Alt>m']
+volume-up=['<Alt>KP_Add']
+www=['<Super>f']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0]
+binding='<Super>Return'
+command='kitty'
+name='kitty'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1]
+binding='<Shift><Super>s'
+command='/home/adharsh/.scripts/ocr.sh'
+name='ocr'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2]
+binding='<Super>e'
+command='nautilus'
+name='nautilus'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3]
+binding='<Primary><Shift>Escape'
+command='gnome-system-monitor'
+name='monitor'
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4]
+binding='<Shift><Alt>s'
+command='/home/adharsh/.scripts/a_good_screenshoting_method_unlike_shitty_gnome_shell_one.sh'
+name='screenshot(not the shitty build in one)'
+
+[org/gnome/settings-daemon/plugins/power]
+idle-dim=true
+power-button-action='hibernate'
+sleep-inactive-ac-type='nothing'
+sleep-inactive-battery-timeout=900
+
+[org/gnome/shell]
+app-picker-layout=[{'org.gnome.clocks.desktop': <{'position': <0>}>, 'gnome-system-monitor.desktop': <{'position': <1>}>, 'Utilities': <{'position': <2>}>, 'be7863b4-2914-4baa-8b96-1fbde203a430': <{'position': <3>}>, 'io.github.celluloid_player.Celluloid.desktop': <{'position': <4>}>, 'org.gnome.Extensions.desktop': <{'position': <5>}>, 'lstopo.desktop': <{'position': <6>}>, 'htop.desktop': <{'position': <7>}>, 'mpv.desktop': <{'position': <8>}>}, {'org.gnome.SoundRecorder.desktop': <{'position': <0>}>, 'org.gnome.Calculator.desktop': <{'position': <1>}>, 'shotwell.desktop': <{'position': <2>}>, 'com.github.neithern.g4music.desktop': <{'position': <3>}>, 'org.gnome.Boxes.desktop': <{'position': <4>}>, 'gparted.desktop': <{'position': <5>}>, 'org.gnome.Settings.desktop': <{'position': <6>}>, 'com.system76.Popsicle.desktop': <{'position': <7>}>, 'org.onlyoffice.desktopeditors.desktop': <{'position': <8>}>, 'com.github.tchx84.Flatseal.desktop': <{'position': <9>}>, 'e7f0e279-aead-4052-9b52-599216f28dd1': <{'position': <10>}>, '9234c6ef-fde6-419c-bc9c-970a70a278ae': <{'position': <11>}>, 'nvidia-settings.desktop': <{'position': <12>}>, 'org.gnome.TextEditor.desktop': <{'position': <13>}>, 'com.github.maoschanz.drawing.desktop': <{'position': <14>}>, 'org.moson.pacseek.desktop': <{'position': <15>}>, 'pavucontrol.desktop': <{'position': <16>}>, 'rofi.desktop': <{'position': <17>}>, 'rofi-theme-selector.desktop': <{'position': <18>}>, 'rog-control-center.desktop': <{'position': <19>}>, 'code-oss.desktop': <{'position': <20>}>, 'btop.desktop': <{'position': <21>}>, 'org.bleachbit.BleachBit.desktop': <{'position': <22>}>}, {'com.github.GradienceTeam.Gradience.desktop': <{'position': <0>}>, 'network.cycles.wdisplays.desktop': <{'position': <1>}>, 'org.pwmt.zathura.desktop': <{'position': <2>}>, 'org.qbittorrent.qBittorrent.desktop': <{'position': <3>}>, 'nvtop.desktop': <{'position': <4>}>, 'io.github.spacingbat3.webcord.desktop': <{'position': <5>}>, 'electron19.desktop': <{'position': <6>}>, 'lf.desktop': <{'position': <7>}>}]
+command-history=['pmi', 'dconf-editor', 'mpv', 'gedit', 'r']
+disable-user-extensions=false
+disabled-extensions=['trayIconsReloaded@selfmade.pl', 'screenshot-window-sizer@gnome-shell-extensions.gcampax.github.com', 'window-list@gnome-shell-extensions.gcampax.github.com', 'windowsNavigator@gnome-shell-extensions.gcampax.github.com', 'workspace-indicator@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'native-window-placement@gnome-shell-extensions.gcampax.github.com', 'transparent-window-moving@noobsai.github.com', 'dock-from-dash@fthx', 'quick-settings@fmuellner.gnome.org', 'logomenu@aryan_k']
+enabled-extensions=['netspeedsimplified@prateekmedia.extension', 'user-theme@gnome-shell-extensions.gcampax.github.com', 'blur-my-shell@aunetx', 'volume-mixer@evermiss.net', 'notification-banner-reloaded@marcinjakubowski.github.com', 'gsconnect@andyholmes.github.io', 'gestureImprovements@gestures', 'clipboard-history@alexsaveau.dev', 'x11gestures@joseexposito.github.io', 'dash-to-dock@micxgx.gmail.com', 'auto-move-windows@gnome-shell-extensions.gcampax.github.com', 'apps-menu@gnome-shell-extensions.gcampax.github.com', 'floatingDock@sun.wxg@gmail.com', 'dash-to-dock-cosmic-@halfmexicanhalfamazing@gmail.com', 'awesome-tiles@velitasali.com', 'workspaces-bar@fthx', 'tiling-assistant@leleat-on-github', 'appindicatorsupport@rgcjonas.gmail.com', 'pickawindow@lluo.gitlab.com', 'quick-settings-tweaks@qwreey', 'just-perfection-desktop@just-perfection', 'rounded-window-corners@yilozt', 'widgets@aylur']
+favorite-apps=['org.gnome.Evince.desktop', 'kitty.desktop', 'org.gnome.Nautilus.desktop', 'nvim.desktop', 'org.gnome.gedit.desktop', 'com.github.johnfactotum.Foliate.desktop', 'firefox.desktop', 'com.usebottles.bottles.desktop']
+had-bluetooth-devices-setup=true
+last-selected-power-profile='power-saver'
+remember-mount-password=false
+welcome-dialog-last-shown-version='41.2'
+
+[org/gnome/shell/app-switcher]
+current-workspace-only=false
+
+[org/gnome/shell/extensions/EasyScreenCast]
+active-custom-gsp=false
+file-container=5
+file-name='gnome-customization-fedora_%d_%t'
+file-resolution-height=1080
+file-resolution-type=8
+file-resolution-width=1920
+fps=30
+pipeline='vp9enc min_quantizer=0 max_quantizer=5 cpu-used=3 deadline=1000000 threads=%T ! queue max-size-buffers=0 max-size-time=0 max-size-bytes=0 ! webmmux'
+quality-index=2
+quality-webcam=''
+shortcut-key=['<Shift>r']
+
+[org/gnome/shell/extensions/Logo-menu]
+menu-button-icon-click-type=3
+menu-button-icon-image=6
+menu-button-icon-size=21
+menu-button-software-center='pamac-manager'
+menu-button-terminal='kitty'
+
+[org/gnome/shell/extensions/appindicator]
+icon-opacity=240
+tray-pos='right'
+
+[org/gnome/shell/extensions/auto-move-windows]
+application-list=['com.discordapp.Discord.desktop:3']
+
+[org/gnome/shell/extensions/awesome-tiles]
+gap-size=15
+
+[org/gnome/shell/extensions/aylurs-widgets]
+background-clock=true
+background-clock-bg-border-color='rgb(0,0,0)'
+background-clock-bg-border-radius=0
+background-clock-bg-border-size=0
+background-clock-bg-color='rgba(0,0,0,0)'
+background-clock-bg-padding=0
+background-clock-bg-shadow-blur=14
+background-clock-bg-shadow-inset=false
+background-clock-clock-color='rgb(192,191,188)'
+background-clock-clock-custom-font=true
+background-clock-clock-font='Bebas Neue'
+background-clock-clock-format='%I:%M %p'
+background-clock-clock-shadow-blur=4
+background-clock-clock-shadow-color='rgb(61,56,70)'
+background-clock-clock-shadow-width=0
+background-clock-clock-shadow-x=1
+background-clock-clock-shadow-y=1
+background-clock-clock-size=84
+background-clock-color='#fffccc'
+background-clock-date-color='rgb(255,255,255)'
+background-clock-date-custom-font=true
+background-clock-date-font='Abel'
+background-clock-date-format='%A %b %Y'
+background-clock-date-shadow-blur=3
+background-clock-date-shadow-color='rgb(36,31,49)'
+background-clock-date-shadow-x=0
+background-clock-date-shadow-y=0
+background-clock-date-size=32
+background-clock-enable-clock=true
+background-clock-offset=40
+background-clock-other-css='text-shadow: 0 0 0 0px black'
+background-clock-position=4
+background-clock-y-offset=80
+battery-bar=true
+battery-bar-charging-color='rgb(143,240,164)'
+battery-bar-color='rgb(98,160,234)'
+battery-bar-height=25
+battery-bar-low-threshold=30
+battery-bar-offset=0
+battery-bar-position=2
+battery-bar-roundness=100
+battery-bar-show-icon=false
+battery-bar-show-percentage=true
+battery-bar-width=90
+dash-app-icon-size=48
+dash-apps-cols=3
+dash-apps-rows=4
+dash-board=true
+dash-button-enable=false
+dash-button-hide=false
+dash-button-icon-hide=true
+dash-button-label='  Dashboard  '
+dash-button-offset=0
+dash-button-position=0
+dash-button-show-icon=false
+dash-hide-activities=true
+dash-layout=1
+dash-link-names=['reddit', 'youtube', 'gmail', 'twitter', 'github']
+dash-link-urls=['https://www.reddit.com/', 'https://www.youtube.com/', 'https://www.gmail.com/', 'https://twitter.com/', 'https://www.github.com/']
+dash-replace-activities-button=true
+dash-shortcut=['<Super>space']
+date-menu-custom-menu=true
+date-menu-date-format='%I:%M:%S %p'
+date-menu-hide-clocks=true
+date-menu-hide-events=true
+date-menu-hide-media=true
+date-menu-hide-notifications=true
+date-menu-hide-user=false
+date-menu-hide-weather=true
+date-menu-indicator-position=0
+date-menu-mirror=false
+date-menu-mod=true
+date-menu-offset=12
+date-menu-position=2
+date-menu-remove-padding=true
+media-player=true
+media-player-controls-offset=1
+media-player-hide-controls=false
+media-player-hide-track=false
+media-player-layout=0
+media-player-max-width=260
+media-player-offset=1
+media-player-position=1
+notification-indicator=false
+notification-indicator-hide-counter=false
+notification-indicator-hide-on-zero=false
+notification-indicator-menu-width=380
+notification-indicator-offset=0
+notification-indicator-position=2
+power-menu=false
+power-menu-button-roundness=16
+power-menu-dialog-padding=34
+power-menu-dialog-roundness=18
+power-menu-dialog-spacing=14
+power-menu-icon-padding=28
+power-menu-icon-size=54
+power-menu-label-position=0
+power-menu-layout=1
+power-menu-offset=12
+power-menu-position=2
+quick-toggles-hide-notifications=false
+quick-toggles-hide-system-levels=true
+quick-toggles-style=1
+workspace-indicator=true
+workspace-indicator-offset=0
+workspace-indicator-position=0
+workspace-indicator-show-names=false
+
+[org/gnome/shell/extensions/blur-my-shell]
+appfolder-dialog-opacity=0.16
+applications-blur=false
+blur-applications=false
+blur-dash=true
+blur-window-list=false
+brightness=0.59999999999999998
+dash-opacity=0.34999999999999998
+debug=false
+hacks-level=3
+hidetopbar=false
+panel-customize=false
+screenshot-blur=false
+screenshot-customize=true
+screenshot-sigma=35
+sigma=30
+static-blur=true
+
+[org/gnome/shell/extensions/blur-my-shell/applications]
+blur=true
+blur-on-overview=true
+brightness=0.41999999999999998
+customize=false
+enable-all=false
+opacity=209
+sigma=200
+whitelist=@as []
+
+[org/gnome/shell/extensions/blur-my-shell/dash-to-dock]
+blur=false
+customize=false
+override-background=false
+
+[org/gnome/shell/extensions/blur-my-shell/overview]
+style-components=1
+
+[org/gnome/shell/extensions/blur-my-shell/panel]
+unblur-in-overview=false
+
+[org/gnome/shell/extensions/clipboard-history]
+display-mode=0
+history-size=1000
+next-entry=@as []
+paste-on-selection=true
+prev-entry=@as []
+preview-size=40
+private-mode=false
+toggle-menu=['<Shift><Super>c']
+
+[org/gnome/shell/extensions/coverflowalttab]
+hide-panel=false
+
+[org/gnome/shell/extensions/dash-to-dock]
+apply-custom-theme=false
+background-color='rgb(0,0,0)'
+background-opacity=0.78000000000000003
+custom-background-color=false
+custom-theme-shrink=false
+dash-max-icon-size=48
+disable-overview-on-startup=false
+dock-fixed=false
+dock-position='BOTTOM'
+extend-height=false
+height-fraction=0.90000000000000002
+hot-keys=false
+intellihide-mode='FOCUS_APPLICATION_WINDOWS'
+isolate-workspaces=true
+middle-click-action='launch'
+preferred-monitor=-2
+preferred-monitor-by-connector='HDMI-1'
+running-indicator-style='DOTS'
+shift-click-action='minimize'
+shift-middle-click-action='launch'
+show-apps-at-top=false
+show-mounts=false
+show-show-apps-button=false
+transparency-mode='FIXED'
+
+[org/gnome/shell/extensions/floatingDock]
+floating-dock-direction='down'
+floating-dock-position=[0, 0]
+
+[org/gnome/shell/extensions/gestureImprovements]
+default-overview=false
+pinch-3-finger-gesture='NONE'
+pinch-4-finger-gesture='SHOW_DESKTOP'
+
+[org/gnome/shell/extensions/gsconnect]
+devices=@as []
+discoverable=true
+enabled=true
+id='2a38407e-2b61-4a8b-a24c-29ff0304de25'
+name='fedora00'
+show-indicators=false
+
+[org/gnome/shell/extensions/gsconnect/device/271e334b-e481-4c5b-a0a6-3f3570873696]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.2.132:1716'
+name='fedora'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.sms.request', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/40f9bcb0-3a1d-4661-a1ae-53740831b69a]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.50.80:1716'
+name='charlie'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.sms.request', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share']
+type='laptop'
+
+[org/gnome/shell/extensions/gsconnect/device/40f9bcb0-3a1d-4661-a1ae-53740831b69a/plugin/battery]
+custom-battery-notification-value=uint32 80
+
+[org/gnome/shell/extensions/gsconnect/device/40f9bcb0-3a1d-4661-a1ae-53740831b69a/plugin/notification]
+applications='{"Power":{"iconName":"org.gnome.Settings-power-symbolic","enabled":true},"Clocks":{"iconName":"org.gnome.clocks","enabled":true},"Color":{"iconName":"org.gnome.Settings-color-symbolic","enabled":true},"Archive Manager":{"iconName":"org.gnome.ArchiveManager","enabled":true},"Timeshift":{"iconName":"timeshift","enabled":true},"Printers":{"iconName":"org.gnome.Settings-printers-symbolic","enabled":true},"Files":{"iconName":"org.gnome.Nautilus","enabled":true},"Disk Usage Analyzer":{"iconName":"org.gnome.baobab","enabled":true},"Date & Time":{"iconName":"org.gnome.Settings-time-symbolic","enabled":true}}'
+
+[org/gnome/shell/extensions/gsconnect/device/40f9bcb0-3a1d-4661-a1ae-53740831b69a/plugin/share]
+receive-directory='/home/adharsh/Downloads'
+
+[org/gnome/shell/extensions/gsconnect/device/7f7f7b8f-95c0-4de8-9c09-68ee9e5eee11]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.2.9:1716'
+name='pop-os'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.sms.request', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share']
+type='laptop'
+
+[org/gnome/shell/extensions/gsconnect/device/_01ce7e8b_a3ae_4fc8_8b85_bc97b8f4c086_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.2.87:1716'
+name='lenovo-s145'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_0e2e913b_973f_42ae_803c_4bc626d4ad4e_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.50.236:1716'
+name='chinesesweatshopworker'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_2128d14c_9422_4d77_b774_482511a10498_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://127.0.0.1:1716'
+name='live'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_79568bd6_3f43_45d3_af75_a096e46dbfc1_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.50.87:1716'
+name='fedora'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_9b637111_1e53_48cb_a896_bc2c812aeca5_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony', 'kdeconnect.virtualmonitor', 'kdeconnect.virtualmonitor.request']
+last-connection='lan://192.168.100.45:1716'
+name='lsws'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute', 'kdeconnect.virtualmonitor', 'kdeconnect.virtualmonitor.request']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_9b637111_1e53_48cb_a896_bc2c812aeca5_/plugin/battery]
+custom-battery-notification-value=uint32 80
+
+[org/gnome/shell/extensions/gsconnect/device/_9b637111_1e53_48cb_a896_bc2c812aeca5_/plugin/notification]
+applications='{"Printers":{"iconName":"org.gnome.Settings-printers-symbolic","enabled":true},"Evolution Alarm Notify":{"iconName":"appointment-soon","enabled":true},"Disks":{"iconName":"org.gnome.DiskUtility","enabled":true},"Software":{"iconName":"org.gnome.Software","enabled":true},"Date & Time":{"iconName":"org.gnome.Settings-time-symbolic","enabled":true},"Rhythmbox":{"iconName":"org.gnome.Rhythmbox3","enabled":true},"Disk Usage Analyzer":{"iconName":"org.gnome.baobab","enabled":true},"Power":{"iconName":"org.gnome.Settings-power-symbolic","enabled":true},"Color":{"iconName":"org.gnome.Settings-color-symbolic","enabled":true},"Files":{"iconName":"org.gnome.Nautilus","enabled":true},"Telegram Desktop":{"iconName":"telegram","enabled":true},"Clocks":{"iconName":"org.gnome.clocks","enabled":true},"Problem Reporting":{"iconName":"abrt","enabled":true}}'
+
+[org/gnome/shell/extensions/gsconnect/device/_9b637111_1e53_48cb_a896_bc2c812aeca5_/plugin/share]
+receive-directory='/home/linuxscoop/Downloads'
+
+[org/gnome/shell/extensions/gsconnect/device/_a1c0ae3a_bd1b_418b_b653_af3172f7eed3_]
+incoming-capabilities=['kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.50.113:1716'
+name='AsusRogStrix'
+outgoing-capabilities=['kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_af8ce2ba_217c_4ae4_a958_169e802e91bc_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://127.0.0.1:1716'
+name='mx1'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_cfd3b3be_7b06_468f_9bf3_36bae4cd4869_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://127.0.0.1:1716'
+name='mx1'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.lock', 'kdeconnect.lock.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share', 'systemvolume']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_e98d4cad_32c7_4818_bb49_d0710e3d8b79_]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.clipboard', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.ping', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.telephony']
+last-connection='lan://192.168.2.73:1716'
+name='administrator@administrator-Acer-one-14-Z476'
+outgoing-capabilities=['kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.notification', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.sms.request', 'kdeconnect.telephony.request']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'ping', 'runcommand', 'share']
+type='desktop'
+
+[org/gnome/shell/extensions/gsconnect/device/_e98d4cad_32c7_4818_bb49_d0710e3d8b79_/plugin/battery]
+custom-battery-notification-value=uint32 80
+
+[org/gnome/shell/extensions/gsconnect/device/_e98d4cad_32c7_4818_bb49_d0710e3d8b79_/plugin/notification]
+applications='{"Power":{"iconName":"gnome-power-manager","enabled":true},"Clocks":{"iconName":"org.gnome.clocks","enabled":true},"Color":{"iconName":"preferences-color","enabled":true},"Files":{"iconName":"org.gnome.Nautilus","enabled":true},"Rhythmbox":{"iconName":"org.gnome.Rhythmbox","enabled":true},"Add/Remove Software":{"iconName":"system-software-install","enabled":true},"Printers":{"iconName":"printer","enabled":true},"Disk Usage Analyzer":{"iconName":"org.gnome.baobab","enabled":true},"Date & Time":{"iconName":"preferences-system-time","enabled":true}}'
+
+[org/gnome/shell/extensions/gsconnect/device/_e98d4cad_32c7_4818_bb49_d0710e3d8b79_/plugin/share]
+receive-directory='/home/adharsh/Downloads'
+
+[org/gnome/shell/extensions/gsconnect/device/a4b6a34cf01ad69b]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+last-connection='lan://192.168.250.209:1716'
+name='SM-A225F'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+supported-plugins=['battery', 'clipboard', 'connectivity_report', 'contacts', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'presenter', 'runcommand', 'sftp', 'share', 'sms', 'systemvolume', 'telephony']
+type='phone'
+
+[org/gnome/shell/extensions/gsconnect/device/a596b4e6-9f18-4a3c-98ff-38b64bec772e]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+last-connection='lan://127.0.0.1:1716'
+name='ZoidBerg'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.runcommand.request', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.sms.request', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+supported-plugins=['battery', 'clipboard', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'runcommand', 'share']
+type='laptop'
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826]
+certificate-pem='-----BEGIN CERTIFICATE-----\nMIIC9zCCAd+gAwIBAgIBATANBgkqhkiG9w0BAQsFADA/MRkwFwYDVQQDDBBhYTAx\nNGVjMTYwNzk0ODI2MRQwEgYDVQQLDAtLREUgQ29ubmVjdDEMMAoGA1UECgwDS0RF\nMB4XDTIxMDQzMDE4MzAwMFoXDTMxMDQzMDE4MzAwMFowPzEZMBcGA1UEAwwQYWEw\nMTRlYzE2MDc5NDgyNjEUMBIGA1UECwwLS0RFIENvbm5lY3QxDDAKBgNVBAoMA0tE\nRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAKNg9V72NklJ29EuliPh\nG3j+xr4ls7D5+td2idD+2v1tep9vU/NUtqZAYhmZIfHLwrHlIWWpNOaYLRukBhi3\ni7T65ztxzDDhcXU5x76hZhspqX+lYkgoI2PUax0RA35eK28WzM2gAb8ZwA0YaeiD\nMiIAz5Ol60fkKIuO9puV6FFxPsh8Zho9JHUWdOvw6sUWSTHJUPFSt5lOW0eoTHtQ\nnsBA9GfltA5TvFca6f0Sdzas7XLCibSDOR5tLWMA0N3ei4u9L4sXY5zpMY4l5mLg\njvZqC88UB6S67YR/0F3p7FfowBrgvluBmIoD9LmNlUA7EzKEzkvZ8Y6f4vqqczIq\nZ38CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAAne3ZBNKDCkmlm/vyzj2zzzP3Vyo\nOFHUYXMV2fYeJjEG+cV2ZqwRokqGmnqrRvVJF9PccItAHINAihhzJAfsaaJ0ox7P\nSrtkX3PnbK4lMPA7305hD2WmQ4jcJx8ZJpxGSaFyw78K3yVTkXVQjwqBSBSpv9ex\nHwOPTA0lWp1WPKDA+2b14qh1T/VqpU0H0p+wBlUJrlUP9bzxFQh7RodVuhaGH5ax\n4ZcBIgQxsJUSg/nqI/rqC6YcG60aGqzg5G4pDbOzTjUh1s810UP1LOiOsxgOxaa2\nLsiNMdje6zQHSZRPtB7pIvvrMQ0+072vhuJEgdRpHjJIRXYrEnR0KdRkxg==\n-----END CERTIFICATE-----\n'
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+last-connection='lan://192.168.237.24:1716'
+name='SM-M215F'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+paired=true
+supported-plugins=['battery', 'clipboard', 'connectivity_report', 'contacts', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'presenter', 'runcommand', 'sftp', 'share', 'sms', 'systemvolume', 'telephony']
+type='phone'
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826/plugin/battery]
+custom-battery-notification-value=uint32 80
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826/plugin/clipboard]
+receive-content=true
+send-content=true
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826/plugin/notification]
+applications='{"Power":{"iconName":"org.gnome.Settings-power-symbolic","enabled":true},"Clocks":{"iconName":"org.gnome.clocks","enabled":true},"Color":{"iconName":"org.gnome.Settings-color-symbolic","enabled":true},"Archive Manager":{"iconName":"org.gnome.ArchiveManager","enabled":true},"Timeshift":{"iconName":"timeshift","enabled":true},"Printers":{"iconName":"org.gnome.Settings-printers-symbolic","enabled":true},"Files":{"iconName":"org.gnome.Nautilus","enabled":true},"Disk Usage Analyzer":{"iconName":"org.gnome.baobab","enabled":true},"Date & Time":{"iconName":"org.gnome.Settings-time-symbolic","enabled":true},"GNOME Shell integration":{"iconName":"org.gnome.ChromeGnomeShell","enabled":true},"discord":{"iconName":"","enabled":true},"Boxes":{"iconName":"org.gnome.Boxes","enabled":true},"notify-send":{"iconName":"","enabled":true},"Add/Remove Software":{"iconName":"system-software-install","enabled":true},"Kooha":{"iconName":"io.github.seadve.Kooha","enabled":true},"Bottles":{"iconName":"com.usebottles.bottles","enabled":true},"Disks":{"iconName":"org.gnome.DiskUtility","enabled":true},"Network":{"iconName":"nm-device-wireless","enabled":true},"BleachBit":{"iconName":"bleachbit","enabled":true}}'
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826/plugin/runcommand]
+command-list={'75cfd730-921b-4bac-9857-f321fc4b9c95': <{'name': 'shutdown', 'command': 'poweroff'}>, '02da06f0-4194-4dcd-b629-e42cdb45a89c': <{'name': 'hibernate', 'command': 'systemctl hibernate'}>, '40a04663-5293-4326-96a2-abf34096e983': <{'name': 'lock', 'command': 'xdg-screensaver lock'}>}
+
+[org/gnome/shell/extensions/gsconnect/device/aa014ec160794826/plugin/share]
+receive-directory='/home/adharsh/Downloads'
+
+[org/gnome/shell/extensions/gsconnect/device/aca9edae9509766c]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+last-connection='lan://192.168.2.217:1716'
+name='OnePlus 6'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+supported-plugins=['battery', 'clipboard', 'connectivity_report', 'contacts', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'presenter', 'runcommand', 'sftp', 'share', 'sms', 'systemvolume', 'telephony']
+type='phone'
+
+[org/gnome/shell/extensions/gsconnect/device/ae8be1c3ecce9aa6]
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+last-connection='lan://192.168.50.3:1716'
+name='XT1635-02'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+supported-plugins=['battery', 'clipboard', 'connectivity_report', 'contacts', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'presenter', 'runcommand', 'sftp', 'share', 'sms', 'systemvolume', 'telephony']
+type='phone'
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca]
+certificate-pem='-----BEGIN CERTIFICATE-----\nMIIC9zCCAd+gAwIBAgIBATANBgkqhkiG9w0BAQsFADA/MRkwFwYDVQQDDBBlZTc0\nZTg5OGQyOTgxOWNhMRQwEgYDVQQLDAtLREUgQ29ubmVjdDEMMAoGA1UECgwDS0RF\nMB4XDTIwMTEzMDE4MzAwMFoXDTMwMTEzMDE4MzAwMFowPzEZMBcGA1UEAwwQZWU3\nNGU4OThkMjk4MTljYTEUMBIGA1UECwwLS0RFIENvbm5lY3QxDDAKBgNVBAoMA0tE\nRTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMI+s9EYPaIyH7S4MO1g\nCsVtvPqEWy9c/CtDjkL18NoeM8mRQq07OjOCG75mEsZ6pXvaXUw3frNmmVqqa4k2\ntmBGnuRm4Z1ZxATOmQKMgS8ErG8Cnme2cl6XRx0LKbi5hb0aNhjnQtP2H6UzE5CV\nK0TrrcEBWTVyKDv7w0mhIcH8SBMCKTpLvzOEQBA3AMVDYX2pKfLTDY1G3REe2wXi\naS+v4lZ6ZL3xEiJ4lALNYN2sUL3grPlhJSQtghOrfHv6WP6GdLRoQ2fy2PjtlYQU\n6Sgw+/FhGGeXuf+29smH/d5vk00Vy1FmMg3SUrVKhUkj9Oy7aZtP70d/SSdPCPcH\ntVECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAhZkDEs4lSbR/C8cWGco6fTaui3QB\nBgfuiAlN7C1iq69NTEjz4twFdqdRbeOP6n+GsR7wkWWYuqFUiAtCa5JV4glPvBB4\nfuNX+akH8J2UAo/mWNYfgX1B1EaprL3gFenqFE6AOzGy0Z0MCic4LCEoBXN/DyXg\n8GLGuNZ62GTWYqwc/6lpbedfeRz8ibehEag+OeVa5oilLADUX02M+sfyLW7ROAyk\ng4Lfww/RbR6OUR3vQUoH1tifqIuwxPdjbPvjT7FHFwh7DNq6NXecUr+OsbCsdTBf\n8MeaqE2Er0H1d6+2uzu8mxUl3usvKH1HnxCm3oaNyuJ5Ik4LiLH/u5eFww==\n-----END CERTIFICATE-----\n'
+incoming-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report.request', 'kdeconnect.contacts.request_all_uids_timestamps', 'kdeconnect.contacts.request_vcards_by_uid', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.action', 'kdeconnect.notification.reply', 'kdeconnect.notification.request', 'kdeconnect.photo.request', 'kdeconnect.ping', 'kdeconnect.runcommand', 'kdeconnect.sftp.request', 'kdeconnect.share.request', 'kdeconnect.share.request.update', 'kdeconnect.sms.request', 'kdeconnect.sms.request_attachment', 'kdeconnect.sms.request_conversation', 'kdeconnect.sms.request_conversations', 'kdeconnect.systemvolume', 'kdeconnect.telephony.request', 'kdeconnect.telephony.request_mute']
+last-connection='lan://192.168.2.174:1716'
+name='lao gan ma'
+outgoing-capabilities=['kdeconnect.battery', 'kdeconnect.battery.request', 'kdeconnect.bigscreen.stt', 'kdeconnect.clipboard', 'kdeconnect.clipboard.connect', 'kdeconnect.connectivity_report', 'kdeconnect.contacts.response_uids_timestamps', 'kdeconnect.contacts.response_vcards', 'kdeconnect.findmyphone.request', 'kdeconnect.mousepad.echo', 'kdeconnect.mousepad.keyboardstate', 'kdeconnect.mousepad.request', 'kdeconnect.mpris', 'kdeconnect.mpris.request', 'kdeconnect.notification', 'kdeconnect.notification.request', 'kdeconnect.photo', 'kdeconnect.ping', 'kdeconnect.presenter', 'kdeconnect.runcommand.request', 'kdeconnect.sftp', 'kdeconnect.share.request', 'kdeconnect.sms.attachment_file', 'kdeconnect.sms.messages', 'kdeconnect.systemvolume.request', 'kdeconnect.telephony']
+paired=true
+supported-plugins=['battery', 'clipboard', 'connectivity_report', 'contacts', 'findmyphone', 'mousepad', 'mpris', 'notification', 'photo', 'ping', 'presenter', 'runcommand', 'sftp', 'share', 'sms', 'systemvolume', 'telephony']
+type='phone'
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/battery]
+custom-battery-notification=false
+custom-battery-notification-value=uint32 80
+full-battery-notification=true
+send-statistics=true
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/clipboard]
+receive-content=true
+send-content=true
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/mousepad]
+share-control=true
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/notification]
+applications='{"Power":{"iconName":"gnome-power-manager","enabled":true},"Clocks":{"iconName":"org.gnome.clocks","enabled":true},"Color":{"iconName":"preferences-color","enabled":true},"Add/Remove Software":{"iconName":"system-software-install","enabled":true},"Printers":{"iconName":"printer","enabled":true},"Files":{"iconName":"org.gnome.Nautilus","enabled":true},"Date & Time":{"iconName":"preferences-system-time","enabled":true},"Disk Usage Analyzer":{"iconName":"org.gnome.baobab","enabled":true},"discord":{"iconName":"","enabled":true},"Microsoft Teams - Preview":{"iconName":"","enabled":true},"Rhythmbox":{"iconName":"rhythmbox","enabled":true},"Boxes":{"iconName":"org.gnome.Boxes","enabled":true},"Firefox":{"iconName":"","enabled":true},"Kooha":{"iconName":"io.github.seadve.Kooha","enabled":true},"GNOME Shell integration":{"iconName":"org.gnome.ChromeGnomeShell","enabled":true},"heroic":{"iconName":"","enabled":true},"Tweaks":{"iconName":"gnome-tweaks","enabled":true},"Bottles":{"iconName":"com.usebottles.bottles","enabled":true},"Archive Manager":{"iconName":"org.gnome.ArchiveManager","enabled":true},"Timeshift":{"iconName":"timeshift","enabled":true},"notify-send":{"iconName":"dialog-information-symbolic","enabled":true},"Disks":{"iconName":"org.gnome.DiskUtility","enabled":true},"Network":{"iconName":"nm-device-wireless","enabled":true},"BleachBit":{"iconName":"bleachbit","enabled":true}}'
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/runcommand]
+command-list={'2a62adeb-914a-4d08-bff5-d95be94e3a1b': <{'name': 'hibernate', 'command': 'systemctl hibernate'}>, '39882467-f738-4a93-9163-b5a934e59568': <{'name': 'shutdown', 'command': 'systemctl poweroff'}>}
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/share]
+receive-directory='/home/adharsh/Downloads'
+
+[org/gnome/shell/extensions/gsconnect/device/ee74e898d29819ca/plugin/telephony]
+ringing-pause=true
+
+[org/gnome/shell/extensions/gsconnect/messaging]
+window-maximized=false
+window-size=(640, 480)
+
+[org/gnome/shell/extensions/gsconnect/preferences]
+window-maximized=false
+window-size=(693, 440)
+
+[org/gnome/shell/extensions/just-perfection]
+accessibility-menu=false
+activities-button=false
+app-menu=true
+app-menu-icon=false
+background-menu=true
+clock-menu=false
+dash=true
+dash-icon-size=32
+double-super-to-appgrid=true
+gesture=true
+hot-corner=true
+osd=true
+panel=true
+panel-arrow=false
+panel-corner-size=1
+panel-in-overview=true
+quick-settings=true
+ripple-box=false
+search=false
+show-apps-button=false
+startup-status=0
+theme=true
+window-demands-attention-focus=true
+window-picker-icon=false
+window-preview-caption=true
+workspace=false
+workspace-background-corner-size=0
+workspace-popup=true
+workspace-wrap-around=false
+workspaces-in-app-grid=false
+
+[org/gnome/shell/extensions/material-you-theme]
+resize-height=100
+resize-width=100
+scheme='Expressive'
+show-notifications=false
+
+[org/gnome/shell/extensions/netspeedsimplified]
+chooseiconset=0
+customfont=''
+dscolor='rgba(255, 255, 255, 1)'
+fontmode=3
+hideindicator=true
+iconstoright=false
+isvertical=false
+lockmouseactions=true
+minwidth=3.0
+mode=1
+refreshtime=1.5
+restartextension=false
+reverseindicators=false
+shortenunits=true
+systemcolr=true
+tdcolor='rgba(255, 255, 255, 1)'
+textalign=1
+togglebool=false
+tscolor='rgba(255, 255, 255, 1)'
+uscolor='rgba(255, 255, 255, 1)'
+wpos=0
+wposext=0
+
+[org/gnome/shell/extensions/notification-banner-reloaded]
+anchor-horizontal=1
+anchor-vertical=0
+
+[org/gnome/shell/extensions/quick-settings-avatar]
+is-avatar-on-left=true
+
+[org/gnome/shell/extensions/quick-settings-tweaks]
+button-labels='{"BluetoothToggle":"Bluetooth","NightLightToggle":"Night Light","DarkModeToggle":"Dark Mode","RfkillToggle":"Airplane Mode","RotationToggle":"Auto Rotate","ServiceToggle":"GSConnect"}'
+default-invisible-buttons=['OutputStreamSlider', 'InputStreamSlider', 'PowerProfilesToggle', 'RfkillToggle', 'RotationToggle']
+list-buttons='[{"name":"Clutter_Actor","label":null,"visible":true},{"name":"SystemItem","label":null,"visible":true},{"name":"OutputStreamSlider","label":null,"visible":false},{"name":"InputStreamSlider","label":null,"visible":false},{"name":"St_BoxLayout","label":null,"visible":true},{"name":"BrightnessItem","label":null,"visible":true},{"name":"NMWiredToggle","label":null,"visible":false},{"name":"NMWirelessToggle","label":"Monohydrochloride","visible":true},{"name":"NMModemToggle","label":null,"visible":false},{"name":"NMBluetoothToggle","label":null,"visible":false},{"name":"NMVpnToggle","label":null,"visible":false},{"name":"BluetoothToggle","label":"Bluetooth","visible":true},{"name":"PowerProfilesToggle","label":"Performance","visible":true},{"name":"NightLightToggle","label":"Night Light","visible":true},{"name":"DarkModeToggle","label":"Dark Mode","visible":true},{"name":"RfkillToggle","label":"Airplane Mode","visible":true},{"name":"RotationToggle","label":"Auto Rotate","visible":false},{"name":"ServiceToggle","label":"GSConnect","visible":true},{"name":"DndQuickToogle","label":"Do Not Disturb","visible":true},{"name":"MediaSection","label":null,"visible":false},{"name":"Notifications","label":null,"visible":true}]'
+notifications-integrated=true
+notifications-move-to-top=false
+volume-mixer-move-to-bottom=false
+
+[org/gnome/shell/extensions/rounded-window-corners]
+custom-rounded-corner-settings=@a{sv} {}
+debug-mode=true
+enable-preferences-entry=true
+focused-shadow={'vertical_offset': 4, 'horizontal_offset': 0, 'blur_offset': 28, 'spread_radius': 4, 'opacity': 60}
+global-rounded-corner-settings={'padding': <{'left': <uint32 1>, 'right': <uint32 1>, 'top': <uint32 1>, 'bottom': <uint32 1>}>, 'keep_rounded_corners': <{'maximized': <false>, 'fullscreen': <false>}>, 'border_radius': <uint32 17>, 'smoothing': <uint32 0>, 'enabled': <true>}
+settings-version=uint32 5
+skip-libhandy-app=true
+tweak-kitty-terminal=false
+unfocused-shadow={'vertical_offset': 2, 'horizontal_offset': 0, 'blur_offset': 12, 'spread_radius': -1, 'opacity': 65}
+
+[org/gnome/shell/extensions/search-light]
+blur-background=true
+blur-brightness=0.59999999999999998
+blur-sigma=30.0
+border-radius=3.0
+border-thickness=1
+entry-font-size=0
+font-size=1
+monitor-count=1
+popup-at-cursor-monitor=true
+scale-height=0.17999999999999999
+scale-width=0.17999999999999999
+shortcut-search=['<Control>space']
+
+[org/gnome/shell/extensions/tiling-assistant]
+activate-layout0=@as []
+activate-layout1=@as []
+activate-layout2=@as []
+activate-layout3=@as []
+active-window-hint-color='rgb(53,132,228)'
+auto-tile=@as []
+center-window=@as []
+changelog-version=33
+debugging-free-rects=@as []
+debugging-show-tiled-rects=@as []
+default-move-mode=0
+dynamic-keybinding-behaviour=0
+import-layout-examples=false
+last-version-installed=39
+restore-window=['<Super>Down']
+search-popup-layout=@as []
+tile-bottom-half=['<Super>KP_2']
+tile-bottomleft-quarter=['<Super>KP_1']
+tile-bottomright-quarter=['<Super>KP_3']
+tile-edit-mode=@as []
+tile-left-half=['<Super>Left', '<Super>KP_4']
+tile-maximize=['<Super>Up', '<Super>KP_5']
+tile-maximize-horizontally=@as []
+tile-maximize-vertically=@as []
+tile-right-half=['<Super>Right', '<Super>KP_6']
+tile-top-half=['<Super>KP_8']
+tile-topleft-quarter=['<Super>KP_7']
+tile-topright-quarter=['<Super>KP_9']
+toggle-always-on-top=@as []
+toggle-tiling-popup=@as []
+
+[org/gnome/shell/extensions/trayIconsReloaded]
+icon-margin-horizontal=0
+icon-padding-horizontal=8
+icon-size=16
+tray-margin-left=4
+tray-position='right'
+
+[org/gnome/shell/extensions/user-theme]
+name='Orchis-Shell-MOD'
+
+[org/gnome/shell/keybindings]
+switch-to-application-1=@as []
+
+[org/gnome/shell/overrides]
+edge-tiling=false
+
+[org/gnome/shell/world-clocks]
+locations=@av []
+
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+background-transparency-percent=16
+font='JetBrains Mono 12'
+use-system-font=false
+use-transparent-background=true
+
+[org/gnome/todo]
+default-provider='local'
+style-variant='dark'
+window-maximized=false
+window-size=(800, 600)
+
+[org/gnome/tweaks]
+show-extensions-notice=false
+
+[org/gtk/gtk4/settings/color-chooser]
+custom-colors=[(0.0, 0.0, 0.0, 0.0)]
+selected-color=(true, 0.38431373238563538, 0.62745100259780884, 0.91764706373214722, 1.0)
+
+[org/gtk/gtk4/settings/emoji-chooser]
+recent-emoji=[(([uint32 127470, 127475], 'flag: India', ['IN', 'flag'], uint32 9), uint32 0), (([129313], 'clown face', ['clown', 'face'], 0), 0), (([129760], 'melting face', ['disappear', 'dissolve', 'liquid', 'melt'], 0), 0), (([128520], 'smiling face with horns', ['face', 'fairy tale', 'fantasy', 'horns', 'smile'], 0), 0)]
+
+[org/gtk/gtk4/settings/file-chooser]
+date-format='regular'
+location-mode='path-bar'
+show-hidden=true
+show-size-column=true
+show-type-column=true
+sidebar-width=170
+sort-column='name'
+sort-directories-first=false
+sort-order='ascending'
+type-format='category'
+window-size=(1085, 542)
+
+[org/gtk/settings/color-chooser]
+custom-colors=[(0.27450980392156865, 0.59999999999999998, 0.56470588235294117, 1.0), (0.6705882352941176, 0.094117647058823528, 0.32156862745098042, 1.0), (0.80000000000000004, 0.0, 0.0, 1.0), (1.0, 1.0, 0.0, 0.5), (0.17647058823529413, 0.49019607843137253, 0.70196078431372544, 1.0), (0.28627450980392155, 0.6588235294117647, 0.20784313725490197, 1.0)]
+selected-color=(true, 0.0, 0.0, 0.0, 1.0)
+
+[org/gtk/settings/file-chooser]
+clock-format='12h'
+date-format='regular'
+location-mode='path-bar'
+show-hidden=false
+show-size-column=true
+show-type-column=true
+sidebar-width=164
+sort-column='name'
+sort-directories-first=false
+sort-order='descending'
+type-format='category'
+window-position=(0, 32)
+window-size=(1203, 902)
+
+[org/nemo/list-view]
+default-column-order=['name', 'size', 'type', 'date_modified', 'date_created_with_time', 'date_accessed', 'date_created', 'detailed_type', 'group', 'where', 'mime_type', 'date_modified_with_time', 'octal_permissions', 'owner', 'permissions']
+default-visible-columns=['name', 'size', 'type', 'date_modified', 'date_created']
+
+[org/nemo/preferences]
+inherit-show-thumbnails=false
+last-server-connect-method=2
+quick-renames-with-pause-in-between=true
+show-compact-view-icon-toolbar=true
+show-hidden-files=true
+show-image-thumbnails='always'
+show-next-icon-toolbar=true
+show-show-thumbnails-toolbar=false
+thumbnail-limit=uint64 68719476736
+
+[org/nemo/window-state]
+maximized=true
+side-pane-view='places'
+sidebar-bookmark-breakpoint=5
+sidebar-width=229
+start-with-sidebar=true
+
+[org/virt-manager/virt-manager]
+manager-window-height=750
+manager-window-width=1440
+xmleditor-enabled=true
+
+[org/virt-manager/virt-manager/confirm]
+delete-storage=true
+forcepoweroff=false
+poweroff=false
+unapplied-dev=true
+
+[org/virt-manager/virt-manager/connections]
+autoconnect=['lxc:///', 'qemu:///system']
+uris=['qemu:///system', 'lxc:///']
+
+[org/virt-manager/virt-manager/conns/qemu:system]
+window-size=(800, 600)
+
+[org/virt-manager/virt-manager/details]
+show-toolbar=true
+
+[org/virt-manager/virt-manager/new-vm]
+graphics-type='system'
+
+[org/virt-manager/virt-manager/paths]
+media-default='/mnt/1284DEF384DED875/iso'
+
+[org/virt-manager/virt-manager/urls]
+isos=['/mnt/1284DEF384DED875/iso/archlinux-2022.05.01-x86_64.iso', '/mnt/1284DEF384DED875/iso/Win10_21H2_English_x64.iso']
+
+[org/virt-manager/virt-manager/vmlist-fields]
+disk-usage=false
+network-traffic=false
+
+[org/virt-manager/virt-manager/vms/1d605fb0ed32417fb0bbd2d745743066]
+autoconnect=1
+scaling=1
+vm-window-size=(1920, 1012)
+
+[org/virt-manager/virt-manager/vms/4c4d586a1ae743c1b1723b0b42b3e2a1]
+autoconnect=1
+scaling=1
+vm-window-size=(1024, 812)
+
+[org/virt-manager/virt-manager/vms/618baacd4db5446cafd77de44177a675]
+autoconnect=1
+scaling=1
+vm-window-size=(1024, 812)
+
+[org/virt-manager/virt-manager/vms/e784fb9705b44eb49f458263e31fd4b3]
+autoconnect=1
+scaling=1
+vm-window-size=(1024, 812)
+
+[org/virt-manager/virt-manager/vms/fec04c91b6c14267ae45ede2818576d7]
+autoconnect=1
+scaling=1
+vm-window-size=(1920, 1012)
+
+[org/yorba/shotwell/crop-settings]
+last-crop-height=1
+last-crop-menu-choice=0
+last-crop-width=1
+
+[org/yorba/shotwell/preferences/ui]
+display-basic-properties=true
+display-event-comments=false
+display-extended-properties=false
+display-photo-comments=false
+display-photo-ratings=true
+display-photo-tags=true
+display-photo-titles=false
+display-search-bar=false
+display-sidebar=true
+event-photos-sort-ascending=true
+event-photos-sort-by=2
+events-sort-ascending=false
+library-photos-sort-ascending=false
+library-photos-sort-by=2
+photo-thumbnail-scale=210
+pin-toolbar-state=false
+show-welcome-dialog=false
+sidebar-position=180
+
+[org/yorba/shotwell/preferences/window]
+direct-height=1012
+direct-maximize=false
+direct-width=1920
+library-height=1027
+library-maximize=false
+library-width=943
+
+[system/proxy]
+mode='none'
