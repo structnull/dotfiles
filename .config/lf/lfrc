@@ -1,10 +1,11 @@
 #lfrc made with documentation from https://pkg.go.dev/github.com/gokcehan/lf#section-readme
-
-
+set shell sh
 set icons
 set period 1
 set hiddenfiles on
 set previewer '~/.config/lf/scope'
+set cleaner '~/.config/lf/kitty_clean'
+
 set autoquit on
 
 cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
@@ -18,15 +19,13 @@ cmd extract ${{
 	[ $ans = "y" ] && aunpack $fx
 }}
 
-cmd open &xdg-open $f
-
-cmd open &{{
-    case $(file --mime-type -Lb $f) in
-        text/*) lf -remote "send $id \$nvim \$fx";;
-        *) for f in $fx; do xdg-open $f > /dev/null 2> /dev/null & done;;
+cmd open ${{
+    test -L $f && f=$(readlink -f $f)
+    case $(file --mime-type $f -b) in
+        text/*) $EDITOR $fx;;
+        *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
     esac
 }}
-
 cmd delete ${{
 	clear; tput cup $(($(tput lines)/3)); tput bold
 	set -f
