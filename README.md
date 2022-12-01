@@ -1,6 +1,6 @@
 # A place to host dotfiles for whatever Window manager I'm currently using.
 
-![rice](https://github.com/chiefdinkan/dotfiles/tree/main/img/rice.png)
+![](https://github.com/chiefdinkan/dotfiles/tree/main/img/rice.png)
 
 * WM: [Hyprland][hypr]
  
