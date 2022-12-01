@@ -1,5 +1,6 @@
 # A place to host dotfiles for whatever Window manager I'm currently using.
 
+![rice](img/rice.png)
 * WM: [Hyprland][hypr]
  
 * OS: [Arch][archurl] btw
