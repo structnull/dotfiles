@@ -6,8 +6,9 @@ local servers = {
   "clangd",
   "html",
   "pyright",
-  "lua-language-server",
   "cssls",
+  "lua-language-server",
+  "marksman",
   "jsonls",
 }
 
