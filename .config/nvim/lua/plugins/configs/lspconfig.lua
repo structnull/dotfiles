@@ -42,10 +42,7 @@ M.capabilities.textDocument.completion.completionItem = {
     },
   },
 }
-lspconfig.pyright.setup {
-	on_attach = M.on_attach,
-	capabilities = M.capabilities,
-}
+
 lspconfig.sumneko_lua.setup {
   on_attach = M.on_attach,
   capabilities = M.capabilities,

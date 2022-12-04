@@ -10,7 +10,6 @@ g.theme_switcher_loaded = false
 opt.laststatus = 3 -- global statusline
 opt.showmode = false
 
-opt.title = true
 opt.clipboard = "unnamedplus"
 opt.cursorline = true
 
@@ -47,7 +46,7 @@ opt.updatetime = 250
 -- go to previous/next line with h,l,left arrow and right arrow
 -- when cursor reaches end/beginning of line
 opt.whichwrap:append "<>[]hl"
-opt.wrap = false
+
 g.mapleader = " "
 
 -- disable some builtin vim plugins
