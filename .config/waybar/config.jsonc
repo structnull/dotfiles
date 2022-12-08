@@ -6,7 +6,7 @@
     "margin-right": 10,
     "modules-left": ["wlr/workspaces","hyprland/window"],
     "modules-center": ["clock"],
-    "modules-right": ["tray","custom/sep","idle_inhibitor","custom/sep","custom/power_profile","custom/sep","cpu","custom/sep","memory","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/sep","custom/session","custom/space"],
+    "modules-right": ["tray","custom/sep","idle_inhibitor","custom/sep","custom/power_profile","custom/sep","backlight","custom/sep","pulseaudio", "custom/sep", "network", "custom/sep","battery","custom/sep","custom/session","custom/space"],
     "custom/sep": {
 		"format": " | "
     },
@@ -56,24 +56,24 @@
 			"10": []
 		},
 		"format-icons": {
-			"1": "一",
-			"2": "二",
-			"3": "三",
-			"4": "四",
-			"5": "五",
-			"6": "六",
-			"7": "七",
-			"8": "八",
-			"9": "九",
-			"10": "〇",
-			"default": "一"
+			"1": "I",
+			"2": "II",
+			"3": "III",
+			"4": "IV",
+			"5": "V",
+			"6": "VI",
+			"7": "VII",
+			"8": "VIII",
+			"9": "IX",
+			"10": "X",
+			"default": "I"
 		}
 	},
     "tray": {
         "spacing": 10
     },
 	"clock": {
-		"format": "   {:%I:%M %p} ",
+		"format": "   {:%I:%M %p |    %x } ",
 		"interval": 60,
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
 	},
