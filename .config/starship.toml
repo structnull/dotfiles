@@ -27,12 +27,6 @@ format = "[](fg:#1c252c bg:none)[$duration]($style)[](fg:#1c252c bg:#1c252
 disabled = false
 style = "fg:#d9d7d6 bg:#1c252c"
 
-[directory]
-format = "[](fg:#1c252c bg:none)[$path]($style)[](fg:#1c252c bg:#1c252c)[](fg:#6791c9 bg:#1c252c)[ ](fg:#1c252c bg:#6791c9)[](fg:#6791c9 bg:none)"
-style = "fg:#d9d7d6 bg:#1c252c"
-truncation_length = 3
-truncate_to_repo=false
-
 [git_branch]
 format = "[](fg:#1c252c bg:none)[$branch]($style)[](fg:#1c252c bg:#1c252c)[](fg:#78b892 bg:#1c252c)[](fg:#282c34 bg:#78b892)[](fg:#78b892 bg:none) "
 style = "fg:#d9d7d6 bg:#1c252c"
