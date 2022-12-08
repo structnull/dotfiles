@@ -68,16 +68,17 @@ tooltip {
 	font-size: 18px;
 }
 
-#clock {
-	font-weight: bold;
+#window {
+    color:#eeeeee;
+    font-family: JetbrainsMono Nerd Font;
+    font-size: 12;
 }
 
 #clock,
 #battery,
 #cpu,
 #memory,
-#temperature,
-#network,
+#temperature, #network,
 #pulseaudio,
 #tray,
 #mode,
