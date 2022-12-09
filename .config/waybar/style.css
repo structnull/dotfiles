@@ -1,6 +1,6 @@
 * { /* `otf-font-awesome` is required to be installed for icons */
     border: none;
-    font-family: FontAwesome, Product Sans,Jetbrains Mono;
+    font-family: FontAwesome,Product Sans;
     font-size: 14px;
     color: #eeeeee;
     /* border-radius: 20px; */
@@ -74,11 +74,15 @@ tooltip {
     font-size: 12;
 }
 
-#clock,
+#clock {
+    font-family: JetbrainsMono Nerd Font;
+}
+
 #battery,
 #cpu,
 #memory,
-#temperature, #network,
+#temperature, 
+#network
 #pulseaudio,
 #tray,
 #mode,

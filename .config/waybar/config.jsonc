@@ -70,7 +70,7 @@
         "spacing": 10
     },
 	"clock": {
-		"format": "   {:%I:%M %p |    %x } ",
+		"format": "  {:%I:%M %p |  %x } ",
 		"interval": 60,
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
 	},
