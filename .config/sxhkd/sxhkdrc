@@ -28,12 +28,16 @@ super + Escape
 ctrl + alt + Escape
        xkill
 
+#gnome-system-monitor
+ctrl + shift + Escape
+    gnome-system-monitor
+
 # Quit/Restart bspwm
 ctrl + super + {q,r}
 	bspc {quit,wm -r}
 	
 # Fullscreen or Monocle
-super + f11
+super + F11
     bspc node -t "~"fullscreen
 
 # Toggle beetwen floating & tiled
@@ -85,6 +89,10 @@ super + ctrl + shift + space
 	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
 
 # media
+XF86AudioRaiseVolume
+	pactl -- set-sink-volume @DEFAULT_SINK@ +5%
+XF86AudioLowerVolume
+	pactl -- set-sink-volume @DEFAULT_SINK@ -5%
 XF86AudioRaiseVolume
 	pactl -- set-sink-volume @DEFAULT_SINK@ +5%
 XF86AudioLowerVolume
