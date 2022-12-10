@@ -1,7 +1,7 @@
 # Keybinds
 
 # Terminal 
-super + Return
+super + @Return
     kitty	
 
 # Rofi App Launcher
