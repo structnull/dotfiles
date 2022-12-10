@@ -8,7 +8,9 @@ super + Return
 super + space
 	sh $HOME/.config/rofi/launchers/type-3/launcher.sh 
 
-# Applications
+# Switch windows
+alt + Tab
+    bash ~/.config/rofi/window-switcher/window-switcher.sh
 
 # Launch Apps
 super + f
@@ -18,7 +20,7 @@ super + e
 
 # Close App
 alt + {_,shift + }q
-	bspc node -{c,k}
+	bspc node -c
 
 # Reload Keybindings
 super + Escape
@@ -53,8 +55,7 @@ alt + {_,shift + }Tab
 
 # Send focused window to another workspace
 alt + {_,shift + }{1-9}
-	bspc {desktop -f,node -d} '^{1-9}'
-
+	bspc {desktop -f,node -d} '^{1-9}' --follow
 
 # focus the node in the given direction
 alt + {h,j,k,l}
@@ -64,34 +65,32 @@ alt + {h,j,k,l}
 alt + {Left,Down,Up,Right}
 	bspc node -{f,s} {west,south,north,east}
 
-# Expanding windows
-alt + control + {Left,Right,Up,Down}
-	bspc node -z {left -20 0,right 20 0,top 0 -20,bottom 0 20}
-	
-# Shrinking windows
-super + alt + {Left,Right,Up,Down}
-	bspc node -z {left 20 0,right -20 0,top 0 20,bottom 0 -20}
+# expand/contract a window 
+alt + control + {h,j,k,l}
+  bspc node -z {left -20 0 || bspc node -z right -20 0, \
+                bottom 0 20 || bspc node -z top 0 20,\
+                top 0 -20 || bspc node -z bottom 0 -20,\
+                right 20 0 || bspc node -z left 20 0}
 
-# Expanding windows (vim)
-alt + control + {h,l,k,j}
-	bspc node -z {left -20 0,right 20 0,top 0 -20,bottom 0 20}
-	
-# Shrinking windows (vim)
-super + alt + {h,l,k,j}
-	bspc node -z {left 20 0,right -20 0,top 0 20,bottom 0 -20}
 
-# Cancel the preselection for the focused node
-super + ctrl + space
-	bspc node -p cancel
+# expand/contract a window 
+alt + control + {Left,Down,Up,Right}
+  bspc node -z {left -20 0 || bspc node -z right -20 0, \
+                bottom 0 20 || bspc node -z top 0 20,\
+                top 0 -20 || bspc node -z bottom 0 -20,\
+                right 20 0 || bspc node -z left 20 0}a
 
-# Cancel the preselection for the focused desktop
-super + ctrl + shift + space
-	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+super + alt + p
+	bspc config focus_follows_pointer {true,false}
 
 # media
 XF86AudioRaiseVolume
 	pactl -- set-sink-volume @DEFAULT_SINK@ +5%
 XF86AudioLowerVolume
+	pactl -- set-sink-volume @DEFAULT_SINK@ -5%
+alt + {Num_Lock,KP_Add}
+	pactl -- set-sink-volume @DEFAULT_SINK@ +5%
+alt + {Num_Lock,KP_Subtract}
 	pactl -- set-sink-volume @DEFAULT_SINK@ -5%
 XF86AudioRaiseVolume
 	pactl -- set-sink-volume @DEFAULT_SINK@ +5%
@@ -117,6 +116,6 @@ XF86AudioStop
 
 # brightness
 XF86MonBrightnessUp
-	xbacklight -inc 1
+	~/.scripts/brightness_ctl.sh up
 XF86MonBrightnessDown
-	xbacklight -dec 1
+	~/.scripts/brightness_ctl.sh down
