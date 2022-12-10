@@ -1,8 +1,12 @@
 # Keybinds
 
 # Terminal 
-super + @Return
+super + Return
     kitty	
+
+# Lock
+super + l
+    xsecurelock
 
 # Rofi App Launcher
 super + space
@@ -113,6 +117,9 @@ XF86AudioPlay
 XF86AudioStop
 	playerctl --all-players stop
 
+#screenshot
+alt + shift + s
+    maim -s --format=png /dev/stdout | xclip -selection clipboard -t image/png -i
 
 # brightness
 XF86MonBrightnessUp
