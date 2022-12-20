@@ -2,7 +2,7 @@
     "label" : "lock",
     "action" : "~/.scripts/lock.sh",
     "text" : "Lock",
-    "keybind" : "l"
+    "keybind" : "e"
 }
 {
     "label" : "hibernate",
@@ -12,9 +12,9 @@
 }
 {
     "label" : "logout",
-    "action" : "loginctl terminate-user $USER",
+    "action" : "hyprctl dispatch exit none",
     "text" : "Logout",
-    "keybind" : "e"
+    "keybind" : "l"
 }
 {
     "label" : "reboot",

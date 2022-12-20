@@ -18,9 +18,9 @@ alt + Tab
 
 # Launch Apps
 super + f
-	firefox
+	firedragon
 super + e
-    nautilus	
+    nautilus -w
 
 # Close App
 alt + {_,shift + }q
@@ -120,7 +120,10 @@ XF86AudioStop
 #screenshot
 alt + shift + s
     maim -s --format=png /dev/stdout | xclip -selection clipboard -t image/png -i
-
+super + shift + s
+    ~/.scripts/maim_ocr.sh
+Print
+    maim | tee ~/Pictures/$(date +%s).png | xclip -selection clipboard -t image/png
 # brightness
 XF86MonBrightnessUp
 	~/.scripts/brightness_ctl.sh up
