@@ -18,9 +18,9 @@ alt + Tab
 
 # Launch Apps
 super + f
-	firedragon
+	firefox
 super + e
-    nautilus -w
+    dolphin
 
 # Close App
 alt + {_,shift + }q
