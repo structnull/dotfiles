@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 i=1 
 
 export colors="rgba(F48FB1FF) rgba(A1EFD3FF) rgba(F1FA8CFF) rgba(92B6F4FF) rgba(BD99FFFF) rgba(87DFEBFF)"
