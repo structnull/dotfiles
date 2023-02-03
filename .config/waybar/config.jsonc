@@ -82,6 +82,21 @@
 			"9": "IX"
 		}
 	},
+    "xwlr/workspaces": {
+        "all-outputs": true,
+        "on-click": "activate",
+        "format": "{icon}",
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "urgent": "",
+            "active": "",
+            "default": ""
+          }
+    },
     "tray": {
         "spacing": 10
     },

@@ -83,7 +83,7 @@ ex ()
   fi
 }
 
-# USE LF TO SWITCH DIRECTORIES AND BIND IT TO CTRL-O
+# USE LF TO SWITCH DIRECTORIES AND BIND IT TO CTRL-F
 lfcd () {
     tmp="$(mktemp)"
     lf -last-dir-path="$tmp" "$@"
