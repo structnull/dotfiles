@@ -3,7 +3,7 @@
 pgrep -x sxhkd > /dev/null || sxhkd &
 polybar &
 picom -b &
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+/usr/lib/polkit-kde-authentication-agent-1 &
 export _JAVA_AWT_WM_NONREPARENTING=1 &
 xsetroot -cursor_name left_ptr &
 feh --bg-scale ~/Pictures/Wallpapers/wepm6ho1ri151.jpg             

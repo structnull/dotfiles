@@ -80,30 +80,6 @@ tooltip {
     padding: 2px;
     border-radius: 10px;
     font-family: JetbrainsMono Nerd Font;
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-    animation: rotate-gradient 3s infinite;
-}
-
-@keyframes rotate-gradient {
-    0% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(0deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
-    20% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(80deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
-    40% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(160deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
-    60% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(240deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
-    80% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(320deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
-    100% {
-        background-image: linear-gradient(#1e1e1e, #1e1e1e), linear-gradient(360deg, rgba(51, 204, 255, 1), rgba(0, 255, 153, 1));
-    }
 }
 
 #battery,
