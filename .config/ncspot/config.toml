@@ -7,7 +7,7 @@ gapless = true
 flip_status_indicators=true
 
 [keybindings]
-## unbinded: nN, c, eE, xX
+## unbinded: nN, eE, xX
 ######################################
 # Song controls
 ######################################
@@ -15,6 +15,9 @@ flip_status_indicators=true
 ##################
 # Fast forward / rewind
 ##################
+
+"h" = "seek -5000"
+"l" = "seek +5000"
 "b" = "seek -1000"
 "f" = "seek +1000"
 "B" = "seek -10000"
@@ -70,8 +73,6 @@ flip_status_indicators=true
 "F1" = "focus queue"
 "F2" = "focus library"
 "F3" = "focus search"
-"1" = "focus queue"
-"2" = "focus library"
 "Ctrl+q" = "focus queue"
 # Go to the playing track
 "." = "move playing"
@@ -84,12 +85,12 @@ flip_status_indicators=true
 "Ctrl+d" = "move down 5"
 "Ctrl+u" = "move up 5"
 "Up" = "move up 1"
-"h" = "move left 1"
+"1" = "move left 1"
 "j" = "move down 1"
 "k" = "move up 1"
 "Ctrl+e" = "move down 1"
 "Ctrl+y" = "move up 1"
-"l" = "move right 1"
+"2" = "move right 1"
 "." = "move playing"
 "q" = "back"
 
