@@ -15,7 +15,7 @@
  
 * Shell: [Zsh][zshurl]
  
-* Music: [cmus][cmusurl]
+* Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
  
 * Hardware: [Asus Tuf f15][asus]
 
