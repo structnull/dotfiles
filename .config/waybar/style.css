@@ -69,10 +69,16 @@ tooltip {
 	font-size: 18px;
 }
 
+
 #window {
     color:#eeeeee;
     font-family: JetbrainsMono Nerd Font;
     font-size: 12;
+}
+
+#custom-recorder {
+  font-size: 10px;
+  margin: 2px 7px 0px 7px;
 }
 
 #clock {
