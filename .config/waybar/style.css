@@ -7,10 +7,9 @@
 }
 
 window {
-	/*font-weight: bold;*/
 }
 window#waybar {
-    background: rgba(8, 8, 8, .45);
+  background: rgba(8, 8, 8, .45);
 	border-radius: 7px;
     /* background: transparent; */
 }
@@ -50,19 +49,17 @@ tooltip {
 }
 #workspaces button:hover {
     box-shadow: inherit;
-	background-color: #74b2ff;
+	background-color: #babbf1;
 	color: #080808;
 }
 
 #workspaces button.focused {
-	background-color: rgba(0,43,51,0.85);
+	background-color: #85c1dc;
 }
 
 #workspaces button.active {
-	background-color: #40a0ff;
-	color: #080808;
+	background-color: #abadc8;
 }
-
 
 #custom-sep {
 	color: #424447;
