@@ -170,6 +170,7 @@ alias egrep='egrep --color=auto'
 alias py='python3'
 alias paclist="pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'"
 alias zshrc="nvim ~/.zshrc"
+alias wttr="curl wttr.in"
 alias kernalupdate='env MAKEFLAGS=-j16 _microarchitecture=44 use_tracers=n use_numa=n yay --answerclean=a --answerdiff=n --sudoloop -S linux-xanmod-rog linux-xanmod-rog-headers;'
 alias bkup="/mnt/1284DEF384DED875/stuff/dotfiles"
 # fzf
