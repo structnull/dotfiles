@@ -60,8 +60,8 @@
         "on-click": "wlogout -p layer-shell"
     },
     "backlight": {
-        "format": " {percent}%",
-        "format-icons": ["", ""]
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", ""]
     },
     "wlr/workspaces": {
         "disable-scroll": true,
@@ -150,9 +150,10 @@
         "format-wifi": "  {essid}",
         "format-ethernet": "  Connected",
         "format-disconnected": " Disconnected",
-        "tooltip-format-wifi": "Signal Strenght: {signalStrength}% | Down Speed: {bandwidthDownBits}, Up Speed: {bandwidthUpBits}",
+        "tooltip-format-wifi": " {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
+        "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
         "format-linked": "{ifname} (No IP) ",
-
+        "on-click-right": "nm-connection-editor",
         "on-click": "bash './rofi-network-manager.sh'"
     },
     "pulseaudio": {

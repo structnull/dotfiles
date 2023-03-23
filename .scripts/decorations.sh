@@ -10,6 +10,7 @@ if [ ! -e $TOGGLE ]; then
     hyprctl keyword misc:vfr 1
     hyprctl keyword misc:vrr 1
     notify-send "Decorations Disabled"
+
 else
     rm $TOGGLE
     hyprctl keyword animations:enabled 1

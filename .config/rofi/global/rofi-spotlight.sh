@@ -9,7 +9,7 @@ MY_PATH="$(realpath "$0" | xargs dirname)"
 HIST_FILE="${MY_PATH}/history.txt"
 
 OPENER=xdg-open
-TERM_EMU=wezterm
+TERM_EMU=kitty
 TEXT_EDITOR=$EDITOR
 FILE_MANAGER=xdg-open
 BLUETOOTH_SEND=blueman-sendto
@@ -52,8 +52,7 @@ declare -a BIN_OPTIONS=(
     "${BIN_NO_X_OPTIONS[@]}"
 )
 declare -a TEXT_OPTIONS=("${SHELL_NO_X_OPTIONS[@]}")
-declare -a HTML_OPTIONS=(
-	"Open"
+declare -a HTML_OPTIONS=( "Open"
 	"Edit"
 	"${OPEN_FILE_LOCATION[@]}"
     "${STANDARD_CONTROLS[@]}"
