@@ -15,11 +15,6 @@ WALLPAPER_DIR_ESCAPED=$(echo "$WALLPAPER_DIR" | sed 's/[\/&]/\\&/g')
 
 # Use sed to replace the wallpaper path in the configuration file:
 sed -i "s|$WALLPAPER_DIR_ESCAPED/.*$|$SELECTED_ESCAPED|g" "$HOME/.config/hypr/hyprland.conf"
-
-echo $WALLPAPER_DIR_ESCAPED
-if [[ $(pidof swaybg) ]]; then
-  pkill swaybg
-fi
 # Use swaybg to set the selected wallpaper as the background:
 swaybg -i "$SELECTED" &
 
