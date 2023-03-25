@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Check if IPv6 is currently enabled or disabled
 ipv6_status=$(cat /proc/sys/net/ipv6/conf/all/disable_ipv6)
