@@ -1,8 +1,6 @@
-* {
-    /* `otf-font-awesome` is required to be installed for icons */
+* { /* `otf-font-awesome` is required to be installed for icons */
     border: none;
-    font-family: Material Design Icons, FontAwesome, Product Sans,
-        JetBrainsMono Nerd Font;
+    font-family: Material Design Icons,FontAwesome,Product Sans,JetBrainsMono Nerd Font;
     font-size: 14px;
     color: #eeeeee;
     /* border-radius: 20px; */
@@ -11,21 +9,21 @@
 window {
 }
 window#waybar {
-    background: rgba(8, 8, 8, 0.45);
-    border-radius: 7px;
-    transition-property: background-color;
-    transition-duration: 0.5s;
+  background: rgba(8, 8, 8, .45);
+	border-radius: 7px;
+  transition-property: background-color;
+  transition-duration: 0.5s;
     /* background: transparent; */
 }
 /*-----module groups----*/
 .modules-right {
-    /* background-color: rgba(8,8,8,0.85); */
+	/* background-color: rgba(8,8,8,0.85); */
     background: transparent;
     margin: 0 -12px 0 0;
     border-radius: 20px;
 }
 .modules-center {
-    background: transparent;
+    background: transparent; 
     margin: 0 0 0 0;
     border-radius: 20px;
 }
@@ -36,48 +34,48 @@ window#waybar {
 }
 
 tooltip {
-    background: #323437;
-    color: #eeeeee;
-    border-radius: 10px;
+  background: #323437;
+  color: #eeeeee;
+  border-radius: 10px;
 }
 
 #workspaces {
-    padding: 0 14px;
+	padding: 0 14px;
 }
 /*-----modules indv----*/
 #workspaces button {
     padding: 1px 5px;
     background-color: transparent;
-    font-family: Jetbrains Nerd Font;
+    font-family:Jetbrains Nerd Font;
 }
 #workspaces button:hover {
     box-shadow: inherit;
-    background-color: #babbf1;
-    color: #080808;
+	background-color: #babbf1;
+	color: #080808;
 }
 
 #workspaces button.focused {
-    background-color: #85c1dc;
+	background-color: #85c1dc;
 }
 
 #workspaces button.active {
-    background-color: #abadc8;
+	background-color: #abadc8;
 }
 
 #custom-sep {
-    color: #424447;
-    font-size: 18px;
+	color: #424447;
+	font-size: 18px;
 }
 
 #window {
-    color: #eeeeee;
+    color:#eeeeee;
     font-family: JetbrainsMono Nerd Font;
     font-size: 12;
 }
 
 #custom-recorder {
-    font-size: 10px;
-    margin: 2px 7px 0px 7px;
+  font-size: 10px;
+  margin: 2px 7px 0px 7px;
 }
 
 #clock {
@@ -90,8 +88,9 @@ tooltip {
 #battery,
 #cpu,
 #memory,
-#temperature,
-#network #pulseaudio,
+#temperature, 
+#network
+#pulseaudio,
 #tray,
 #mode,
 #custom-power,
@@ -107,10 +106,10 @@ tooltip {
 
 /*-----Indicators----*/
 #network.disconnected {
-    color: #ff5454;
+	color: #ff5454;
 }
 #network.disabled {
-    color: #e3c78a;
+	color: #e3c78a;
 }
 #idle_inhibitor.activated {
     color: #2dcc36;
@@ -122,7 +121,7 @@ tooltip {
     color: #8cc85f;
 }
 #battery.warning:not(.charging) {
-    color: #e3c78a;
+	color: #e3c78a;
 }
 #battery.critical:not(.charging) {
     color: #ff5454;

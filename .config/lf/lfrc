@@ -6,6 +6,8 @@ set hiddenfiles on
 set previewer '~/.config/lf/scope'
 set cleaner '~/.config/lf/kitty_clean'
 
+export EDITOR=nvim
+
 set autoquit on
 
 cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
