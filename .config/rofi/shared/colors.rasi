@@ -1,4 +1,6 @@
 * {
+    transparent:    #00000000;
+    foreground:     #F2F2F2EE;
     background:     #1E1E2E;
     background-alt: #45475A;
     foreground:     #dee6e7;
