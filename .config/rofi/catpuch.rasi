@@ -20,6 +20,8 @@ configuration {
 * {
     border-colour:               var(selected);
     handle-colour:               var(selected);
+    transparent: #00000000;
+    foreground: #F2F2F2EE;
     background-colour:           var(background);
     foreground-colour:           var(foreground);
     alternate-background:        var(background-alt);
@@ -47,19 +49,19 @@ configuration {
 window {
     /* properties for window widget */
     transparency:                "real";
-    location:                    southwest;
-    anchor:                      southwest;
+    location:                    southeast;
+    anchor:                      southeast;
     fullscreen:                  false;
     width:                       500px;
-    x-offset:                    15%;
-    y-offset:                    -68px;
+    x-offset:                    -11px;
+    y-offset:                    -11px;
 
     /* properties for all widgets */
     enabled:                     true;
     margin:                      0px;
     padding:                     0px;
     border:                      0px solid;
-    border-radius:               4px;
+    border-radius:               18px;
     border-color:                @border-colour;
     cursor:                      "default";
     /* Backgroud Colors */

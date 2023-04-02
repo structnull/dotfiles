@@ -1,107 +1,108 @@
-* { /* `otf-font-awesome` is required to be installed for icons */
-    border: none;
-    font-family: Material Design Icons,FontAwesome,Product Sans,JetBrainsMono Nerd Font;
-    font-size: 14px;
-    color: #eeeeee;
-    /* border-radius: 20px; */
+* {
+	/* `otf-font-awesome` is required to be installed for icons */
+	border: none;
+	font-family: Material Design Icons, FontAwesome, Product Sans,
+		JetBrainsMono Nerd Font;
+	font-size: 14px;
+	/* border-radius: 20px; */
 }
 
 window {
 }
 window#waybar {
-  background: rgba(8, 8, 8, .45);
+	background: rgba(8, 8, 8, 0.45);
 	border-radius: 7px;
-  transition-property: background-color;
-  transition-duration: 0.5s;
-    /* background: transparent; */
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	/* background: transparent; */
 }
 /*-----module groups----*/
 .modules-right {
 	/* background-color: rgba(8,8,8,0.85); */
-    background: transparent;
-    margin: 0 -12px 0 0;
-    border-radius: 20px;
+	background: transparent;
+	margin: 0 -12px 0 0;
+	border-radius: 20px;
 }
 .modules-center {
-    background: transparent; 
-    margin: 0 0 0 0;
-    border-radius: 20px;
+	background: transparent;
+	margin: 0 0 0 0;
+	border-radius: 20px;
 }
 .modules-left {
-    background: transparent;
-    margin: 0 0 0 -12px;
-    border-radius: 20px;
+	background: transparent;
+	margin: 0 0 0 -12px;
+	border-radius: 20px;
 }
 
 tooltip {
-  background: #323437;
-  color: #eeeeee;
-  border-radius: 10px;
+	background: #323437;
+	color: #cdd6f4;
+	border-radius: 12px;
 }
 
 #workspaces {
 	padding: 0 14px;
 }
-/*-----modules indv----*/
 #workspaces button {
     padding: 1px 5px;
-    background-color: transparent;
-    font-family:Jetbrains Nerd Font;
+    background: transparent;
+    color: #4c566a;
 }
 #workspaces button:hover {
     box-shadow: inherit;
-	background-color: #babbf1;
-	color: #080808;
-}
-
-#workspaces button.focused {
-	background-color: #85c1dc;
+    text-shadow: inherit;
+    color: #d8dee9;
 }
 
 #workspaces button.active {
-	background-color: #abadc8;
+    color: #f2cdcd;
+    transition: all 0.2s cubic-bezier(.55,-0.68,.48,1.682);
+}
+#workspaces button.urgent {
+    color: #11111b;
+    background: #fab387;
+    border-radius: 10px;
 }
 
 #custom-sep {
-	color: #424447;
+	color: #313244;
 	font-size: 18px;
 }
 
 #window {
-    color:#eeeeee;
-    font-family: JetbrainsMono Nerd Font;
-    font-size: 12;
+	color: #cdd6f4;
+	font-family: JetbrainsMono Nerd Font;
+	font-size: 12;
 }
 
 #custom-recorder {
-  font-size: 10px;
-  margin: 2px 7px 0px 7px;
+	font-size: 10px;
+	margin: 2px 7px 0px 7px;
 }
 
 #clock {
-    margin: 2px 0 0 0;
-    padding: 2px;
-    border-radius: 10px;
-    font-family: JetbrainsMono Nerd Font;
+	margin: 2px 0 0 0;
+	padding: 2px;
+	border-radius: 10px;
+	font-family: JetbrainsMono Nerd Font;
 }
 
 #battery,
 #cpu,
 #memory,
-#temperature, 
-#network
-#pulseaudio,
+#temperature,
+#network #pulseaudio,
 #tray,
 #mode,
 #custom-power,
 #custom-menu,
 #idle_inhibitor {
-    padding: 0 5px;
+	padding: 0 5px;
 }
 
 #mode {
-    color: #cc3436;
-    font-weight: bold;
+	color: #cc3436;
+	font-weight: bold;
 }
 
 /*-----Indicators----*/
@@ -112,17 +113,17 @@ tooltip {
 	color: #e3c78a;
 }
 #idle_inhibitor.activated {
-    color: #2dcc36;
+	color: #2dcc36;
 }
 #pulseaudio.muted {
-    color: #e3c78a;
+	color: #e3c78a;
 }
 #battery.charging {
-    color: #8cc85f;
+	color: #8cc85f;
 }
 #battery.warning:not(.charging) {
 	color: #e3c78a;
 }
 #battery.critical:not(.charging) {
-    color: #ff5454;
+	color: #ff5454;
 }

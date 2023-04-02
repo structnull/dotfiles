@@ -12,6 +12,7 @@ configuration {
 	border-color: #00000000;
 	width: 684px;
 	height: 477px;
+	border-radius: 12px;
 	location: 0;
 }
 
