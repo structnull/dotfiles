@@ -55,7 +55,7 @@ tooltip {
 }
 
 #workspaces button.active {
-    color: #f2cdcd;
+    color: #BC83E3;
     transition: all 0.2s cubic-bezier(.55,-0.68,.48,1.682);
 }
 #workspaces button.urgent {
