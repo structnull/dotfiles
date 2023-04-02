@@ -1,28 +1,25 @@
 #!/bin/sh
 swaylock \
-	--screenshots \
-	--clock \
-  --hide-keyboard-layout \
-	--indicator \
-	--indicator-radius 100 \
-	--indicator-thickness 7 \
-	--effect-blur 7x5 \
-	--effect-vignette 0.5:0.5 \
-	--ring-color cba6f7 \
-  --ring-ver-color 89b4fa \
-  --ring-wrong-color f38ba8 \
-  --ring-clear-color a6e3a1 \
-	--key-hl-color 1e1e2e \
-  --bs-hl-color eba0ac \
-  --text-color 11111b \
-  --text-caps-lock-color 11111b \
-	--line-color 00000000 \
-	--line-ver-color 00000000 \
-	--line-wrong-color 00000000 \
-	--line-clear-color 00000000 \
-	--separator-color 00000000 \
-	--inside-color cba6f7 \
-  --inside-ver-color 89b4fa\
-  --inside-wrong-color f38ba8 \
-  --inside-clear-color a6e3a1 \
-	--fade-in 0.2
+--screenshots \
+--indicator \
+--clock \
+--inside-wrong-color f38ba8  \
+--ring-wrong-color 11111b  \
+--inside-clear-color a6e3a1 \
+--ring-clear-color 11111b \
+--inside-ver-color 89b4fa \
+--ring-ver-color 11111b \
+--text-color  f5c2e7 \
+--indicator-radius 120 \
+--indicator-thickness 6 \
+--effect-blur 10x7 \
+--effect-vignette 0.2:0.2 \
+--ring-color 11111b \
+--key-hl-color f5c2e7 \
+--line-color 313244 \
+--inside-color 0011111b \
+--font="Jetbrains mono" \
+--datestr="%d.%m" \
+--ignore-empty-password \
+--separator-color 00000000 \
+--fade-in 0.1 &

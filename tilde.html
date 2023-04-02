@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<meta name="color-scheme" content="dark light" />
+<meta name="robots" content="noindex" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>~</title>
+
+<style>
+	:root {
+		--color-background: #111;
+		--color-rain: #222;
+		--color-text-subtle: #999;
+		--color-text: #eee;
+		--font-family: -apple-system, Helvetica, sans-serif;
+		--font-size-1: 1rem;
+		--font-size-2: 3rem;
+		--font-size-base: clamp(16px, 1.2vw, 18px);
+		--font-weight-bold: 700;
+		--font-weight-normal: 400;
+		--line-height-base: 1.4;
+		--space-1: 0.5rem;
+		--space-2: 1rem;
+		--space-3: 4rem;
+		--transition-speed: 200ms;
+	}
+
+	@media (prefers-color-scheme: light) {
+		:root {
+			--color-background: #eee;
+			--color-rain: #ddd;
+			--color-text-subtle: #777;
+			--color-text: #111;
+		}
+	}
+</style>
+
+<script>
+	const CONFIG = {
+		commandPathDelimiter: "/",
+		commandSearchDelimiter: " ",
+		defaultSearchTemplate: "https://www.google.com/search?q={}",
+		openLinksInNewTab: true,
+		rainColumns: 200,
+		rainFade: 0.2,
+		rainFrameRate: 1000 / 18,
+		rainResilience: 0.8,
+		rainSpeed: 1,
+		suggestionLimit: 6,
+	}
+	const COMMANDS = new Map([
+		[
+			"a",
+			{
+				name: "archive",
+				url: "https://archive.org/",
+			},
+		],
+		[
+			"c",
+			{
+				name: "Chiefdinkan",
+				url: "https://chiefdinkan.github.io/",
+			},
+		],
+		[
+			"d",
+			{
+				name: "Drive",
+				searchTemplate: "/drive/u/0/search?q={}",
+				suggestions: ["d/drive/u/1/my-drive", "d/drive/u/2/my-drive"],
+				url: "https://drive.google.com/drive/u/0/my-drive",
+			},
+		],
+		[
+			"g",
+			{
+				name: "GitHub",
+				searchTemplate: "/search?q={}",
+				suggestions: [
+					"g/topics",
+					"g/trending",
+					"g/collections",
+					"gist.github.com",
+				],
+				url: "https://github.com",
+			},
+		],
+		["i", { name: "ChatGPT", url: "https://chat.openai.com/chat" }],
+		[
+			"k",
+			{
+				name: "Keep",
+				searchTemplate: "/u/0/#search/text={}",
+				suggestions: ["k/u/1", "k/u/2"],
+				url: "https://keep.google.com/u/0",
+			},
+		],
+		[
+			"l",
+			{
+				name: "Translate",
+				searchTemplate: "/?sl=en&tl=es&text={}",
+				suggestions: ["l/english → spanish", "l/spanish → english"],
+				url: "https://translate.google.com",
+			},
+		],
+		["l/english → spanish", { command: "l/?sl=en&tl=es" }],
+		["l/spanish → english", { command: "l/?sl=es&tl=en" }],
+		["m", { name: "Mail", url: "https://mail.proton.me/u/0/inbox" }],
+		[
+			"n",
+			{
+				name: "Notion",
+				suggestions: ["n/todo", "n/study", "n/story", "n/notes"],
+				url: "https://www.notion.so",
+			},
+		],
+		["n/todo", { command: "n/7c11e98c9c504ec2aa106dae83c6b803" }],
+		["n/study", { command: "n/03aac6c591aa435b90f5c9b007409af3" }],
+		["n/story", { command: "n/0e30a11736734779983a3e17906dde8b" }],
+		["n/notes", { command: "n/bda021cd6b7249daaf076f9a1929aa1d" }],
+		[
+			"r",
+			{
+				name: "Reddit",
+				searchTemplate: "/search?q={}",
+				suggestions: [
+					"r/r/webdev",
+					"r/r/startpages",
+					"r/r/linux",
+					"r/r/linuxmasterrace",
+					"r/r/linuxmemes",
+					"r/r/linux_gaming",
+					"r/r/kerala",
+					"r/r/piracy",
+					"r/r/crackwatch",
+					"r/r/piratedgames",
+					"r/r/pcmr",
+					"r/r/gaming",
+					"r/r/developersindia",
+					"r/r/unixporn",
+				],
+				url: "https://www.reddit.com",
+			},
+		],
+		[
+			"t",
+			{
+				name: "Twitter",
+				searchTemplate: "/search?q={}",
+				suggestions: [
+					"t/explore/tabs/trending",
+					"t/hashtag/buildinpublic?f=live",
+				],
+				url: "https://twitter.com/home",
+			},
+		],
+		[
+			"w",
+			{
+				name: "Wikipedia",
+				searchTemplate: "/w/index.php?search={}",
+				suggestions: [
+					"w/wiki/Portal:Current_events",
+					"w/wiki/Special:Random",
+				],
+				url: "https://en.wikipedia.org/wiki/Main_Page",
+			},
+		],
+		[
+			"y",
+			{
+				name: "YouTube",
+				searchTemplate: "/results?search_query={}",
+				suggestions: ["y/trending", "y/music", "y/gaming", "y/sports"],
+				url: "https://youtube.com/feed/subscriptions",
+			},
+		],
+		[
+			"0",
+			{
+				name: "monkeytype",
+				url: "http://monkeytype.com",
+			},
+		],
+		["?", { name: "README", url: "https://github.com/xvvvyz/tilde" }],
+	])
+</script>
+
+<template id="commands-template">
+	<style>
+		.commands {
+			columns: 1;
+			list-style: none;
+			margin: 0 auto;
+			max-width: 10rem;
+			padding: 0 0 0 var(--space-1);
+			width: 100vw;
+		}
+
+		.command {
+			display: flex;
+			gap: var(--space-2);
+			outline: 0;
+			padding: var(--space-1);
+			text-decoration: none;
+		}
+
+		.key {
+			color: var(--color-text);
+			display: inline-block;
+			text-align: center;
+			width: 3ch;
+		}
+
+		.name {
+			color: var(--color-text-subtle);
+			transition: color var(--transition-speed);
+		}
+
+		.command:where(:focus, :hover) .name {
+			color: var(--color-text);
+		}
+
+		@media (min-width: 500px) {
+			.commands {
+				columns: 2;
+				max-width: 20rem;
+			}
+		}
+
+		@media (min-width: 700px) {
+			.commands {
+				columns: 3;
+				max-width: 30rem;
+			}
+		}
+
+		@media (min-width: 900px) {
+			.commands {
+				columns: 4;
+				max-width: 40rem;
+			}
+		}
+
+		@media (min-width: 1200px) {
+			.commands {
+				columns: 6;
+				max-width: 60rem;
+			}
+		}
+	</style>
+	<nav>
+		<menu class="commands"></menu>
+	</nav>
+</template>
+
+<template id="command-template">
+	<li>
+		<a class="command" rel="noopener noreferrer">
+			<span class="key"></span>
+			<span class="name"></span>
+		</a>
+	</li>
+</template>
+
+<script type="module">
+	class Commands extends HTMLElement {
+		constructor() {
+			super()
+			this.attachShadow({ mode: "open" })
+			const template = document.getElementById("commands-template")
+			const clone = template.content.cloneNode(true)
+			const commands = clone.querySelector(".commands")
+			const commandTemplate = document.getElementById("command-template")
+
+			for (const [key, { name, url }] of COMMANDS.entries()) {
+				if (!name || !url) continue
+				const clone = commandTemplate.content.cloneNode(true)
+				const command = clone.querySelector(".command")
+				command.href = url
+				if (CONFIG.openLinksInNewTab) command.target = "_blank"
+				clone.querySelector(".key").innerText = key
+				clone.querySelector(".name").innerText = name
+				commands.append(clone)
+			}
+
+			this.shadowRoot.append(clone)
+		}
+	}
+
+	customElements.define("commands-component", Commands)
+</script>
+
+<template id="search-template">
+	<style>
+		input,
+		button {
+			-moz-appearance: none;
+			-webkit-appearance: none;
+			background: transparent;
+			border: 0;
+			display: block;
+			outline: 0;
+		}
+
+		.dialog {
+			align-items: center;
+			background: var(--color-background);
+			border: none;
+			display: none;
+			flex-direction: column;
+			height: 100%;
+			justify-content: center;
+			left: 0;
+			padding: 0;
+			top: 0;
+			width: 100%;
+		}
+
+		.dialog[open] {
+			display: flex;
+		}
+
+		.form {
+			width: 100%;
+		}
+
+		.input {
+			color: var(--color-text);
+			font-size: var(--font-size-2);
+			font-weight: var(--font-weight-bold);
+			padding: 0;
+			text-align: center;
+			width: 100%;
+		}
+
+		.suggestions {
+			align-items: center;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+			justify-content: center;
+			list-style: none;
+			margin: var(--space-2) 0 0;
+			overflow: hidden;
+			padding: 0;
+		}
+
+		.suggestion {
+			color: var(--color-text);
+			cursor: pointer;
+			font-size: var(--font-size-1);
+			padding: var(--space-2);
+			position: relative;
+			transition: color var(--transition-speed);
+			white-space: nowrap;
+			z-index: 1;
+		}
+
+		.suggestion:where(:focus, :hover) {
+			color: var(--color-background);
+		}
+
+		.suggestion::before {
+			background-color: var(--color-text);
+			bottom: var(--space-2);
+			content: " ";
+			left: var(--space-2);
+			opacity: 0;
+			position: absolute;
+			right: var(--space-2);
+			top: var(--space-2);
+			transform: translateY(0.5em);
+			transition: all var(--transition-speed);
+			z-index: -1;
+		}
+
+		.suggestion:where(:focus, :hover)::before {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		.match {
+			color: var(--color-text-subtle);
+			transition: color var(--transition-speed);
+		}
+
+		.suggestion:where(:focus, :hover) .match {
+			color: var(--color-background);
+		}
+
+		@media (min-width: 700px) {
+			.suggestions {
+				flex-direction: row;
+			}
+		}
+	</style>
+	<dialog class="dialog">
+		<form
+			autocomplete="off"
+			class="form"
+			method="dialog"
+			spellcheck="false"
+		>
+			<input class="input" title="search" type="text" />
+			<menu class="suggestions"></menu>
+		</form>
+	</dialog>
+</template>
+
+<template id="suggestion-template">
+	<li>
+		<button class="suggestion" type="button"></button>
+	</li>
+</template>
+
+<template id="match-template">
+	<span class="match"></span>
+</template>
+
+<script type="module">
+	class Search extends HTMLElement {
+		#dialog
+		#form
+		#input
+		#suggestions
+
+		constructor() {
+			super()
+			this.attachShadow({ mode: "open" })
+			const template = document.getElementById("search-template")
+			const clone = template.content.cloneNode(true)
+			this.#dialog = clone.querySelector(".dialog")
+			this.#form = clone.querySelector(".form")
+			this.#input = clone.querySelector(".input")
+			this.#suggestions = clone.querySelector(".suggestions")
+			this.#form.addEventListener("submit", this.#onSubmit, false)
+			this.#input.addEventListener("input", this.#onInput)
+			this.#suggestions.addEventListener("click", this.#onSuggestionClick)
+			document.addEventListener("keydown", this.#onKeydown)
+			this.shadowRoot.append(clone)
+		}
+
+		static #attachSearchPrefix(array, { key, splitBy }) {
+			if (!splitBy) return array
+			return array.map((search) => `${key}${splitBy}${search}`)
+		}
+
+		static #escapeRegexCharacters(s) {
+			return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&")
+		}
+
+		static #fetchDuckDuckGoSuggestions(search) {
+			return new Promise((resolve) => {
+				window.autocompleteCallback = (res) => {
+					const suggestions = []
+
+					for (const item of res) {
+						if (item.phrase === search.toLowerCase()) continue
+						suggestions.push(item.phrase)
+					}
+
+					resolve(suggestions)
+				}
+
+				const script = document.createElement("script")
+				document.querySelector("head").appendChild(script)
+				script.src = `https://duckduckgo.com/ac/?callback=autocompleteCallback&q=${search}`
+				script.onload = script.remove
+			})
+		}
+
+		static #formatSearchUrl(url, searchPath, search) {
+			if (!searchPath) return url
+			const [baseUrl] = Search.#splitUrl(url)
+			const urlQuery = encodeURIComponent(search)
+			searchPath = searchPath.replace(/{}/g, urlQuery)
+			return baseUrl + searchPath
+		}
+
+		static #hasProtocol(s) {
+			return /^[a-zA-Z]+:\/\//i.test(s)
+		}
+
+		static #isUrl(s) {
+			return /^((https?:\/\/)?[\w-]+(\.[\w-]+)+\.?(:\d+)?(\/\S*)?)$/i.test(
+				s
+			)
+		}
+
+		static #parseQuery = (raw) => {
+			const query = raw.trim()
+
+			if (this.#isUrl(query)) {
+				const url = this.#hasProtocol(query)
+					? query
+					: `https://${query}`
+				return { query, url }
+			}
+
+			if (COMMANDS.has(query)) {
+				const { command, key, url } = COMMANDS.get(query)
+				return command
+					? Search.#parseQuery(command)
+					: { key, query, url }
+			}
+
+			let splitBy = CONFIG.commandSearchDelimiter
+			const [searchKey, rawSearch] = query.split(
+				new RegExp(`${splitBy}(.*)`)
+			)
+
+			if (COMMANDS.has(searchKey)) {
+				const { searchTemplate, url: base } = COMMANDS.get(searchKey)
+				const search = rawSearch.trim()
+				const url = Search.#formatSearchUrl(
+					base,
+					searchTemplate,
+					search
+				)
+				return { key: searchKey, query, search, splitBy, url }
+			}
+
+			splitBy = CONFIG.commandPathDelimiter
+			const [pathKey, path] = query.split(new RegExp(`${splitBy}(.*)`))
+
+			if (COMMANDS.has(pathKey)) {
+				const { url: base } = COMMANDS.get(pathKey)
+				const [baseUrl] = Search.#splitUrl(base)
+				const url = `${baseUrl}/${path}`
+				return { key: pathKey, path, query, splitBy, url }
+			}
+
+			const [baseUrl, rest] = Search.#splitUrl(
+				CONFIG.defaultSearchTemplate
+			)
+			const url = Search.#formatSearchUrl(baseUrl, rest, query)
+			return { query, search: query, url }
+		}
+
+		static #splitUrl(url) {
+			const parser = document.createElement("a")
+			parser.href = url
+			const baseUrl = `${parser.protocol}//${parser.hostname}`
+			const rest = `${parser.pathname}${parser.search}`
+			return [baseUrl, rest]
+		}
+
+		#close() {
+			this.#input.value = ""
+			this.#input.blur()
+			this.#dialog.close()
+			this.#suggestions.innerHTML = ""
+		}
+
+		#execute(query) {
+			const { url } = Search.#parseQuery(query)
+			const target = CONFIG.openLinksInNewTab ? "_blank" : "_self"
+			window.open(url, target, "noopener noreferrer")
+			this.#close()
+		}
+
+		#focusNextSuggestion(previous = false) {
+			const active = this.shadowRoot.activeElement
+			let nextIndex
+
+			if (active.dataset.index) {
+				const activeIndex = Number(active.dataset.index)
+				nextIndex = previous ? activeIndex - 1 : activeIndex + 1
+			} else {
+				nextIndex = previous
+					? this.#suggestions.childElementCount - 1
+					: 0
+			}
+
+			const next = this.#suggestions.children[nextIndex]
+			if (next) next.querySelector(".suggestion").focus()
+			else this.#input.focus()
+		}
+
+		#onInput = async () => {
+			const oq = Search.#parseQuery(this.#input.value)
+
+			if (!oq.query) {
+				this.#close()
+				return
+			}
+
+			let suggestions = COMMANDS.get(oq.query)?.suggestions ?? []
+
+			if (oq.search && suggestions.length < CONFIG.suggestionLimit) {
+				const res = await Search.#fetchDuckDuckGoSuggestions(oq.search)
+				const formatted = Search.#attachSearchPrefix(res, oq)
+				suggestions = suggestions.concat(formatted)
+			}
+
+			const nq = Search.#parseQuery(this.#input.value)
+			if (nq.query !== oq.query) return
+			this.#renderSuggestions(suggestions, oq.query)
+		}
+
+		#onKeydown = (e) => {
+			if (!this.#dialog.open) {
+				this.#dialog.show()
+				this.#input.focus()
+
+				requestAnimationFrame(() => {
+					// close the search dialog before the next repaint if a character is
+					// not produced (e.g. if you type shift, control, alt etc.)
+					if (!this.#input.value) this.#close()
+				})
+
+				return
+			}
+
+			if (e.key === "Escape") {
+				this.#close()
+				return
+			}
+
+			const alt = e.altKey ? "alt-" : ""
+			const ctrl = e.ctrlKey ? "ctrl-" : ""
+			const meta = e.metaKey ? "meta-" : ""
+			const shift = e.shiftKey ? "shift-" : ""
+			const modifierPrefixedKey = `${alt}${ctrl}${meta}${shift}${e.key}`
+
+			if (/^(ArrowDown|Tab|ctrl-n)$/.test(modifierPrefixedKey)) {
+				e.preventDefault()
+				this.#focusNextSuggestion()
+				return
+			}
+
+			if (/^(ArrowUp|ctrl-p|shift-Tab)$/.test(modifierPrefixedKey)) {
+				e.preventDefault()
+				this.#focusNextSuggestion(true)
+			}
+		}
+
+		#onSubmit = () => {
+			this.#execute(this.#input.value)
+		}
+
+		#onSuggestionClick = (e) => {
+			const ref = e.target.closest(".suggestion")
+			if (!ref) return
+			this.#execute(ref.dataset.suggestion)
+		}
+
+		#renderSuggestions(suggestions, query) {
+			this.#suggestions.innerHTML = ""
+			const sliced = suggestions.slice(0, CONFIG.suggestionLimit)
+			const template = document.getElementById("suggestion-template")
+
+			for (const [index, suggestion] of sliced.entries()) {
+				const clone = template.content.cloneNode(true)
+				const ref = clone.querySelector(".suggestion")
+				ref.dataset.index = index
+				ref.dataset.suggestion = suggestion
+				const escapedQuery = Search.#escapeRegexCharacters(query)
+				const matched = suggestion.match(new RegExp(escapedQuery, "i"))
+
+				if (matched) {
+					const template = document.getElementById("match-template")
+					const clone = template.content.cloneNode(true)
+					const matchRef = clone.querySelector(".match")
+					const pre = suggestion.slice(0, matched.index)
+					const post = suggestion.slice(
+						matched.index + matched[0].length
+					)
+					matchRef.innerText = matched[0]
+					matchRef.insertAdjacentHTML("beforebegin", pre)
+					matchRef.insertAdjacentHTML("afterend", post)
+					ref.append(clone)
+				} else {
+					ref.innerText = suggestion
+				}
+
+				this.#suggestions.append(clone)
+			}
+		}
+	}
+
+	customElements.define("search-component", Search)
+</script>
+
+<template id="rain-template">
+	<style>
+		canvas {
+			left: 0;
+			position: absolute;
+			top: 0;
+			z-index: -1;
+		}
+	</style>
+	<canvas class="rain"></canvas>
+</template>
+
+<script type="module">
+	class Rain extends HTMLElement {
+		#backgroundColor
+		#canvas
+		#ctx
+		#drops
+		#lastRender
+		#rainColor
+		#rainHeight
+		#rainWidth
+
+		constructor() {
+			super()
+			this.attachShadow({ mode: "open" })
+			const template = document.getElementById("rain-template")
+			const clone = template.content.cloneNode(true)
+			this.#canvas = clone.querySelector(".rain")
+			this.#ctx = this.#canvas.getContext("2d", { alpha: false })
+			this.#renderCanvas()
+			const rerender = Rain.debounce(
+				this.#renderCanvas,
+				CONFIG.rainFrameRate
+			)
+			const mq = "(prefers-color-scheme: light)"
+			window.matchMedia(mq).addEventListener("change", rerender)
+			window.addEventListener("resize", rerender)
+			this.shadowRoot.append(clone)
+		}
+
+		static cssVar(name) {
+			return getComputedStyle(document.body).getPropertyValue(name)
+		}
+
+		static debounce(fn, delay) {
+			let timeout
+
+			return () => {
+				clearTimeout(timeout)
+				timeout = setTimeout(() => fn.apply(this, arguments), delay)
+			}
+		}
+
+		#renderCanvas = () => {
+			this.#canvas.height = window.innerHeight
+			this.#canvas.width = window.innerWidth
+			this.#rainWidth = Math.ceil(this.#canvas.width / CONFIG.rainColumns)
+			this.#rainHeight = this.#rainWidth * CONFIG.rainSpeed
+			this.#backgroundColor = Rain.cssVar("--color-background")
+			this.#rainColor = Rain.cssVar("--color-rain")
+			this.#ctx.fillStyle = this.#backgroundColor
+			this.#ctx.fillRect(0, 0, this.#canvas.width, this.#canvas.height)
+			this.#drops = new Array(CONFIG.rainColumns).fill(0)
+			this.#lastRender = performance.now()
+			requestAnimationFrame(this.#renderRain)
+		}
+
+		#renderRain = (timestamp) => {
+			if (timestamp - this.#lastRender >= CONFIG.rainFrameRate) {
+				this.#ctx.fillStyle = this.#backgroundColor
+				this.#ctx.globalAlpha = CONFIG.rainFade
+				this.#ctx.fillRect(
+					0,
+					0,
+					this.#canvas.width,
+					this.#canvas.height
+				)
+
+				for (let i = 0; i < this.#drops.length; i++) {
+					this.#ctx.fillStyle = this.#rainColor
+					this.#ctx.globalAlpha = 1
+					const x = i * this.#rainWidth
+					const y = this.#drops[i] * this.#rainHeight
+					this.#ctx.fillRect(x, y, this.#rainWidth, this.#rainHeight)
+
+					if (this.#drops[i] <= 4) {
+						// fully fade out previous rain drop streak
+						this.#ctx.fillStyle = this.#backgroundColor
+						this.#ctx.globalAlpha = this.#drops[i] === 4 ? 1 : 0.4
+						const eraseY = y + this.#rainHeight
+						const eraseHeight = this.#canvas.height - eraseY
+						this.#ctx.fillRect(
+							x,
+							eraseY,
+							this.#rainWidth,
+							eraseHeight
+						)
+					}
+
+					const reset = Math.random() > CONFIG.rainResilience
+					if (reset || y > this.#canvas.height) this.#drops[i] = 0
+					else this.#drops[i]++
+				}
+
+				this.#lastRender = timestamp
+			}
+
+			requestAnimationFrame(this.#renderRain)
+		}
+	}
+
+	customElements.define("rain-component", Rain)
+</script>
+
+<style>
+	html {
+		background-color: var(--color-background);
+		font-family: var(--font-family);
+		font-size: var(--font-size-base);
+		line-height: var(--line-height-base);
+	}
+
+	body {
+		margin: 0;
+	}
+
+	main {
+		align-items: center;
+		box-sizing: border-box;
+		display: flex;
+		justify-content: center;
+		min-height: 100vh;
+		overflow: hidden;
+		padding: var(--space-3) var(--space-2);
+		position: relative;
+		width: 100vw;
+	}
+</style>
+
+<main>
+	<rain-component></rain-component>
+	<commands-component></commands-component>
+	<search-component></search-component>
+</main>
