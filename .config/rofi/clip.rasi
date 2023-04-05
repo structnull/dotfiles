@@ -29,8 +29,8 @@ window {
     anchor:                      southeast;
     fullscreen:                  false;
     width:                       500px;
-    x-offset:                    11px;
-    y-offset:                    11px;
+    x-offset:                    -11px;
+    y-offset:                    -11px;
 }
 
 prompt {
@@ -53,7 +53,7 @@ entry {
     expand: true;
     vertical-align: 0.5;
     horizontal-align: 0;
-    placeholder: "Wallpaper Search";
+    placeholder: "Cliphist Search";
     placeholder-color: @foreground;
     blink: true;
 }

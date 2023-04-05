@@ -49,13 +49,13 @@ case $1 in
     # set the volume on (if it was muted)
     amixer -D pipewire set Master on > /dev/null
     # up the volume (+ 5%)
-    amixer -D pipewire sset Master 5%+ > /dev/null
+    amixer -D pipewire sset Master 1%+ > /dev/null
     send_notification
     canberra-gtk-play -i audio-volume-change -d "changeVolume"
     ;;
   down)
     amixer -D pipewire set Master on > /dev/null
-    amixer -D pipewire sset Master 5%- > /dev/null
+    amixer -D pipewire sset Master 1%- > /dev/null
     send_notification
     canberra-gtk-play -i audio-volume-change -d "changeVolume"
     ;;
