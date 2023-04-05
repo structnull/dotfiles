@@ -32,6 +32,7 @@ window#waybar {
 	background: transparent;
 	margin: 0 0 0 -12px;
 	border-radius: 20px;
+
 }
 
 tooltip {
@@ -55,7 +56,8 @@ tooltip {
 }
 
 #workspaces button.active {
-    color: #BC83E3;
+    /* color: #BC83E3; */
+	color: #cdd6f4;
     transition: all 0.2s cubic-bezier(.55,-0.68,.48,1.682);
 }
 #workspaces button.urgent {
