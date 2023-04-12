@@ -1,6 +1,9 @@
 # A place to host dotfiles for whatever Window manager I'm currently using.
 
-![image](https://user-images.githubusercontent.com/87846149/231361470-884f602b-3952-41fc-9d2c-41c797bead37.png)
+- ![image](https://user-images.githubusercontent.com/87846149/231362373-a1d467fb-2207-4888-b2d1-81834fbf2a92.png)
+- ![image](https://user-images.githubusercontent.com/87846149/231362579-5dac9e34-0b83-45a7-b8dc-29e6dbe270ad.png)
+- ![image](https://user-images.githubusercontent.com/87846149/231362841-ef2c9025-c8bd-4aa7-8e92-90b6219b36c0.png)
+
 
 * WM: [Hyprland][hypr]
  
@@ -11,6 +14,8 @@
 * Launcher: [rofi-ibonn][rofiurl]
 
 * Shell: [Zsh][zshurl]
+
+* Editor : Neovim , Vscode
  
 * Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
  
