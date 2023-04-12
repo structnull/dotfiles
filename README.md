@@ -1,7 +1,6 @@
 # A place to host dotfiles for whatever Window manager I'm currently using.
 
-![rice](https://user-images.githubusercontent.com/87846149/204972311-decf83e7-31d8-4b9e-ba24-3620d795c456.png)
-
+![image](https://user-images.githubusercontent.com/87846149/231361470-884f602b-3952-41fc-9d2c-41c797bead37.png)
 
 * WM: [Hyprland][hypr]
  
@@ -10,9 +9,7 @@
 * Term: [kitty][kittyurl]
  
 * Launcher: [rofi-ibonn][rofiurl]
- 
-* Bar: [Waybar][waybarurl]
- 
+
 * Shell: [Zsh][zshurl]
  
 * Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
