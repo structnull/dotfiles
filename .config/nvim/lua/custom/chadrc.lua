@@ -6,7 +6,7 @@ M.plugins = "custom.plugins" -- path for lazy.nvim
 M.mappings = require "custom.mappings"
 
 M.ui = {
-    theme = "onedark",
+    theme = "ayu_dark",
     statusline = {
         theme = "minimal",
         separator_style = "round",
