@@ -2,7 +2,10 @@
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 polybar &
-picom -b &
+xcompmgr -c &
+xset r rate 300 50 &
+
+# picom -b &
 /usr/lib/polkit-kde-authentication-agent-1 &
 export _JAVA_AWT_WM_NONREPARENTING=1 &
 xsetroot -cursor_name left_ptr &
