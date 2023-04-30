@@ -10,11 +10,7 @@ super + l
 
 # Rofi App Launcher
 super + space
-	sh $HOME/.config/rofi/launchers/type-3/launcher.sh 
-
-# Switch windows
-alt + Tab
-    bash ~/.config/rofi/window-switcher/window-switcher.sh
+	sh killall rofi || rofi -show drun -theme ~/.config/rofi/launcher.rasi
 
 # Launch Apps
 super + f
