@@ -144,6 +144,7 @@ export LANG=en_US.UTF-8
 export EDITOR='nvim'
 export VISUAL='nvim'
 export MANPAGER='nvim +Man!'
+export MANPAGER='less'
 export BROWSER='firefox'
 export TRUEBROWSER='firefox'
 export BAT_THEME='base16-256'
@@ -154,6 +155,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH=/home/adharsh/.cargo/bin:$PATH
 
 # aliases
+alias neofetch='fastfetch'
 alias ls='ls -Gh --color=auto'
 alias ll='ls -alF'
 alias la='ls -A'
@@ -173,6 +175,7 @@ alias zshrc="nvim ~/.zshrc"
 alias wttr="curl wttr.in"
 alias kernalupdate='env MAKEFLAGS=-j16 _microarchitecture=44 use_tracers=n use_numa=n yay --answerclean=a --answerdiff=n --sudoloop -S linux-xanmod-rog linux-xanmod-rog-headers;'
 alias bkup="/mnt/1284DEF384DED875/stuff/dotfiles"
+# alias hyprcrash="cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log >> sed && paste.sh sed && rm sed"
 # fzf
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
