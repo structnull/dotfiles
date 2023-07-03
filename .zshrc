@@ -143,7 +143,7 @@ unset COLUMNS
 export LANG=en_US.UTF-8
 export EDITOR='nvim'
 export VISUAL='nvim'
-export MANPAGER='nvim +Man!'
+# export MANPAGER='nvim +Man!'
 export MANPAGER='less'
 export BROWSER='firefox'
 export TRUEBROWSER='firefox'

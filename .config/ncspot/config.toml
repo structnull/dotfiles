@@ -1,4 +1,3 @@
-# vim: ft=cfg
 # Basic options
 default_keybindings = false
 use_nerdfont = true
@@ -61,8 +60,8 @@ flip_status_indicators=true
 ######################################
 # Sound
 ######################################
-"plus" = "volup 1"
-"minus" = "voldown 1"
+"plus" = "volup 5"
+"minus" = "voldown 5"
 "[" = "volup 5"
 "]" = "voldown 5"
 
@@ -91,7 +90,6 @@ flip_status_indicators=true
 "Ctrl+e" = "move down 1"
 "Ctrl+y" = "move up 1"
 "2" = "move right 1"
-"." = "move playing"
 "q" = "back"
 
 ######################################
