@@ -1,24 +1,48 @@
-#lfrc made with documentation from https://pkg.go.dev/github.com/gokcehan/lf#section-readme
-set shell sh
-set icons
-set period 1
-set hiddenfiles on
-set previewer '~/.config/lf/scope'
-set cleaner '~/.config/lf/kitty_clean'
+# Basic Settings
+set hidden true
+set ignorecase true
+set icons true
+set cursorpreviewfmt "\033[7;2m"
 
-export EDITOR=nvim
+set shell zsh
+set ifs "\n"
+set filesep "\n"  # default already
 
-set autoquit on
+# Custom Functions
+cmd mkdir %{{
+	printf "Directory Name: "
+	read -r ans
+	mkdir -p "$ans"
+	lf -remote "send select \"$ans\""
+}}
 
-cmd mkdir $mkdir -p "$(echo $* | tr ' ' '\ ')"
+cmd mkfile %{{
+	printf "File Name: "
+	read ans
+	touch "$ans"
+	lf -remote "send select \"$ans\""
+}}
 
-cmd extract ${{
+cmd shred ${{
+	# TODO:
+	# handle multiple files with shred or rshred
+	# for files or directories respectively (with array/positional parameters)
 	clear; tput cup $(($(tput lines)/3)); tput bold
 	set -f
-	printf "%s\n\t" "$fx"
-	printf "extract?[y/N]"
-	read ans
-	[ $ans = "y" ] && aunpack $fx
+	printf -- "%s\n" $fx | sed 's|'"$HOME"'||'
+	printf "\t\033[1;34m¿shred? \033[37m[\033[32ms\033[37m/\033[31mN\033[37m]\033[m "
+	read -r REPLY
+	case "$REPLY" in
+		[yYsS])
+			for f in $fx; do
+				if [ -f "$f" ]; then
+					shred -u -n 3 "$f" >/dev/null 2>&1 &
+				elif [ -d "$f" ]; then
+					rshred -fdu "$f"
+				fi
+			done
+		;;
+	esac
 }}
 
 cmd open ${{
@@ -27,6 +51,7 @@ cmd open ${{
         *) for f in $fx; do setsid $OPENER $f > /dev/null 2> /dev/null & done;;
     esac
 }}
+
 
 cmd delete ${{
 	clear; tput cup $(($(tput lines)/3)); tput bold
@@ -37,18 +62,104 @@ cmd delete ${{
 	[ $ans = "y" ] && rm -rf -- $fx
 }}
 
-cmd setbg "$1"
-cmd bulkrename $vidir
+cmd bulkrenamevimv ${{
+	vimv --git -- $fx
+	lf -remote "send $id load"
+	lf -remote "send $id unselect"
+}}
 
-# Bindings
-map gh
-map g top
-map D delete
-map E extract
-map <c-n> push :mkdir<space>
-map <c-r> reload
+cmd chmod_plus_x %{{
+	chmod +x $fx
+	lf -remote "send $id reload"
+}}
+
+cmd chmod_minus_x %{{
+	chmod -x $fx
+	lf -remote "send $id reload"
+}}
+
+cmd link %{{
+	set -- $(cat ~/.local/share/lf/files)
+	mode="$1"
+	shift
+	if [ "$#" -lt 1 ]; then
+		lf -remote "send $id echo no files to link"
+		exit 0
+	fi
+	case "$mode" in
+			# symbolically copy mode is indicating a soft link
+		copy) ln -sr -t . -- "$@" ;;
+			# while a move mode is indicating a hard link
+		move) ln -t . -- "$@" ;;
+	esac
+	# rm ~/.local/share/lf/files
+	# lf -remote "send clear"
+}}
+
+cmd tagfiles %{{
+	TAGS="$(tmsu tags | dmenu -l 4 -g 5 -p "Tag" | sed "s/,/\n/g")"
+
+	if [ -z "$TAGS" ]; then
+		exit 1
+	fi
+
+	for f in $fx; do
+		echo "$TAGS" | xargs tmsu tag $f
+	done
+}}
+
+cmd extract ${{
+	clear; tput cup $(($(tput lines)/3)); tput bold
+	set -f
+	printf "%s\n\t" "$fx"
+	printf "extract?[y/N]"
+	read ans
+	[ $ans = "y" ] && aunpack $fx
+}}
+
+cmd full_size %{{
+	du -sh $fx
+}}
+
+# Remove some defaults
+map m
+# map o
+map "'"
+map '"'
+map d
+map w
+# map r
+# use enter for shell commands
 map <enter> shell
-map x $$f
-map X !$f
-map o &mimeopen "$f"
-map O $mimeopen --ask "$f"
+# show the result of execution of previous commands
+map ` !true
+# execute current file (must be executable)
+# map x $$f
+map X !$f &
+map P :link
+# Bindings
+
+map mx chmod_plus_x
+map mX chmod_minus_x
+map mt tagfiles $fx
+map md mkdir
+map mf mkfile
+map mw setwallpaper
+
+# Basic Functions
+map . set hidden!
+map D delete
+map sD shred
+map p paste
+map d cut
+map y copy
+map R reload
+map C clear
+map b bulkrenamevimv
+map r rename
+
+
+# Movement
+
+set previewer ~/.config/lf/scope
+set cleaner ~/.config/lf/clean

@@ -86,7 +86,7 @@ ex ()
 # USE LF TO SWITCH DIRECTORIES AND BIND IT TO CTRL-F
 lfcd () {
     tmp="$(mktemp)"
-    lf -last-dir-path="$tmp" "$@"
+    lfub -last-dir-path="$tmp" "$@"
     if [ -f "$tmp" ]; then
         dir="$(cat "$tmp")"
         rm -f "$tmp"
@@ -140,13 +140,21 @@ unset LINES
 unset COLUMNS
 
 # EXPORTS
+export FZF_COMPLETION_OPTS="--multi"
+# Default Apps
+export EDITOR="nvim"
+export READER="zathura"
+export VISUAL="nvim"
+export TERMINAL="kitty"
+export BROWSER="mercury-browser"
+export VIDEO="mpv"
+export IMAGE="imv"
+export COLORTERM="truecolor"
+export OPENER="mimeopen"
 export LANG=en_US.UTF-8
-export EDITOR='nvim'
-export VISUAL='nvim'
 # export MANPAGER='nvim +Man!'
-export MANPAGER='less'
-export BROWSER='firefox'
-export TRUEBROWSER='firefox'
+export PAGER='nvimpager'
+export TRUEBROWSER='mercury-browser'
 export BAT_THEME='base16-256'
 
 #export paths
