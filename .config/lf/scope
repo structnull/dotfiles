@@ -10,7 +10,6 @@ image() {
     exit 1
 }
 
-
 batorcat() {
 	file="$1"
 	shift
@@ -21,6 +20,8 @@ batorcat() {
 		cat "$file"
 	fi
 }
+
+CACHE="$HOME/.cache/lf/$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | awk '{print $1}')"
 
 case "$(printf "%s\n" "$(readlink -f "$1")" | awk '{print tolower($0)}')" in
 	*.tgz|*.tar.gz) tar tzf "$1" ;;
@@ -67,3 +68,4 @@ case "$(printf "%s\n" "$(readlink -f "$1")" | awk '{print tolower($0)}')" in
 		batorcat "$1"
 		;;
 esac
+exit 0
