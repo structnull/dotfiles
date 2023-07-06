@@ -153,7 +153,7 @@ export COLORTERM="truecolor"
 export OPENER="mimeopen"
 export LANG=en_US.UTF-8
 # export MANPAGER='nvim +Man!'
-export PAGER='nvimpager'
+export PAGER='nvimpager -a'
 export TRUEBROWSER='mercury-browser'
 export BAT_THEME='base16-256'
 
