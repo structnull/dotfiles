@@ -1,71 +1,69 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-TMP_FILE="$HOME/.cache/lf/err.png"
-
-function check_cache {
-    if [ ! -d "$HOME/.cache/lf" ]; then
-	mkdir -p "$HOME/.cache/lf"
-    fi
+image() {
+    FILE_PATH="$1"
+    X=$4
+    Y=$5
+    MW=$(($2-1))
+    MH=$3
+    ueberzugpp cmd -s $UB_SOCKET -a add -i PREVIEW -x $X -y $Y --max-width $MW --max-height $MH -f "$FILE_PATH"
+    exit 1
 }
 
-function hash_filename {
-    TMP_FILE="$HOME/.cache/lf/$(echo ${1%.*} | sed -e 's|/|\!|g').$2"
+
+batorcat() {
+	file="$1"
+	shift
+	if command -v bat > /dev/null 2>&1
+	then
+		bat --color=always --style=plain --pager=never "$file" "$@"
+	else
+		cat "$file"
+	fi
 }
 
-function draw_clear {
-    kitty +kitten icat --transfer-mode file --clear
-}
-
-function draw_image {
-    kitty +kitten icat --transfer-mode file --place "$3x$2@$4x$5" "$1"
-}
-
-function make_video {
-    if [ "${TMP_FILE}" -ot "$1" ]; then
-	ffmpegthumbnailer -t 0% -q 3 -s 0 \
-			  -c jpeg -i "$1" -o "${TMP_FILE}"
-    fi
-}
-
-function make_pdf {
-    if [ "${TMP_FILE}" -ot "$1" ]; then
-	pdftoppm -png -f 1 -l 1 -jpeg -tiffcompression jpeg \
-		 -scale-to-x -1 -scale-to-y 1080 \
-		 -singlefile "$1" "${TMP_FILE%.png}"
-    fi
-}
-
-check_cache
-draw_clear
-case $(file -b --mime-type "$1") in
-    text/*)
-	cat "$1"
-	;;
-    image/*)
-	draw_image "$1" "$2" "$3" "$4" "$5"
-	exit 1
-	;;
-    video/*)
-	hash_filename "$1" "jpg"
-	make_video "$1" "$2" "$3"
-	draw_image "${TMP_FILE}" "$2" "$3" "$4" "$5"
-	exit 1
-	;;
-    application/pdf)
-	hash_filename "$1" "png"
-	make_pdf "$1" "$2" "$3"
-	draw_image "${TMP_FILE}" "$2" "$3" "$4" "$5"
-	exit 1
-	;;
-    application/gzip|application/x-xz)
-	tar tf "$1"
-	;;
-    application/zip)
-	unzip -Z -1 "$1"
-	;;
-    application/x-sharedlib)
-	readelf -h "$1"
-	;;
+case "$(printf "%s\n" "$(readlink -f "$1")" | awk '{print tolower($0)}')" in
+	*.tgz|*.tar.gz) tar tzf "$1" ;;
+	*.tar.bz2|*.tbz2) tar tjf "$1" ;;
+	*.tar.txz|*.txz) xz --list "$1" ;;
+	*.tar) tar tf "$1" ;;
+	*.zip|*.jar|*.war|*.ear|*.oxt) unzip -l "$1" ;;
+	*.rar) unrar l "$1" ;;
+	*.7z) 7z l "$1" ;;
+	*.[1-8]) man "$1" | col -b ;;
+	*.o) nm "$1";;
+	*.torrent) transmission-show "$1" ;;
+	*.iso) iso-info --no-header -l "$1" ;;
+	*.odt|*.ods|*.odp|*.sxw) odt2txt "$1" ;;
+	*.doc) catdoc "$1" ;;
+	*.docx) docx2txt "$1" - ;;
+	*.xls|*.xlsx)
+		ssconvert --export-type=Gnumeric_stf:stf_csv "$1" "fd://1" | batorcat --language=csv
+		;;
+	*.pdf)
+		[ ! -f "${CACHE}.jpg" ] && \
+			pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
+		image "${CACHE}.jpg" "$2" "$3" "$4" "$5"
+		;;
+	*.epub)
+		[ ! -f "${CACHE}.jpg" ] && \
+            gnome-epub-thumbnailer "$1" "$CACHE".jpg
+		image "${CACHE}.jpg" "$2" "$3" "$4" "$5"
+		;;
+	*.avi|*.mp4|*.gif|*.wmv|*.dat|*.3gp|*.ogv|*.mkv|*.mpg|*.mpeg|*.vob|*.fl[icv]|*.m2v|*.mov|*.webm|*.ts|*.mts|*.m4v|*.r[am]|*.qt|*.divx|*.wav|*.mp3|*.flac|*.m4a|*.wma|*.ape|*.ac3|*.og[agx]|*.spx|*.opus|*.as[fx]|*.mka)
+		[ ! -f "${CACHE}.jpg" ] && \
+			ffmpegthumbnailer -i "$1" -o "${CACHE}.jpg" -m -s 0 -q 5
+		image "${CACHE}.jpg" "$2" "$3" "$4" "$5"
+		;;
+	*.bmp|*.jpg|*.jpeg|*.png|*.xpm|*.webp|*.jfif)
+		image "$1" "$2" "$3" "$4" "$5"
+		;;
+	*.svg)
+        [ ! -f "${CACHE}.jpg" ] && \
+            convert "$1" "${CACHE}.jpg" 
+        image "${CACHE}.jpg" "$2" "$3" "$4" "$5"
+                    ;;
+	*)
+		batorcat "$1"
+		;;
 esac
-
-exit 0
