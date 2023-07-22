@@ -1,262 +1,262 @@
 {
-    "spacing": 0,
-    "layer": "top",
-    "margin-top": 5,
-    "margin-left": 10,
-    "margin-right": 10,
-    "modules-left": [
-        "wlr/workspaces",
-        "hyprland/window"
-    ],
-    "modules-center": [
-        "clock",
-        "custom/recorder"
-    ],
-    "modules-right": [
-        "tray",
-        "custom/sep",
-        "idle_inhibitor",
-        "custom/sep",
-        "custom/notification",
-        "custom/sep",
-        "custom/power_profile",
-        "custom/sep",
-        "backlight",
-        "custom/sep",
-        "pulseaudio",
-        "custom/sep",
-        "network",
-        "custom/sep",
-        "battery",
-        "custom/sep",
-        "custom/session",
-        "custom/space"
-    ],
-    "custom/sep": {
-        "format": " | "
-    },
-    "custom/space": {
-        "format": "     "
-    },
-    "hyprland/window": {
-        "format": "  {}",
-        "max-length": 50,
-        "separate-outputs": true
-    },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "",
-            "deactivated": ""
-        }
-    },
-    "custom/recorder": {
-        "format": "‎⭕‎",
-        "return-type": "json",
-        "interval": 1,
-        "exec": "echo '{\"class\": \"recording\"}'",
-        "exec-if": "pgrep wf-recorder",
-        "tooltip": false,
-        "on-click": "killall -s SIGINT wf-recorder"
-    },
-    "custom/notification": {
-        "tooltip": true,
-        "format": " {icon} ",
-        "format-icons": {
-            "notification": "",
-            "none": "",
-            "dnd-notification": "",
-            "dnd-none": ""
-        },
-        "return-type": "json",
-        "exec-if": "which swaync-client",
-        "exec": "swaync-client -swb",
-        "on-click": "swaync-client -t -sw",
-        "on-click-right": "swaync-client -d -sw",
-        "escape": true
-    },
-    "custom/session": {
-        "format": "{icon}",
-        "format-icons": {
-            "default": " 💀 "
-        },
-        "toolip": true,
-        "on-click": "wlogout -p layer-shell"
-    },
-    "backlight": {
-        "format": "{icon} {percent}%",
-        "format-icons": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            ""
-        ]
-    },
-    "wlr/workspaces": {
-        "disable-scroll": true,
-        "all-outputs": true,
-        "on-click": "activate",
-        "format": "{icon}",
-        "persistent_workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": [],
-            "6": [],
-            "7": [],
-            "8": [],
-            "9": []
-        },
-        "format-icons": {
-            "1": "I",
-            "2": "II",
-            "3": "III",
-            "4": "IV",
-            "5": "V",
-            "6": "VI",
-            "7": "VII",
-            "8": "VIII",
-            "9": "IX",
-            "urgent": ""
-        }
-    },
-    "mwlr/workspaces": {
-        "disable-scroll": true,
-        "on-click": "activate",
-        "format": "{icon}",
-        "all-outputs": false,
-        "persistent_workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": [],
-            "6": [],
-            "7": [],
-            "8": [],
-            "9": [],
-            "10": []
-        },
-        "format-icons": {
-            "1": "I",
-            "2": "II",
-            "3": "III",
-            "4": "IV",
-            "5": "V",
-            "6": "VI",
-            "7": "VII",
-            "8": "VIII",
-            "9": "IX",
-            "10": "X",
-            "urgent": ""
-        }
-    },
-    "xwlr/workspaces": {
-        "all-outputs": true,
-        "on-click": "activate",
-        "format": "{icon}",
-        "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "",
-            "5": "",
-            "urgent": "",
-            "active": "",
-            "default": ""
-        }
-    },
-    "tray": {
-        "spacing": 10
-    },
-    "clock": {
-        "format": "  {:%I:%M %p |  %x } ",
-        "interval": 60,
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-    },
-    "custom/bruh": {
-        "interval": 60,
-        "format": "{:  %A %d %b}"
-    },
-    "cpu": {
-        "format": "   {usage}%",
-        "tooltip": false
-    },
-    "memory": {
-        "format": " {}%"
-    },
-    "battery": {
-        "states": {
-            "good": 95,
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon}{capacity}%  ",
-        "format-charging": " {capacity}%  ",
-        "format-plugged": " {capacity}%  ",
-        "format-alt": "{icon}{time}  ",
-        "format-icons": [
-            "  ",
-            "  ",
-            "  ",
-            "  ",
-            "  "
-        ]
-    },
-    "battery#bat2": {
-        "bat": "BAT2"
-    },
-    "custom/power_profile": {
-        "exec": "sleep 0.3 && /home/adharsh/.scripts/powerprofilecycle.sh -m",
-        "interval": 1,
-        "on-click": "/home/adharsh/.scripts/powerprofilecycle.sh",
-        "exec-on-event": true
-    },
-    "network": {
-        "format-wifi": "  {essid}",
-        "format-ethernet": "  Connected",
-        "format-disconnected": " Disconnected",
-        "tooltip-format-wifi": " {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
-        "tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
-        "format-linked": "{ifname} (No IP) ",
-        "on-click-right": "nm-connection-editor",
-        "on-click": "bash './rofi-network-manager.sh'"
-    },
-    "pulseaudio": {
-        "format": "{volume}% {icon} {format_source}",
-        "format-bluetooth": "{volume}%  {format_source}",
-        "format-bluetooth-muted": "   {format_source}",
-        "format-muted": " {format_source}",
-        "format-source": "{volume}%  ",
-        "format-source-muted": "  ",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": [
-                "",
-                "",
-                ""
-            ]
-        },
-        "on-click": "pavucontrol"
-    },
-    "custom/media": {
-        "format": "{icon} {}",
-        "return-type": "json",
-        "max-length": 40,
-        "format-icons": {
-            "spotify": "",
-            "default": "🎜"
-        },
-        "escape": true
-    }
+	"spacing": 0,
+	"layer": "top",
+	"margin-top": 5,
+	"margin-left": 10,
+	"margin-right": 10,
+	"modules-left": [
+		"wlr/workspaces",
+		"hyprland/window"
+	],
+	"modules-center": [
+		"clock",
+		"custom/recorder"
+	],
+	"modules-right": [
+		"tray",
+		"custom/sep",
+		"idle_inhibitor",
+		"custom/sep",
+		"custom/notification",
+		"custom/sep",
+		"custom/power_profile",
+		"custom/sep",
+		"backlight",
+		"custom/sep",
+		"pulseaudio",
+		"custom/sep",
+		"network",
+		"custom/sep",
+		"battery",
+		"custom/sep",
+		"custom/session",
+		"custom/space"
+	],
+	"custom/sep": {
+		"format": " | "
+	},
+	"custom/space": {
+		"format": "     "
+	},
+	"hyprland/window": {
+		"format": "  {}",
+		"max-length": 50,
+		"separate-outputs": true
+	},
+	"idle_inhibitor": {
+		"format": "{icon}",
+		"format-icons": {
+			"activated": "",
+			"deactivated": ""
+		}
+	},
+	"custom/recorder": {
+		"format": "‎⭕‎",
+		"return-type": "json",
+		"interval": 1,
+		"exec": "echo '{\"class\": \"recording\"}'",
+		"exec-if": "pgrep wf-recorder",
+		"tooltip": false,
+		"on-click": "killall -s SIGINT wf-recorder"
+	},
+	"custom/notification": {
+		"tooltip": true,
+		"format": " {icon} ",
+		"format-icons": {
+			"notification": "",
+			"none": "",
+			"dnd-notification": "",
+			"dnd-none": ""
+		},
+		"return-type": "json",
+		"exec-if": "which swaync-client",
+		"exec": "swaync-client -swb",
+		"on-click": "swaync-client -t -sw",
+		"on-click-right": "swaync-client -d -sw",
+		"escape": true
+	},
+	"custom/session": {
+		"format": "{icon}",
+		"format-icons": {
+			"default": " 💀 "
+		},
+		"toolip": true,
+		"on-click": "wlogout -p layer-shell"
+	},
+	"backlight": {
+		"format": "{icon} {percent}%",
+		"format-icons": [
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		]
+	},
+	"wlr/workspaces": {
+		"disable-scroll": true,
+		"all-outputs": true,
+		"on-click": "activate",
+		"format": "{icon}",
+		"persistent_workspaces": {
+			"1": [],
+			"2": [],
+			"3": [],
+			"4": [],
+			"5": [],
+			"6": [],
+			"7": [],
+			"8": [],
+			"9": []
+		},
+		"format-icons": {
+			"1": "I",
+			"2": "II",
+			"3": "III",
+			"4": "IV",
+			"5": "V",
+			"6": "VI",
+			"7": "VII",
+			"8": "VIII",
+			"9": "IX",
+			"urgent": ""
+		}
+	},
+	"mwlr/workspaces": {
+		"disable-scroll": true,
+		"on-click": "activate",
+		"format": "{icon}",
+		"all-outputs": false,
+		"persistent_workspaces": {
+			"1": [],
+			"2": [],
+			"3": [],
+			"4": [],
+			"5": [],
+			"6": [],
+			"7": [],
+			"8": [],
+			"9": [],
+			"10": []
+		},
+		"format-icons": {
+			"1": "I",
+			"2": "II",
+			"3": "III",
+			"4": "IV",
+			"5": "V",
+			"6": "VI",
+			"7": "VII",
+			"8": "VIII",
+			"9": "IX",
+			"10": "X",
+			"urgent": ""
+		}
+	},
+	"xwlr/workspaces": {
+		"all-outputs": true,
+		"on-click": "activate",
+		"format": "{icon}",
+		"format-icons": {
+			"1": "",
+			"2": "",
+			"3": "",
+			"4": "",
+			"5": "",
+			"urgent": "",
+			"active": "",
+			"default": ""
+		}
+	},
+	"tray": {
+		"spacing": 10
+	},
+	"clock": {
+		"format": "  {:%I:%M %p |  %x } ",
+		"interval": 60,
+		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+	},
+	"custom/bruh": {
+		"interval": 60,
+		"format": "{:  %A %d %b}"
+	},
+	"cpu": {
+		"format": "   {usage}%",
+		"tooltip": false
+	},
+	"memory": {
+		"format": " {}%"
+	},
+	"battery": {
+		"states": {
+			"good": 95,
+			"warning": 30,
+			"critical": 15
+		},
+		"format": "{icon}{capacity}%  ",
+		"format-charging": " {capacity}%  ",
+		"format-plugged": " {capacity}%  ",
+		"format-alt": "{icon}{time}  ",
+		"format-icons": [
+			"  ",
+			"  ",
+			"  ",
+			"  ",
+			"  "
+		]
+	},
+	"battery#bat2": {
+		"bat": "BAT2"
+	},
+	"custom/power_profile": {
+		"exec": "sleep 0.3 && /home/adharsh/.scripts/powerprofilecycle.sh -m",
+		"interval": 1,
+		"on-click": "/home/adharsh/.scripts/powerprofilecycle.sh",
+		"exec-on-event": true
+	},
+	"network": {
+		"format-wifi": "  {essid}",
+		"format-ethernet": "  Connected",
+		"format-disconnected": " Disconnected",
+		"tooltip-format-wifi": " {ifname} @ {essid}\nIP: {ipaddr}\nStrength: {signalStrength}%\nFreq: {frequency}MHz\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
+		"tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
+		"format-linked": "{ifname} (No IP) ",
+		"on-click-right": "nm-connection-editor",
+		"on-click": "bash './rofi-network-manager.sh'"
+	},
+	"pulseaudio": {
+		"format": "{volume}% {icon} {format_source}",
+		"format-bluetooth": "{volume}%  {format_source}",
+		"format-bluetooth-muted": "   {format_source}",
+		"format-muted": " {format_source}",
+		"format-source": "{volume}%  ",
+		"format-source-muted": "  ",
+		"format-icons": {
+			"headphone": "",
+			"hands-free": "",
+			"headset": "",
+			"phone": "",
+			"portable": "",
+			"car": "",
+			"default": [
+				"",
+				"",
+				""
+			]
+		},
+		"on-click": "pavucontrol"
+	},
+	"custom/media": {
+		"format": "{icon} {}",
+		"return-type": "json",
+		"max-length": 40,
+		"format-icons": {
+			"spotify": "",
+			"default": "🎜"
+		},
+		"escape": true
+	}
 }

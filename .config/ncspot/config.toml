@@ -72,6 +72,7 @@ flip_status_indicators=true
 "F1" = "focus queue"
 "F2" = "focus library"
 "F3" = "focus search"
+"F4" = "focus cover"
 "Ctrl+q" = "focus queue"
 # Go to the playing track
 "." = "move playing"

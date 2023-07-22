@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 ## Grimblast: a helper for screenshots within hyprland
 ## Requirements:
 ##  - `grim`: screenshot utility for wayland
@@ -18,40 +18,72 @@
 ## https://github.com/swaywm/sway/blob/master/contrib/grimshot
 
 getTargetDirectory() {
-  test -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" && \
+  test -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" &&
     . "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
 
   echo "${XDG_SCREENSHOTS_DIR:-${XDG_PICTURES_DIR:-$HOME}}"
 }
 
+tmp_editor_directory() {
+  echo "/tmp"
+}
+
+#Detect if $GRIMBLAST_EDITOR env exist
+env_editor_confirm() {
+  if [ -n "$GRIMBLAST_EDITOR" ]; then
+    echo "GRIMBLAST_EDITOR is set. Continuing..."
+  else
+    echo "GRIMBLAST_EDITOR is not set. Defaulting to gimp"
+    GRIMBLAST_EDITOR=gimp
+  fi
+}
+
 NOTIFY=no
 CURSOR=
+FREEZE=
+SCALE=
+HYPRPICKER_PID=-1
 
 while [ $# -gt 0 ]; do
   key="$1"
 
   case $key in
-    -n|--notify)
-      NOTIFY=yes
-      shift # past argument
-      ;;
-    -c|--cursor)
-      CURSOR=yes
-      shift # past argument
-      ;;
-    *)    # unknown option
-      break # done with parsing --flags
-      ;;
+  -n | --notify)
+    NOTIFY=yes
+    shift # past argument
+    ;;
+  -c | --cursor)
+    CURSOR=yes
+    shift # past argument
+    ;;
+  -f | --freeze)
+    FREEZE=yes
+    shift # past argument
+    ;;
+  -s | --scale)
+    shift # past argument
+    if [ $# -gt 0 ]; then
+      SCALE="$1" # assign the next argument to SCALE
+      shift      # past argument
+    else
+      echo "Error: Missing argument for --scale option."
+      exit 1
+    fi
+    ;;
+  *)      # unknown option
+    break # done with parsing --flags
+    ;;
   esac
 done
 
 ACTION=${1:-usage}
 SUBJECT=${2:-screen}
 FILE=${3:-$(getTargetDirectory)/$(date -Ins).png}
+FILE_EDITOR=${3:-$(tmp_editor_directory)/$(date -Ins).png}
 
-if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "copysave" ] && [ "$ACTION" != "check" ]; then
+if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "edit" ] && [ "$ACTION" != "copysave" ] && [ "$ACTION" != "check" ]; then
   echo "Usage:"
-  echo "  grimblast [--notify] [--cursor] (copy|save|copysave) [active|screen|output|area|window] [FILE|-]"
+  echo "  grimblast [--notify] [--cursor] [--freeze] [--scale <scale>] (copy|save|copysave|edit) [active|screen|output|area] [FILE|-]"
   echo "  grimblast check"
   echo "  grimblast usage"
   echo ""
@@ -59,6 +91,7 @@ if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "copysav
   echo "  copy: Copy the screenshot data into the clipboard."
   echo "  save: Save the screenshot to a regular file or '-' to pipe to STDOUT."
   echo "  copysave: Combine the previous 2 options."
+  echo "  edit: Open screenshot in the image editor of your choice (default is gimp). See man page for info."
   echo "  check: Verify if required tools are installed and exit."
   echo "  usage: Show this message and exit."
   echo ""
@@ -66,22 +99,20 @@ if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "copysav
   echo "  active: Currently active window."
   echo "  screen: All visible outputs."
   echo "  output: Currently active output."
-  echo "  area: Manually select a region."
-  echo "  window: Manually select a window."
+  echo "  area: Manually select a region or window."
   exit
 fi
 
 notify() {
   notify-send -t 3000 -a grimblast "$@"
 }
+
 notifyOk() {
   [ "$NOTIFY" = "no" ] && return
 
-  TITLE=${2:-"Screenshot"}
-  MESSAGE=${1:-"OK"}
-  REST=${@: 3}
-  notify "$TITLE" "$MESSAGE" $REST
+  notify "$@"
 }
+
 notifyError() {
   if [ $NOTIFY = "yes" ]; then
     TITLE=${2:-"Screenshot"}
@@ -92,7 +123,14 @@ notifyError() {
   fi
 }
 
+killHyprpicker() {
+  if [ ! $HYPRPICKER_PID -eq -1 ]; then
+    kill $HYPRPICKER_PID
+  fi
+}
+
 die() {
+  killHyprpicker
   MSG=${1:-Bye}
   notifyError "Error: $MSG"
   exit 2
@@ -100,7 +138,7 @@ die() {
 
 check() {
   COMMAND=$1
-  if command -v "$COMMAND" > /dev/null 2>&1; then
+  if command -v "$COMMAND" >/dev/null 2>&1; then
     RESULT="OK"
   else
     RESULT="NOT FOUND"
@@ -113,73 +151,100 @@ takeScreenshot() {
   GEOM=$2
   OUTPUT=$3
   if [ -n "$OUTPUT" ]; then
-    grim ${CURSOR:+-c} -o "$OUTPUT" "$FILE" || die "Unable to invoke grim"
+    grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} -o "$OUTPUT" "$FILE" || die "Unable to invoke grim"
   elif [ -z "$GEOM" ]; then
-    grim ${CURSOR:+-c} "$FILE" || die "Unable to invoke grim"
+    grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} "$FILE" || die "Unable to invoke grim"
   else
-    grim ${CURSOR:+-c} -g "$GEOM" "$FILE" || die "Unable to invoke grim"
+    grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} -g "$GEOM" "$FILE" || die "Unable to invoke grim"
   fi
 }
 
-if [ "$ACTION" = "check" ] ; then
+if [ "$ACTION" = "check" ]; then
   echo "Checking if required tools are installed. If something is missing, install it to your system and make it available in PATH..."
   check grim
   check slurp
   check hyprctl
+  check hyprpicker
   check wl-copy
   check jq
   check notify-send
   exit
-elif [ "$SUBJECT" = "area" ] ; then
-  GEOM=$(slurp -d)
-  # Check if user exited slurp without selecting the area
-  if [ -z "$GEOM" ]; then
-    exit 1
-  fi
-  WHAT="Area"
-elif [ "$SUBJECT" = "active" ] ; then
+elif [ "$SUBJECT" = "active" ]; then
   FOCUSED=$(hyprctl activewindow -j)
   GEOM=$(echo "$FOCUSED" | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
   APP_ID=$(echo "$FOCUSED" | jq -r '.class')
   WHAT="$APP_ID window"
-elif [ "$SUBJECT" = "screen" ] ; then
+elif [ "$SUBJECT" = "screen" ]; then
   GEOM=""
   WHAT="Screen"
-elif [ "$SUBJECT" = "output" ] ; then
+elif [ "$SUBJECT" = "output" ]; then
   GEOM=""
   OUTPUT=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)' | jq -r '.name')
   WHAT="$OUTPUT"
-elif [ "$SUBJECT" = "window" ] ; then
-  WORKSPACES="$(hyprctl monitors -j | jq -r 'map(.activeWorkspace.id)')"
-  WINDOWS="$(hyprctl clients -j | jq -r --argjson workspaces "$WORKSPACES" 'map(select([.workspace.id] | inside($workspaces)))' )"
-  GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp -r)
+elif [ "$SUBJECT" = "area" ]; then
+  if [ "$FREEZE" = "yes" ] && [ "$(command -v "hyprpicker")" ] >/dev/null 2>&1; then
+    hyprpicker -r -z &
+    sleep 0.2
+    HYPRPICKER_PID=$!
+  fi
+
+  # get fade & fadeOut animation and unset it
+  # this removes the black border seen around screenshots
+  FADE="$(hyprctl -j animations | jq -jr '.[0][] | select(.name == "fade") | .name, ",", (if .enabled == true then "1" else "0" end), ",", (.speed|floor), ",", .bezier')"
+  FADEOUT="$(hyprctl -j animations | jq -jr '.[0][] | select(.name == "fadeOut") | .name, ",", (if .enabled == true then "1" else "0" end), ",", (.speed|floor), ",", .bezier')"
+  hyprctl keyword animation 'fade,0,1,default' >/dev/null
+  hyprctl keyword animation 'fadeOut,0,1,default' >/dev/null
+
+  GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp)
+
+
+  # reset fade
+  hyprctl keyword animation "$FADE" >/dev/null
+  hyprctl keyword animation "$FADEOUT" >/dev/null
+
   # Check if user exited slurp without selecting the area
   if [ -z "$GEOM" ]; then
-   exit 1
+    killHyprpicker
+    exit 1
   fi
-  WHAT="Window"
+  WHAT="Area"
+elif [ "$SUBJECT" = "window" ]; then
+  die "Subject 'window' is now included in 'area'"
 else
   die "Unknown subject to take a screen shot from" "$SUBJECT"
 fi
 
-if [ "$ACTION" = "copy" ] ; then
+if [ "$ACTION" = "copy" ]; then
   takeScreenshot - "$GEOM" "$OUTPUT" | wl-copy --type image/png || die "Clipboard error"
   notifyOk "$WHAT copied to buffer"
-elif [ "$ACTION" = "save" ] ; then
+elif [ "$ACTION" = "save" ]; then
   if takeScreenshot "$FILE" "$GEOM" "$OUTPUT"; then
     TITLE="Screenshot of $SUBJECT"
     MESSAGE=$(basename "$FILE")
-    notifyOk "$MESSAGE" "$TITLE" -i "$FILE"
+    notifyOk "$TITLE" "$MESSAGE" -i "$FILE"
     echo "$FILE"
   else
     notifyError "Error taking screenshot with grim"
   fi
+elif [ "$ACTION" = "edit" ]; then
+  env_editor_confirm
+  if takeScreenshot "$FILE_EDITOR" "$GEOM" "$OUTPUT"; then
+    TITLE="Screenshot of $SUBJECT"
+    MESSAGE="Open screenshot in image editor"
+    notifyOk "$TITLE" "$MESSAGE" -i "$FILE_EDITOR"
+    $GRIMBLAST_EDITOR "$FILE_EDITOR"
+    echo "$FILE_EDITOR"
+  else
+    notifyError "Error taking screenshot"
+  fi
 else
-  if [ "$ACTION" = "copysave" ] ; then
+  if [ "$ACTION" = "copysave" ]; then
     takeScreenshot - "$GEOM" "$OUTPUT" | tee "$FILE" | wl-copy --type image/png || die "Clipboard error"
-    notifyOk "$WHAT copied to buffer and saved to $FILE"
+    notifyOk "$WHAT copied to buffer and saved to $FILE" -i "$FILE"
     echo "$FILE"
   else
     notifyError "Error taking screenshot with grim"
   fi
 fi
+
+killHyprpicker
