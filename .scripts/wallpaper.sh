@@ -10,7 +10,7 @@ CURRENT_WALLPAPER=$(grep -o '$wall=".*"' "$WALLPAPER_CONF" | cut -d '"' -f 2)
 # Check if the wallpaper path is empty:
 if [ -z "$CURRENT_WALLPAPER" ]; then
   # Get a list of all the images in the wallpaper directory:
-  WALLPAPERS=$(find "$WALLPAPER_DIR" -type f -name "*.jpg" -o -name "*.png")
+  WALLPAPERS=$(find "$WALLPAPER_DIR" -type f -name "*.jpg" -o -name "*.png" -o -name "*.jpeg")
 
   # Use rofi to display a list of wallpapers and allow the user to select one:
   SELECTED=$(echo "$WALLPAPERS" | rofi -dmenu -i -p "Select Wallpaper" -theme ~/.config/rofi/wall.rasi)
