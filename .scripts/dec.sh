@@ -5,7 +5,7 @@ if [ $HYPRPERFMODE = 1 ] ; then
     hyprctl --batch "\
         keyword animations:enabled 0;\
         keyword decoration:drop_shadow 0;\
-        keyword decoration:blur 0;\
+        keyword decoration:blur:enabled 0;\
         keyword general:border_size 1;\
         keyword decoration:rounding 0;\
         keyword monitor eDP-1,1920x1080@60,0x0,1"
