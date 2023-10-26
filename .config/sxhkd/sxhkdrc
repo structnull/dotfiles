@@ -30,9 +30,8 @@ super + Escape
 ctrl + alt + Escape
        xkill
 
-#gnome-system-monitor
 ctrl + shift + Escape
-    gnome-system-monitor
+    plasma-systemmonitor
 
 # Quit/Restart bspwm
 ctrl + super + {q,r}
@@ -65,6 +64,10 @@ alt + {h,j,k,l}
 alt + {Left,Down,Up,Right}
 	bspc node -{f,s} {west,south,north,east}
 
+# Window management (replace with your preferred WM commands)
+alt + shift + r
+    bspc wm -r # replace with your preferred WM reload command
+
 # expand/contract a window 
 alt + control + {h,j,k,l}
   bspc node -z {left -20 0 || bspc node -z right -20 0, \
@@ -82,6 +85,12 @@ alt + control + {Left,Down,Up,Right}
 
 super + alt + p
 	bspc config focus_follows_pointer {true,false}
+
+# Mouse bindings (replace with your preferred WM commands)
+alt + button2
+    bspc node -t floating # replace with your preferred floating toggle command
+alt + button1
+    bspc node -t floating; bspc node -v 20 20 # replace with your preferred move window command
 
 # media
 XF86AudioRaiseVolume

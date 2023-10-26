@@ -190,6 +190,7 @@ source /usr/share/fzf/completion.zsh
 export FZF_DEFAULT_COMMAND='ag --hidden -p .gitignore -g ""'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --preview "bat --color=always --style=numbers --line-range=:500 {}"'
+export XCURSOR_PATH=${XCURSOR_PATH}:~/.local/share/icons
 
 # Startup
 eval "$(starship init zsh)"

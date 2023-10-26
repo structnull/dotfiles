@@ -53,19 +53,14 @@ cmd open ${{
 }}
 
 
+
 cmd delete ${{
-	clear; tput cup $(($(tput lines)/3)); tput bold
+	clear; tput cup $((($(tput lines) - 1) / 3)); tput bold
 	set -f
 	printf "%s\n\t" "$fx"
 	printf "delete?[y/N]"
 	read ans
 	[ $ans = "y" ] && rm -rf -- $fx
-}}
-
-cmd bulkrenamevimv ${{
-	vimv --git -- $fx
-	lf -remote "send $id load"
-	lf -remote "send $id unselect"
 }}
 
 cmd chmod_plus_x %{{
@@ -117,10 +112,38 @@ cmd extract ${{
 	[ $ans = "y" ] && aunpack $fx
 }}
 
+cmd batch_rename !{{
+  contentsfile=$(mktemp)
+  trap 'rm $contentsfile' INT TERM EXIT
+  dircontents="$(command ls -1p)"
+  printf "%s" "$dircontents" | nl -n ln > "$contentsfile";
+  $EDITOR "$contentsfile"
+  printf "%s" "$dircontents" | paste -d '\t' "$contentsfile" - \
+  | while read -r line; do
+    orig="$(printf "%s" "$line" | cut -f3 | sed 's!/$!!')"
+    new="$(printf "%s" "$line" | cut -f2 | sed 's!/$!!')"
+    if [ "$new" != "$orig" ]; then
+      if [ -e "$new" ]; then
+        printf "%s already exists, not overwriting.\n" "$new"
+      else
+        printf "./%s -> ./%s\n" "$orig" "$new"
+        command mv -i ./"$orig" ./"$new"
+      fi
+    fi
+  done
+  rm "$contentsfile"
+  trap - INT TERM EXIT
+}}
+
 cmd full_size %{{
 	du -sh $fx
 }}
 
+
+map <m-down> down
+map <m-up> up
+map <m-1> open
+map <m-3> updir
 # Remove some defaults
 map m
 # map o
@@ -155,11 +178,12 @@ map d cut
 map y copy
 map R reload
 map C clear
-map b bulkrenamevimv
 map r rename
+map <c-r> batch_rename
+map r reload
+map . set hidden!
+map U redraw
 
-
-# Movement
 
 set previewer ~/.config/lf/scope
 set cleaner ~/.config/lf/clean
