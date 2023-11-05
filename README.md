@@ -4,6 +4,7 @@
 ![image](https://user-images.githubusercontent.com/87846149/231362579-5dac9e34-0b83-45a7-b8dc-29e6dbe270ad.png)
 ![image](https://user-images.githubusercontent.com/87846149/231362841-ef2c9025-c8bd-4aa7-8e92-90b6219b36c0.png)
 ![image](https://user-images.githubusercontent.com/87846149/231363329-7b2c4e70-c36f-4332-b34b-e2358531568e.png)
+![image](https://github.com/chiefdinkan/dotfiles/assets/87846149/9c6e498c-b8f2-4b13-a9fb-8726bb56c206)
 
 
 * WM: [Hyprland][hypr]
