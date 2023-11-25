@@ -101,17 +101,6 @@
 		"all-outputs": true,
 		"on-click": "activate",
 		"format": "{icon}",
-		"persistent_workspaces": {
-			"1": [],
-			"2": [],
-			"3": [],
-			"4": [],
-			"5": [],
-			"6": [],
-			"7": [],
-			"8": [],
-			"9": []
-		},
 		"format-icons": {
 			"1": "I",
 			"2": "II",
@@ -225,7 +214,6 @@
 		"tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n⬆️ {bandwidthUpBits} ⬇️ {bandwidthDownBits}",
 		"format-linked": "{ifname} (No IP) ",
 		"on-click-right": "nm-connection-editor",
-		"on-click": "bash './rofi-network-manager.sh'"
 	},
 	"pulseaudio": {
 		"format": "{volume}% {icon} {format_source}",
