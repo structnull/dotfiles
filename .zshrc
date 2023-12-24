@@ -182,7 +182,8 @@ alias paclist="pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bi
 alias zshrc="nvim ~/.zshrc"
 alias wttr="curl wttr.in"
 alias bkup="/mnt/1284DEF384DED875/stuff/dotfiles"
-alias fzf='fzfub'
+# alias fzf='fzfub'
+alias lckrec="WAYLAND_SESSION=wayland-1 swaylock"
 # alias hyprcrash="cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log >> sed && paste.sh sed && rm sed"
 # fzf
 source /usr/share/fzf/key-bindings.zsh
