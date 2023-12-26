@@ -182,9 +182,6 @@
       <input clientName="win10" connectPorts="Built-in.*capture_F[LR]"/>
       <output clientName="win10" connectPorts="Built-in.*playback_F[LR]"/>
     </audio>
-    <video>
-      <model type="none"/>
-    </video>
     <hostdev mode="subsystem" type="pci" managed="yes">
       <source>
         <address domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
@@ -210,3 +207,4 @@
     <qemu:env name="PIPEWIRE_LATENCY" value="512/48000"/>
   </qemu:commandline>
 </domain>
+ 
