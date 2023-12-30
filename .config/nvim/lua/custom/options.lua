@@ -17,6 +17,8 @@ vim.cmd [[
 
 vim.g["prettier#autoformat_options"] = "--tab-width 4 --use-tabs"
 
+-- disable swap file
+-- opt.swapfile = false
 -- Set utf8 as standard encoding and en_US as the standard language
 opt.encoding = "utf8"
 -- Use Unix as the standard file type
@@ -39,15 +41,15 @@ opt.errorbells = false
 opt.visualbell = false
 opt.tm = 500
 opt.completeopt = "menu,menuone,noselect"
--- Tab set to four spaces
+-- Tab set to four
 opt.tabstop = 4
 opt.shiftwidth = 4
-opt.softtabstop = 4
-opt.expandtab = true
+-- opt.softtabstop = 4
+opt.expandtab = false
 opt.smarttab = true
--- linebreak on 500 characters
+-- linebreak on 200 characters
 opt.lbr = true
-opt.tw = 500
+opt.tw = 200
 -- Auto indent
 opt.ai = true
 -- Smart indent

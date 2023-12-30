@@ -15,7 +15,6 @@ return {
                 end,
             },
         },
-
         config = function()
             require "plugins.configs.lspconfig"
             require "custom.configs.lspconfig"
@@ -25,14 +24,12 @@ return {
     --------------------------------------------- custom plugins ----------------------------------------------
     -- autoclose tags in html, jsx only
     {
-        "windwp/nvim-ts-autotag",
-        event = "InsertEnter",
-        config = function()
-            require("nvim-ts-autotag").setup()
-        end,
-    },
-    {
         "christoomey/vim-tmux-navigator",
         lazy = false,
     },
+	{
+		"eandrju/cellular-automaton.nvim",
+		lazy = false,
+	},
+
 }

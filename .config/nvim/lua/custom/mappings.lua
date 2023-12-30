@@ -4,12 +4,11 @@ local M = {}
 M.general = {
     n = {
         [";"] = { ":", "enter command mode", opts = { nowait = true } },
-        -- vim tmux navigator 
+        -- vim tmux navigator
         ["<C-h>"] = { "<cmd> TmuxNavigateLeft<CR>", "window left" },
         ["<C-l>"] = { "<cmd> TmuxNavigateRight<CR>", "window right" },
         ["<C-j>"] = { "<cmd> TmuxNavigateDown<CR>", "window down" },
-        ["<C-k>"] = { "<cmd> TmuxNavigateUp<CR>", "window up" },  
-
+        ["<C-k>"] = { "<cmd> TmuxNavigateUp<CR>", "window up" },
         ["<leader>tt"] = {
             function()
                 require("base46").toggle_transparency()
@@ -44,6 +43,7 @@ M.nvterm = {
             end,
             "compile & run a cpp file",
         },
+        ["<leader>mk"] = {"<cmd>CellularAutomaton make_it_rain<CR>","make it rain"},
         ["<leader>pc"] = {
             function()
                 if vim.bo.filetype ~= "python" then
