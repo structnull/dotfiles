@@ -1,5 +1,4 @@
 local null_ls = require "null-ls"
-local b = null_ls.builtins
 local format = null_ls.builtins.formatting
 local sources = {
     -- b.formatting.prettier,

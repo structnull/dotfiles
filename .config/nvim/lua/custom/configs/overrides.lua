@@ -45,6 +45,7 @@ M.mason = {
     ensure_installed = {
         -- lua stuff
         "lua-language-server",
+		"stylua",
         -- python
         "pyright",
         -- web dev
