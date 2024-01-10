@@ -9,6 +9,7 @@ if [ ! -e $TOGGLE ]; then
     notify-send "Internal Microphone Muted"
 else
     rm $TOGGLE
+	pactl set-source-port 1160 analog-input-headset-mic
 	pactl set-source-mute @DEFAULT_SOURCE@ off
     notify-send "Internal Microphone Unmuted"
 fi
