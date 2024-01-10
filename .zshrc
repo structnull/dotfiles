@@ -146,7 +146,7 @@ export EDITOR="nvim"
 export READER="zathura"
 export VISUAL="nvim"
 export TERMINAL="kitty"
-export BROWSER="mercury-browser"
+export BROWSER="firefox"
 export VIDEO="mpv"
 export IMAGE="imv"
 export COLORTERM="truecolor"
@@ -154,7 +154,7 @@ export OPENER="mimeopen"
 export LANG=en_US.UTF-8
 # export MANPAGER='nvim +Man!'
 export PAGER='nvimpager -a'
-export TRUEBROWSER='mercury-browser'
+export TRUEBROWSER='firefox'
 export BAT_THEME='base16-256'
 
 #export paths
@@ -172,6 +172,7 @@ alias l='ls -CF'
 alias wiki='vim -c ":VimwikiIndex"'
 alias v='nvim'
 alias vim='nvim'
+alias dev='/mnt/1284DEF384DED875/s/'
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 alias grep='grep --color=auto'
@@ -182,6 +183,9 @@ alias paclist="pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bi
 alias zshrc="nvim ~/.zshrc"
 alias wttr="curl wttr.in"
 alias bkup="/mnt/1284DEF384DED875/stuff/dotfiles"
+alias cava="TERM=st-256color cava"
+
+
 # alias fzf='fzfub'
 alias lckrec="WAYLAND_SESSION=wayland-1 swaylock"
 # alias hyprcrash="cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log >> sed && paste.sh sed && rm sed"
@@ -192,6 +196,8 @@ export FZF_DEFAULT_COMMAND='ag --hidden -p .gitignore -g ""'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --preview "bat --color=always --style=numbers --line-range=:500 {}"'
 export XCURSOR_PATH=${XCURSOR_PATH}:~/.local/share/icons
+
+
 
 # Startup
 eval "$(starship init zsh)"
