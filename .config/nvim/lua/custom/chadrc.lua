@@ -8,8 +8,8 @@ M.mappings = require "custom.mappings"
 M.ui = {
     theme = "tokyodark",
     statusline = {
-        theme = "minimal",
-        separator_style = "round",
+        theme = "default",
+        separator_style = "default",
     },
     transparency = true,
     -- nvdash (dashboard)
