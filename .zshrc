@@ -166,6 +166,7 @@ export PATH=/home/adharsh/.cargo/bin:$PATH
 alias neofetch='fastfetch'
 alias ls='ls -Gh --color=auto'
 alias ll='ls -alF'
+# alias code='GTK_USE_PORTAL=1 code'
 alias la='ls -A'
 alias ta='tmux attach-session'
 alias l='ls -CF'
