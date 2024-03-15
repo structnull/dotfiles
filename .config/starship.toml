@@ -12,8 +12,8 @@ add_newline = false
 disabled = true
 
 [character]
-success_symbol = "[\uf8c8](#6791c9)"
-error_symbol = " [](#df5b61)"
+success_symbol = "[➜](bold green)"
+error_symbol = " [✖](#df5b61)"
 vicmd_symbol = "[  ](#78b892)"
 
 [hostname]
