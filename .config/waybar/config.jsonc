@@ -30,25 +30,25 @@
 		"battery",
 		"custom/sep",
 		"custom/session",
-		"custom/space"
+		"custom/space",
 	],
 	"custom/sep": {
-		"format": " | "
+		"format": " | ",
 	},
 	"custom/space": {
-		"format": "     "
+		"format": "     ",
 	},
 	"hyprland/window": {
 		"format": "  {}",
 		"max-length": 50,
-		"separate-outputs": true
+		"separate-outputs": true,
 	},
 	"idle_inhibitor": {
 		"format": "{icon}",
 		"format-icons": {
 			"activated": "",
-			"deactivated": ""
-		}
+			"deactivated": "",
+		},
 	},
 	"custom/recorder": {
 		"format": "‎⭕‎",
@@ -57,7 +57,7 @@
 		"exec": "echo '{\"class\": \"recording\"}'",
 		"exec-if": "pgrep wf-recorder",
 		"tooltip": false,
-		"on-click": "killall -s SIGINT wf-recorder"
+		"on-click": "killall -s SIGINT wf-recorder",
 	},
 	"custom/notification": {
 		"tooltip": true,
@@ -66,28 +66,28 @@
 			"notification": "",
 			"none": "",
 			"dnd-notification": "",
-			"dnd-none": ""
+			"dnd-none": "",
 		},
 		"return-type": "json",
 		"exec-if": "which swaync-client",
 		"exec": "swaync-client -swb",
 		"on-click": "swaync-client -t -sw",
 		"on-click-right": "swaync-client -d -sw",
-		"escape": true
+		"escape": true,
 	},
 	"custom/session": {
 		"format": "{icon}",
 		"format-icons": {
-			"default": " 💀 "
+			"default": " 💀   ",
 		},
 		"toolip": true,
-		"on-click": "wlogout -p layer-shell"
+		"on-click": "wlogout -p layer-shell",
 	},
 	"backlight": {
 		"format": "{icon} {percent}%",
 		"format-icons": [
 			""
-		]
+		],
 	},
 	"hyprland/workspaces": {
 		"disable-scroll": true,
@@ -104,8 +104,8 @@
 			"7": "VII",
 			"8": "VIII",
 			"9": "IX",
-			"urgent": ""
-		}
+			"urgent": "",
+		},
 	},
 	"mwlr/workspaces": {
 		"disable-scroll": true,
@@ -122,7 +122,7 @@
 			"7": [],
 			"8": [],
 			"9": [],
-			"10": []
+			"10": [],
 		},
 		"format-icons": {
 			"1": "I",
@@ -135,8 +135,8 @@
 			"8": "VIII",
 			"9": "IX",
 			"10": "X",
-			"urgent": ""
-		}
+			"urgent": "",
+		},
 	},
 	"xwlr/workspaces": {
 		"all-outputs": true,
@@ -150,33 +150,33 @@
 			"5": "",
 			"urgent": "",
 			"active": "",
-			"default": ""
-		}
+			"default": "",
+		},
 	},
 	"tray": {
-		"spacing": 10
+		"spacing": 10,
 	},
 	"clock": {
 		"format": "  {:%I:%M %p |  %d/%m/%Y  } ",
 		"interval": 60,
-		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 	},
 	"custom/bruh": {
 		"interval": 60,
-		"format": "{:  %A %d %b}"
+		"format": "{:  %A %d %b}",
 	},
 	"cpu": {
 		"format": "   {usage}%",
-		"tooltip": false
+		"tooltip": false,
 	},
 	"memory": {
-		"format": " {}%"
+		"format": " {}%",
 	},
 	"battery": {
 		"states": {
 			"good": 95,
 			"warning": 30,
-			"critical": 15
+			"critical": 15,
 		},
 		"format": "{icon}{capacity}%  ",
 		"format-charging": " {capacity}%  ",
@@ -188,16 +188,16 @@
 			"  ",
 			"  ",
 			"  "
-		]
+		],
 	},
 	"battery#bat2": {
-		"bat": "BAT2"
+		"bat": "BAT2",
 	},
 	"custom/power_profile": {
 		"exec": "sleep 0.3 && /home/adharsh/.scripts/powerprofilecycle.sh -m",
 		"interval": 1,
 		"on-click": "/home/adharsh/.scripts/powerprofilecycle.sh",
-		"exec-on-event": true
+		"exec-on-event": true,
 	},
 	"network": {
 		"format-wifi": "  {essid}",
@@ -226,9 +226,9 @@
 				"",
 				"",
 				""
-			]
+			],
 		},
-		"on-click": "pavucontrol"
+		"on-click": "pavucontrol",
 	},
 	"custom/media": {
 		"format": "{icon} {}",
@@ -236,8 +236,8 @@
 		"max-length": 40,
 		"format-icons": {
 			"spotify": "",
-			"default": "🎜"
+			"default": "🎜",
 		},
-		"escape": true
-	}
+		"escape": true,
+	},
 }

@@ -1,21 +1,24 @@
 * {
 	/* `otf-font-awesome` is required to be installed for icons */
 	border: none;
-	font-family: Material Design Icons, FontAwesome, Product Sans,
+	font-family:
+		Product Sans,
+		FontAwesome,
 		JetBrainsMono Nerd Font;
 	font-size: 14px;
 	/* border-radius: 20px; */
 }
 
-window {
-}
+window {}
+
 window#waybar {
 	background: rgba(8, 8, 8, 0.45);
-	border-radius: 7px;
+	border-radius: 8px;
 	transition-property: background-color;
 	transition-duration: 0.5s;
 	/* background: transparent; */
 }
+
 /*-----module groups----*/
 .modules-right {
 	/* background-color: rgba(8,8,8,0.85); */
@@ -23,16 +26,17 @@ window#waybar {
 	margin: 0 -12px 0 0;
 	border-radius: 20px;
 }
+
 .modules-center {
 	background: transparent;
 	margin: 0 0 0 0;
 	border-radius: 20px;
 }
+
 .modules-left {
 	background: transparent;
 	margin: 0 0 0 -12px;
 	border-radius: 20px;
-
 }
 
 tooltip {
@@ -44,26 +48,29 @@ tooltip {
 #workspaces {
 	padding: 0 14px;
 }
+
 #workspaces button {
-    padding: 1px 5px;
-    background: transparent;
-    color: #4c566a;
+	padding: 1px 5px;
+	background: transparent;
+	color: #4c566a;
 }
+
 #workspaces button:hover {
-    box-shadow: inherit;
-    text-shadow: inherit;
-    color: #d8dee9;
+	box-shadow: inherit;
+	text-shadow: inherit;
+	color: #d8dee9;
 }
 
 #workspaces button.active {
-    /* color: #BC83E3; */
+	/* color: #BC83E3; */
 	color: #cdd6f4;
-    transition: all 0.2s cubic-bezier(.55,-0.68,.48,1.682);
+	transition: all 0.2s cubic-bezier(0.55, -0.68, 0.48, 1.682);
 }
+
 #workspaces button.urgent {
-    color: #11111b;
-    background: #fab387;
-    border-radius: 10px;
+	color: #11111b;
+	background: #fab387;
+	border-radius: 10px;
 }
 
 #custom-sep {
@@ -74,7 +81,7 @@ tooltip {
 #window {
 	color: #cdd6f4;
 	font-family: JetbrainsMono Nerd Font;
-	font-size: 12;
+	font-size: 10;
 }
 
 #custom-recorder {
@@ -111,21 +118,27 @@ tooltip {
 #network.disconnected {
 	color: #ff5454;
 }
+
 #network.disabled {
 	color: #e3c78a;
 }
+
 #idle_inhibitor.activated {
 	color: #2dcc36;
 }
+
 #pulseaudio.muted {
 	color: #e3c78a;
 }
+
 #battery.charging {
 	color: #8cc85f;
 }
+
 #battery.warning:not(.charging) {
 	color: #e3c78a;
 }
+
 #battery.critical:not(.charging) {
 	color: #ff5454;
 }
