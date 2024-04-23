@@ -1,3 +1,4 @@
+require "nvchad.options"
 local opt = vim.opt
 
 -- Enable syntax highlight
