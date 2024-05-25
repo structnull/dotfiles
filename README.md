@@ -6,24 +6,21 @@
 ![image](https://user-images.githubusercontent.com/87846149/231363329-7b2c4e70-c36f-4332-b34b-e2358531568e.png)
 ![image](https://github.com/chiefdinkan/dotfiles/assets/87846149/2c17d467-7f4b-4706-8104-af353e89dfba)
 
+-   WM: [Hyprland][hypr]
 
+-   OS: [Arch][archurl] btw
 
-* WM: [Hyprland][hypr]
- 
-* OS: [Arch][archurl] btw
- 
-* Term: [kitty][kittyurl]
- 
-* Launcher: [rofi-ibonn][rofiurl]
+-   Term: [kitty][kittyurl]
 
-* Shell: [Zsh][zshurl]
+-   Launcher: [rofi-ibonn][rofiurl]
 
-* Editor : Neovim , Vscode
- 
-* Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
- 
-* Hardware: [Asus Tuf f15][asus]
+-   Shell: [Zsh][zshurl]
 
+-   Editor : Neovim , Vscode
+
+-   Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
+
+-   Hardware: [Asus Tuf f15][asus]
 
 [hypr]: https://github.com/hyprwm/Hyprland
 [archurl]: https://archlinux.org/

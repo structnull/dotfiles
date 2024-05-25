@@ -15,12 +15,22 @@ return {
       require "configs.lspconfig"
     end,
   },
+  {
+    "mrcjkb/rustaceanvim",
+    version = "^4",
+    ft = { "rust" },
+    dependencies = "neovim/nvim-lspconfig",
+    config = function()
+      require "configs.rustaceanvim"
+    end,
+  },
 
- {
+  {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
         "stylua",
+		"rust-analyzer",
         "html-lsp",
         "css-lsp",
         "json-lsp",
