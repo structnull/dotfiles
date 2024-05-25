@@ -5,6 +5,7 @@ local M = {}
 -- M.plugins = "plugins" -- path for lazy.nvim
 -- M.mappings = require "mappings"
 
+
 M.ui = {
   theme = "tokyodark",
   statusline = {
@@ -30,3 +31,4 @@ M.ui = {
   },
 }
 return M
+

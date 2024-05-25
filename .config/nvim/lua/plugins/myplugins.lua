@@ -22,7 +22,11 @@ return {
   },
 
   --------------------------------------------- custom plugins ----------------------------------------------
-  -- autoclose tags in html, jsx only
+  {
+    "mrcjkb/rustaceanvim",
+    version = "^4", -- Recommended
+    lazy = false, -- This plugin is already lazy
+  },
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
