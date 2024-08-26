@@ -38,11 +38,6 @@
 	"custom/space": {
 		"format": "     ",
 	},
-	"hyprland/window": {
-		"format": "  {}",
-		"max-length": 50,
-		"separate-outputs": true,
-	},
 	"idle_inhibitor": {
 		"format": "{icon}",
 		"format-icons": {
@@ -78,7 +73,7 @@
 	"custom/session": {
 		"format": "{icon}",
 		"format-icons": {
-			"default": " 💀   "
+			"default": " 💀   ",
 		},
 		"toolip": true,
 		"on-click": "wlogout -p layer-shell",
@@ -171,6 +166,13 @@
 	},
 	"memory": {
 		"format": " {}%",
+	},
+	"hyprland/window": {
+		"format": "{title}",
+		"icon": true,
+		"icon-size": 16,
+		"max-length": 50,
+		"separate-outputs": true,
 	},
 	"battery": {
 		"states": {

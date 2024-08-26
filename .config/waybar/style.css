@@ -9,8 +9,6 @@
 	/* border-radius: 20px; */
 }
 
-window {}
-
 window#waybar {
 	background: rgba(8, 8, 8, 0.45);
 	border-radius: 8px;
