@@ -1,0 +1,6 @@
+{"signed_in":false,"milliseconds_since_first_event":0,"type":"App","operation":"first open"}
+{"signed_in":false,"milliseconds_since_first_event":31,"type":"Setting","setting":"theme","value":"One Dark"}
+{"signed_in":false,"milliseconds_since_first_event":31,"type":"Setting","setting":"keymap","value":"VSCode"}
+{"signed_in":false,"milliseconds_since_first_event":0,"type":"App","operation":"welcome page: toggle vim"}
+{"signed_in":false,"milliseconds_since_first_event":3282,"type":"App","operation":"welcome page: toggle metric telemetry"}
+{"signed_in":false,"milliseconds_since_first_event":3283,"type":"Setting","setting":"metric telemetry","value":"false"}

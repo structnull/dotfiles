@@ -7,7 +7,12 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-	"base_keymap": "VSCode",
+	"languages": {
+  "CSS": {
+   "show_inline_completions": true
+  }
+ },
+ "base_keymap": "VSCode",
 	"theme": "Tokyo Night",
 	"buffer_font_family": "JetBrains Mono",
 	"project_panel": {
