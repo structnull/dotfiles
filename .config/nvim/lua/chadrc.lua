@@ -5,16 +5,16 @@ local M = {}
 -- M.plugins = "plugins" -- path for lazy.nvim
 -- M.mappings = require "mappings"
 
+M.base46 = {
+     theme = "tokyodark",
+     hl_add = {},
+     hl_override = {},
+     integrations = {},
+     changed_themes = {},
+     transparency = true,
+}
 
-M.ui = {
-  theme = "tokyodark",
-  statusline = {
-    theme = "default",
-    separator_style = "default",
-  },
-  transparency = true,
-  -- nvdash (dashboard)
-  nvdash = {
+M.nvdash = {
     load_on_startup = true,
     header = {
       [[                                                                       ]],
@@ -28,7 +28,6 @@ M.ui = {
       [[ ██████  █████████████████████ ████ █████ █████ ████ ██████ ]],
       [[                                                                       ]],
     },
-  },
 }
 return M
 
