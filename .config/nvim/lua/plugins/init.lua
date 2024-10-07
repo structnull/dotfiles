@@ -26,24 +26,6 @@ return {
   },
 
   {
-    "williamboman/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "stylua",
-		"rust-analyzer",
-        "html-lsp",
-        "css-lsp",
-        "json-lsp",
-        "prettier",
-        "pyright",
-        "bash-language-server",
-        "clangd",
-        "clang-format",
-      },
-    },
-  },
-
-  {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
