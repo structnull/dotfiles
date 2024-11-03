@@ -7,7 +7,17 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-	"languages": {
+	"assistant": {
+  "default_model": {
+   "provider": "copilot_chat",
+   "model": "gpt-4o"
+  },
+  "version": "2"
+ },
+ "features": {
+  "inline_completion_provider": "copilot"
+ },
+ "languages": {
   "CSS": {
    "show_inline_completions": true
   }
