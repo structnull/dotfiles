@@ -1,0 +1,13 @@
+[Unit]
+Description=Aria2c download manager
+After=network.target network.service
+
+[Service]
+ExecStart=/usr/bin/aria2c --conf-path=/home/adharsh/.config/aria2/aria2.conf
+ExecReload=/usr/bin/kill -HUP $MAINPID
+ExecStop=/usr/bin/kill -TERM $MAINPID
+RestartSec=1min
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
