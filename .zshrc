@@ -83,17 +83,16 @@ ex ()
   fi
 }
 
-# USE LF TO SWITCH DIRECTORIES AND BIND IT TO CTRL-F
-lfcd () {
-    tmp="$(mktemp)"
-    lfub -last-dir-path="$tmp" "$@"
-    if [ -f "$tmp" ]; then
-        dir="$(cat "$tmp")"
-        rm -f "$tmp"
-        [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
-    fi
+function yy() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	yazi "$@" --cwd-file="$tmp"
+	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+		cd -- "$cwd"
+	fi
+	rm -f -- "$tmp"
 }
-bindkey -s '^f' 'lfcd\n'
+
+bindkey -s '^f' 'yy\n'
 
 # Open ranger in current directory:
 #run_ranger () {
@@ -152,8 +151,7 @@ export IMAGE="imv"
 export COLORTERM="truecolor"
 export OPENER="mimeopen"
 export LANG=en_US.UTF-8
-# export MANPAGER='nvim +Man!'
-export PAGER='nvimpager -a'
+export MANPAGER='nvim +Man!'
 export TRUEBROWSER='firefox'
 export BAT_THEME='base16-256'
 
@@ -170,7 +168,6 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias ta='tmux attach-session'
 alias l='ls -CF'
-alias wiki='vim -c ":VimwikiIndex"'
 alias v='nvim'
 alias vim='nvim'
 alias dev='/mnt/1284DEF384DED875/s/'
@@ -188,7 +185,6 @@ alias cava="TERM=st-256color cava"
 
 
 # alias fzf='fzfub'
-alias lckrec="WAYLAND_SESSION=wayland-1 swaylock"
 # alias hyprcrash="cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log >> sed && paste.sh sed && rm sed"
 # fzf
 source /usr/share/fzf/key-bindings.zsh
@@ -210,3 +206,10 @@ mp3 () {
 
 # Load zsh-syntax-highlighting; should be last.
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
+
+# bun completions
+[ -s "/home/adharsh/.bun/_bun" ] && source "/home/adharsh/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"

@@ -21,15 +21,6 @@ export TRUEBROWSER='firefox'
 export BAT_THEME='base16-256'
 export PATH
 
-function fgtab {
-  echo "tput setf/setb - Foreground/Background table"
-  for f in {0..7}; do
-    for b in {0..7}; do
-      echo -en "$(tput setf $f)$(tput setb $b) $f/$b "
-    done
-    echo -e "$(tput sgr 0)"
-  done
-}
 # The prompt in a somewhat Terminal -type independent manner:
 cname="$(tput setf 3)"
 csgn="$(tput setf 4)"
