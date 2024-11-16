@@ -35,4 +35,6 @@ return {
     "eandrju/cellular-automaton.nvim",
     lazy = false,
   },
+  { "nvzone/volt", lazy = true },
+  { "nvzone/menu", lazy = true },
 }
