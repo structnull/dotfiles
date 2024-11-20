@@ -14,6 +14,9 @@ source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 #Load zsh history-substring-search
 source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 
+#load zsh-system-clipboard
+source /usr/share/zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh
+
 #Basic auto/tab complete:
 autoload -U compinit
 zstyle ':completion:*' menu select
@@ -56,18 +59,7 @@ preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 autoload edit-command-line; zle -N edit-command-line
 bindkey '^e' edit-command-line
 
-# copy yank to clipboard
-function vi_yank_clipboard {
-    zle vi-yank
-    if command -v wl-copy &>/dev/null; then
-        echo "$CUTBUFFER" | wl-copy
-    elif command -v xclip &>/dev/null; then
-        echo "$CUTBUFFER" | xclip -selection clipboard
-    fi
-}
-
-zle -N vi_yank_clipboard
-bindkey -M vicmd 'y' vi_yank_clipboard
+bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
 
 
 # Archive extraction:
