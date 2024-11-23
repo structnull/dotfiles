@@ -67,6 +67,12 @@ for i = 1, 9, 1 do
 	end)
 end
 
+for i = 1, 9, 1 do
+  vim.keymap.set("n", string.format("<D-%s>", i), function()
+    vim.api.nvim_set_current_buf(vim.t.bufs[i])
+  end)
+end
+
 -- Call "CellularAutomaton make_it_rain" command
 map("n", "<leader>mk", "<cmd>CellularAutomaton make_it_rain<CR>", {
 	desc = "make it rain",
