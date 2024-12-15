@@ -21,9 +21,10 @@
 		"custom/sep",
 		"custom/power_profile",
 		"custom/sep",
-		"backlight",
+		"group/expand-1",
 		"custom/sep",
 		"pulseaudio",
+		"pulseaudio/slider",
 		"custom/sep",
 		"network",
 		"custom/sep",
@@ -45,13 +46,38 @@
 			"deactivated": "",
 		},
 	},
+	"group/expand-1": {
+		"orientation": "horizontal",
+		"drawer": {
+			"transition-duration": 600,
+			"children-class": "brightnessg",
+			"transition-to-left": true,
+			"click-to-reveal": false,
+		},
+		"modules": [
+			"backlight",
+			"backlight/slider"
+		],
+	},
+	"group/expand-2": {
+		"orientation": "horizontal",
+		"drawer": {
+			"transition-duration": 600,
+			"children-class": "pulseaudiog",
+			"transition-to-left": true,
+			"click-to-reveal": false,
+		},
+		"modules": [
+			"pulseaudio",
+			"pulseaudio/slider"
+		],
+	},
 	"custom/recorder": {
 		"format": "‎⭕‎",
 		"return-type": "json",
 		"interval": 1,
 		"exec": "echo '{\"class\": \"recording\"}'",
 		"exec-if": "pgrep wf-recorder",
-		"tooltip": false,
 		"on-click": "killall -s SIGINT wf-recorder",
 	},
 	"custom/notification": {
@@ -79,10 +105,14 @@
 		"on-click": "wlogout -p layer-shell",
 	},
 	"backlight": {
-		"format": "{icon} {percent}%",
-		"format-icons": [
-			""
-		],
+		"format": "{percent}% {icon} ",
+        "format-icons": ["󰃞", "󰃝", "󰃟", "󰃠"],
+		"backlight/slider": {
+			"min": 1,
+			"max": 100,
+			"rotate": 0,
+			"scroll-step": 1,
+		},
 	},
 	"hyprland/workspaces": {
 		"disable-scroll": true,
@@ -230,7 +260,12 @@
 				""
 			],
 		},
-		"on-click": "pavucontrol",
+		"on-click": "pavucontrol-qt",
+		"pulseaudio/slider": {
+			"min": 0,
+			"max": 100,
+			"orientation": "horizontal",
+		},
 	},
 	"custom/media": {
 		"format": "{icon} {}",

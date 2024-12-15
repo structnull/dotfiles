@@ -1,7 +1,7 @@
 q
+clear
 add Music/spotify_playlist/
 Q
 add *.mp3
-clear
 add Music/music/
 live-filter 

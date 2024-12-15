@@ -134,3 +134,4 @@ XF86MonBrightnessUp
 	~/.scripts/brightness_ctl.sh up
 XF86MonBrightnessDown
 	~/.scripts/brightness_ctl.sh down
+

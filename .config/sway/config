@@ -1,0 +1,112 @@
+# Sway Configuration
+
+### Key Bindings
+set $mod super
+# Launch applications
+bindsym $mod+Return exec kitty
+bindsym $mod+F exec firefox
+bindsym XF86Calculator exec kcalc
+bindsym XF86ScreenSaver exec "$HOME/.scripts/lock.sh & sleep 1 && swaymsg "output * dpms off""
+bindsym $mod+E exec dolphin
+bindsym $mod+Shift+L exec wlogout -p layer-shell
+bindsym Ctrl+Alt+Delete exec wlogout -p layer-shell
+bindsym Alt+Shift+S exec ~/.scripts/grim_ocr.sh
+bindsym $mod+Shift+S exec ~/.scripts/grimblast.sh --notify --freeze copy area
+bindsym Print exec ~/.scripts/grimblast.sh --notify copysave
+bindsym Ctrl+Shift+Escape exec plasma-systemmonitor
+bindsym Ctrl+$mod+R exec ~/.scripts/record-screen.sh
+bindsym Ctrl+$mod+B exec "killall waybar && sleep 2 && waybar"
+bindsym Ctrl+$mod+W exec waypaper
+bindsym Ctrl+$mod+Shift+Q exit
+bindsym $mod+C exec "killall rofi || cliphist list | rofi -dmenu -theme ~/.config/rofi/clip.rasi | cliphist decode | wl-copy"
+bindsym $mod+space exec "killall rofi || rofi -show drun -theme ~/.config/rofi/launcher.rasi"
+
+# Volume and Media Controls
+bindsym XF86AudioRaiseVolume exec ~/.scripts/volume_ctl.sh up
+bindsym Alt+KP_Add exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec ~/.scripts/volume_ctl.sh down
+bindsym Alt+KP_Subtract exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute exec ~/.scripts/volume_ctl.sh mute
+bindsym Alt+M exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioMicMute exec ~/.scripts/mic.sh
+bindsym Alt+X exec ~/.scripts/mic.sh
+bindsym XF86MonBrightnessDown exec ~/.scripts/brightness_ctl.sh down
+bindsym XF86MonBrightnessUp exec ~/.scripts/brightness_ctl.sh up
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym Alt+KP_5 exec playerctl play-pause
+bindsym Alt+KP_6 exec playerctl next
+bindsym Alt+KP_4 exec playerctl previous
+
+# Workspace Management
+bindsym Alt+1 workspace 1
+bindsym Alt+2 workspace 2
+bindsym Alt+3 workspace 3
+bindsym Alt+4 workspace 4
+bindsym Alt+5 workspace 5
+bindsym Alt+6 workspace 6
+bindsym Alt+7 workspace 7
+bindsym Alt+8 workspace 8
+bindsym Alt+9 workspace 9
+bindsym Alt+Shift+1 move container to workspace 1
+bindsym Alt+Shift+2 move container to workspace 2
+bindsym Alt+Shift+3 move container to workspace 3
+bindsym Alt+Shift+4 move container to workspace 4
+bindsym Alt+Shift+5 move container to workspace 5
+bindsym Alt+Shift+6 move container to workspace 6
+bindsym Alt+Shift+7 move container to workspace 7
+bindsym Alt+Shift+8 move container to workspace 8
+bindsym Alt+Shift+9 move container to workspace 9
+
+# Floating and Tiling
+bindsym Alt+S floating toggle
+bindsym Alt+P layout toggle split
+bindsym Alt+Shift+Q kill
+bindsym $mod+F11 fullscreen toggle
+
+# Focus Movement
+bindsym Alt+Left focus left
+bindsym Alt+Right focus right
+bindsym Alt+Up focus up
+bindsym Alt+Down focus down
+
+
+bindsym Alt+h focus left
+bindsym Alt+l focus right
+bindsym Alt+k focus up
+bindsym Alt+j focus down
+
+# Resize Windows
+bindsym Ctrl+Alt+Left resize shrink width 20px
+bindsym Ctrl+Alt+Right resize grow width 20px
+bindsym Ctrl+Alt+Up resize shrink height 20px
+bindsym Ctrl+Alt+Down resize grow height 20px
+
+# Move Windows
+bindsym Alt+Shift+h move left
+bindsym Alt+Shift+l move right
+bindsym Alt+Shift+k move up
+bindsym Alt+Shift+j move down
+
+
+bindsym Alt+Shift+Left move left
+bindsym Alt+Shift+Right move right
+bindsym Alt+Shift+Up move up
+bindsym Alt+Shift+Down move down
+
+# Miscellaneous
+bindsym Alt+Tab focus next
+bindsym $mod+Tab focus parent
+
+# Mouse Bindings
+floating_modifier Alt
+bindsym Alt+Button1 move
+bindsym Alt+Button3 resize
+
+# Status Bar
+bar {
+    swaybar_command waybar
+    position top
+}
+
