@@ -2,19 +2,20 @@
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 polybar &
-xcompmgr -c &
+ picom -b &
+# xcompmgr -c &
 xset r rate 300 50 &
 
-# picom -b &
 /usr/lib/polkit-kde-authentication-agent-1 &
 export _JAVA_AWT_WM_NONREPARENTING=1 &
+export _JAVA_AWT_WM_NONREPARENTING=1 &
 xsetroot -cursor_name left_ptr &
-feh --bg-scale ~/Pictures/wallpapers/wallpapers/maller/deep-dark.jpg
+feh --bg-scale ~/Pictures/aesthetic-wallpapers/images/moon.png &
 
 bspc monitor -d 1 2 3 4 5 6 7 8 9
 
-bspc config border_width         2
-bspc config window_gap          12
+bspc config border_width        2 
+bspc config window_gap          4
 
 bspc config split_ratio          0.52
 bspc config borderless_monocle   true
@@ -34,4 +35,4 @@ bspc config pointer_action2 resize_corner
 
 bspc rule -a WebCord desktop='^4'
 bspc rule -a mpv state=floating
-bspc rule -a discord-screenaudio='^5'
+bspc rule -a vesktop='^5'
