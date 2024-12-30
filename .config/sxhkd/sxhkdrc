@@ -41,6 +41,9 @@ ctrl + super + {q,r}
 super + F11
     bspc node -t "~"fullscreen
 
+@button{10,11}
+    bspc desktop -f {prev,next}
+
 # Toggle beetwen floating & tiled
 alt + s
     bspc node -t "~"{floating,tiled}
