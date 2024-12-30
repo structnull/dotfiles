@@ -2,7 +2,8 @@
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 polybar &
- picom -b &
+picom -b &
+libinput-gestures-setup start &
 # xcompmgr -c &
 xset r rate 300 50 &
 
