@@ -6,6 +6,7 @@ local servers = {
   "html",
   "pyright",
   "astro",
+  "ts_ls",
   "cssls",
   "marksman",
   "jsonls",

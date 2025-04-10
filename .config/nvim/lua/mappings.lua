@@ -13,15 +13,7 @@ end, {
   desc = "Toggle wrap",
 })
 
-map("n", "<leader>tt", function()
-  vim.g.transparency_enabled = not vim.g.transparency_enabled
-  require("base46").toggle_transparency()
-  if vim.g.transparency_enabled then
-    vim.notify("Toggled On", vim.log.levels.INFO, { title = "Transparency" })
-  else
-    vim.notify("Toggled Off", vim.log.levels.INFO, { title = "Transparency" })
-  end
-end, { desc = "Options | Toggle Transparency", silent = true })
+map("n", "<leader>tt", ":lua require('base46').toggle_transparency()<CR>", { noremap = true, silent = true, desc = "Toggle Background Transparency" })
 
 map("n", "<leader>cc", function()
   local file = vim.fn.expand "%:t"
