@@ -3,10 +3,11 @@
 ## Requirements:
 ##  - `grim`: screenshot utility for wayland
 ##  - `slurp`: to select an area
-##  - `hyprctl`: to read properties of current window
-##  - `wl-copy`: clipboard utility
+##  - `hyprctl`: to read properties of current window (provided by Hyprland)
+##  - `hyprpicker`: to freeze the screen when selecting area
+##  - `wl-copy`: clipboard utility (provided by wl-clipboard)
 ##  - `jq`: json utility to parse hyprctl output
-##  - `notify-send`: to show notifications
+##  - `notify-send`: to show notifications (provided by libnotify)
 ## Those are needed to be installed, if unsure, run `grimblast check`
 ##
 ## See `man 1 grimblast` or `grimblast usage` for further details.
@@ -16,6 +17,16 @@
 ## This tool is based on grimshot, with swaymsg commands replaced by their
 ## hyprctl equivalents.
 ## https://github.com/swaywm/sway/blob/master/contrib/grimshot
+
+# Check whether another instance is running
+
+grimblastInstanceCheck="${XDG_RUNTIME_DIR:-$XDG_CACHE_DIR:-$HOME/.cache}/grimblast.lock"
+if [ -e "$grimblastInstanceCheck" ]; then
+  exit 2
+else
+  touch "$grimblastInstanceCheck"
+fi
+trap 'rm -f "$grimblastInstanceCheck"' EXIT
 
 getTargetDirectory() {
   test -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" &&
@@ -39,10 +50,11 @@ env_editor_confirm() {
 }
 
 NOTIFY=no
+OPENFILE_NOTIFICATION=no
 CURSOR=
 FREEZE=
+WAIT=no
 SCALE=
-HYPRPICKER_PID=-1
 
 while [ $# -gt 0 ]; do
   key="$1"
@@ -52,6 +64,10 @@ while [ $# -gt 0 ]; do
     NOTIFY=yes
     shift # past argument
     ;;
+  -o | --openfile)
+    OPENFILE_NOTIFICATION=yes
+    shift # past argument
+    ;;
   -c | --cursor)
     CURSOR=yes
     shift # past argument
@@ -59,6 +75,15 @@ while [ $# -gt 0 ]; do
   -f | --freeze)
     FREEZE=yes
     shift # past argument
+    ;;
+  -w | --wait)
+    shift
+    WAIT=$1
+    if [[ ! "$WAIT" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+      echo "Invalid value for wait '$WAIT'" >&2
+      exit 3
+    fi
+    shift
     ;;
   -s | --scale)
     shift # past argument
@@ -83,7 +108,7 @@ FILE_EDITOR=${3:-$(tmp_editor_directory)/$(date -Ins).png}
 
 if [ "$ACTION" != "save" ] && [ "$ACTION" != "copy" ] && [ "$ACTION" != "edit" ] && [ "$ACTION" != "copysave" ] && [ "$ACTION" != "check" ]; then
   echo "Usage:"
-  echo "  grimblast [--notify] [--cursor] [--freeze] [--scale <scale>] (copy|save|copysave|edit) [active|screen|output|area] [FILE|-]"
+  echo "  grimblast [--notify] [--openfile] [--cursor] [--freeze] [--wait N] [--scale <scale>] (copy|save|copysave|edit) [active|screen|output|area] [FILE|-]"
   echo "  grimblast check"
   echo "  grimblast usage"
   echo ""
@@ -113,6 +138,23 @@ notifyOk() {
   notify "$@"
 }
 
+notifyOpen() {
+  if [ "$OPENFILE_NOTIFICATION" = "no" ]; then
+    notifyOk "$@"
+  else
+    outt=$(notifyOk -A "default=open_folder" "$@")
+    if [ "$outt" == "default" ]; then
+      # this does not work for filenames with commas in them
+      if dbus-send --session --print-reply --dest=org.freedesktop.FileManager1 --type=method_call /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:"$4" string:""; then
+        :
+      else
+        notify-send -t 3000 -a grimblast "Error displaying folder with dbus-send"
+        echo "Displayed: Error displaying folder with dbus-send"
+      fi
+    fi
+  fi
+}
+
 notifyError() {
   if [ $NOTIFY = "yes" ]; then
     TITLE=${2:-"Screenshot"}
@@ -124,8 +166,8 @@ notifyError() {
 }
 
 killHyprpicker() {
-  if [ ! $HYPRPICKER_PID -eq -1 ]; then
-    kill $HYPRPICKER_PID
+  if pidof hyprpicker >/dev/null; then
+    pkill hyprpicker
   fi
 }
 
@@ -146,6 +188,20 @@ check() {
   echo "   $COMMAND: $RESULT"
 }
 
+moveCursorPosition() {
+  [ "$GRIMBLAST_HIDE_CURSOR" ] && return 0
+  initialCursorPosition=$(hyprctl cursorpos)
+  virtualDisplayName="grimblastVD"
+  focusedMonitorName=$(hyprctl -j monitors | jq -r '.[] | select( .focused == true ) | .name')
+
+  hyprctl --batch "output create headless $virtualDisplayName; dispatch focusmonitor $virtualDisplayName" >/dev/null
+}
+
+restoreCursorPosition() {
+  [ "$GRIMBLAST_HIDE_CURSOR" ] && return 0
+  hyprctl --batch "dispatch focusmonitor $focusedMonitorName; output remove $virtualDisplayName; dispatch movecursor ${initialCursorPosition//,/}" >/dev/null
+}
+
 takeScreenshot() {
   FILE=$1
   GEOM=$2
@@ -155,9 +211,25 @@ takeScreenshot() {
   elif [ -z "$GEOM" ]; then
     grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} "$FILE" || die "Unable to invoke grim"
   else
-    grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} -g "$GEOM" "$FILE" || die "Unable to invoke grim"
+    moveCursorPosition
+    if grim ${CURSOR:+-c} ${SCALE:+-s "$SCALE"} -g "$GEOM" "$FILE"; then
+      restoreCursorPosition
+    else
+      die "Unable to invoke grim"
+    fi
   fi
 }
+
+wait() {
+  if [ "$WAIT" != "no" ]; then
+    sleep "$WAIT"
+  fi
+}
+
+if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+  echo "Error: HYPRLAND_INSTANCE_SIGNATURE not set! (is hyprland running?)"
+  exit 1
+fi
 
 if [ "$ACTION" = "check" ]; then
   echo "Checking if required tools are installed. If something is missing, install it to your system and make it available in PATH..."
@@ -170,37 +242,38 @@ if [ "$ACTION" = "check" ]; then
   check notify-send
   exit
 elif [ "$SUBJECT" = "active" ]; then
+  wait
   FOCUSED=$(hyprctl activewindow -j)
   GEOM=$(echo "$FOCUSED" | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
   APP_ID=$(echo "$FOCUSED" | jq -r '.class')
   WHAT="$APP_ID window"
 elif [ "$SUBJECT" = "screen" ]; then
+  wait
   GEOM=""
   WHAT="Screen"
 elif [ "$SUBJECT" = "output" ]; then
+  wait
   GEOM=""
-  OUTPUT=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true)' | jq -r '.name')
+  OUTPUT=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .name')
   WHAT="$OUTPUT"
 elif [ "$SUBJECT" = "area" ]; then
-  if [ "$FREEZE" = "yes" ] && [ "$(command -v "hyprpicker")" ] >/dev/null 2>&1; then
-    hyprpicker -r -z &
-    sleep 0.2
-    HYPRPICKER_PID=$!
+  if [ "$CURSOR" = "yes" ]; then
+    die "Error: '--cursor' cannot be used with subject 'area'"
   fi
 
-  # get fade & fadeOut animation and unset it
+  if [ "$FREEZE" = "yes" ] && [ "$(command -v "hyprpicker")" ] >/dev/null 2>&1; then
+    hyprpicker -r -z &
+  fi
+
+  # disable animation for layer namespace "selection" (slurp)
   # this removes the black border seen around screenshots
-  FADE="$(hyprctl -j animations | jq -jr '.[0][] | select(.name == "fade") | .name, ",", (if .enabled == true then "1" else "0" end), ",", (.speed|floor), ",", .bezier')"
-  FADEOUT="$(hyprctl -j animations | jq -jr '.[0][] | select(.name == "fadeOut") | .name, ",", (if .enabled == true then "1" else "0" end), ",", (.speed|floor), ",", .bezier')"
-  hyprctl keyword animation 'fade,0,1,default' >/dev/null
-  hyprctl keyword animation 'fadeOut,0,1,default' >/dev/null
+  hyprctl keyword layerrule "noanim,selection" >/dev/null
 
-  GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp)
-
-
-  # reset fade
-  hyprctl keyword animation "$FADE" >/dev/null
-  hyprctl keyword animation "$FADEOUT" >/dev/null
+  FULLSCREEN_WORKSPACES="$(hyprctl workspaces -j | jq -r 'map(select(.hasfullscreen) | .id)')"
+  WORKSPACES="$(hyprctl monitors -j | jq -r '[(foreach .[] as $monitor (0; if $monitor.specialWorkspace.name == "" then $monitor.activeWorkspace else $monitor.specialWorkspace end)).id]')"
+  WINDOWS="$(hyprctl clients -j | jq -r --argjson workspaces "$WORKSPACES" --argjson fullscreenWorkspaces "$FULLSCREEN_WORKSPACES" 'map((select(([.workspace.id] | inside($workspaces)) and ([.workspace.id] | inside($fullscreenWorkspaces) | not) or .fullscreen > 0)))')"
+  # shellcheck disable=2086 # if we don't split, spaces mess up slurp
+  GEOM=$(echo "$WINDOWS" | jq -r '.[] | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' | slurp $SLURP_ARGS)
 
   # Check if user exited slurp without selecting the area
   if [ -z "$GEOM" ]; then
@@ -208,6 +281,7 @@ elif [ "$SUBJECT" = "area" ]; then
     exit 1
   fi
   WHAT="Area"
+  wait
 elif [ "$SUBJECT" = "window" ]; then
   die "Subject 'window' is now included in 'area'"
 else
@@ -221,7 +295,8 @@ elif [ "$ACTION" = "save" ]; then
   if takeScreenshot "$FILE" "$GEOM" "$OUTPUT"; then
     TITLE="Screenshot of $SUBJECT"
     MESSAGE=$(basename "$FILE")
-    notifyOk "$TITLE" "$MESSAGE" -i "$FILE"
+    killHyprpicker
+    notifyOpen "$TITLE" "$MESSAGE" -i "$FILE"
     echo "$FILE"
   else
     notifyError "Error taking screenshot with grim"
