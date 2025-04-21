@@ -13,7 +13,12 @@ end, {
   desc = "Toggle wrap",
 })
 
-map("n", "<leader>tt", ":lua require('base46').toggle_transparency()<CR>", { noremap = true, silent = true, desc = "Toggle Background Transparency" })
+map(
+  "n",
+  "<leader>tt",
+  ":lua require('base46').toggle_transparency()<CR>",
+  { noremap = true, silent = true, desc = "Toggle Background Transparency" }
+)
 
 map("n", "<leader>cc", function()
   local file = vim.fn.expand "%:t"
@@ -76,18 +81,23 @@ _G.diagnostics_virtual_text = false
 -- Toggle function for inline diagnostics (virtual_text)
 local function toggle_diagnostics()
   _G.diagnostics_virtual_text = not _G.diagnostics_virtual_text
-  vim.diagnostic.config({
-    virtual_text     = _G.diagnostics_virtual_text,
-    signs            = true,
-    underline        = true,
+  vim.diagnostic.config {
+    virtual_text = _G.diagnostics_virtual_text,
+    signs = true,
+    underline = true,
     update_in_insert = false,
-  })
+  }
   vim.notify(
     _G.diagnostics_virtual_text and "Inline diagnostics enabled" or "Inline diagnostics disabled",
     vim.log.levels.INFO,
     { title = "Diagnostics" }
   )
 end
+
+-- manually overriding the mapping passing in the border style
+map({ "n" }, "K", function()
+  vim.lsp.buf.hover { border = "rounded" }
+end, { desc = "LSP show details", silent = true })
 
 -- Map <leader>s to toggle inline diagnostics
 map("n", "<leader>s", toggle_diagnostics, { desc = "Toggle inline diagnostics", silent = true })
