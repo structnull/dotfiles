@@ -46,12 +46,12 @@ map("n", "<leader>cc", function()
 end, { desc = "Code Runner" })
 
 -- Keyboard users
-vim.keymap.set("n", "<C-t>", function()
+map("n", "<C-t>", function()
   require("menu").open "default"
 end, {})
 
 -- mouse users + nvimtree users!
-vim.keymap.set("n", "<RightMouse>", function()
+map("n", "<RightMouse>", function()
   vim.cmd.exec '"normal! \\<RightMouse>"'
 
   local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
@@ -59,13 +59,13 @@ vim.keymap.set("n", "<RightMouse>", function()
 end, {})
 
 for i = 1, 9, 1 do
-  vim.keymap.set("n", string.format("<A-%s>", i), function()
+  map("n", string.format("<A-%s>", i), function()
     vim.api.nvim_set_current_buf(vim.t.bufs[i])
   end)
 end
 
 for i = 1, 9, 1 do
-  vim.keymap.set("n", string.format("<D-%s>", i), function()
+  map("n", string.format("<D-%s>", i), function()
     vim.api.nvim_set_current_buf(vim.t.bufs[i])
   end)
 end
@@ -93,6 +93,13 @@ local function toggle_diagnostics()
     { title = "Diagnostics" }
   )
 end
+
+map(
+  { "n" },
+  "<leader>fa",
+  "<cmd>Telescope find_files follow=true no_ignore=false hidden=true<CR>",
+  { desc = "telescope find all files" }
+)
 
 -- manually overriding the mapping passing in the border style
 map({ "n" }, "K", function()

@@ -2,9 +2,6 @@
 
 local M = {}
 
--- M.plugins = "plugins" -- path for lazy.nvim
--- M.mappings = require "mappings"
-
 M.base46 = {
      theme = "tokyodark",
      hl_add = {},
@@ -15,7 +12,7 @@ M.base46 = {
 }
 
 M.nvdash = {
-    load_on_startup = true,
+    load_on_startup = false,
     header = {
       [[                                                                       ]],
       [[                                                                     ]],
@@ -29,6 +26,15 @@ M.nvdash = {
       [[                                                                       ]],
     },
 }
+
+-- M.ui = {
+--       tabufline = {
+--          lazyload = false
+--      }
+--}
+
+
+
 return M
 
 
