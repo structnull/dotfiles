@@ -70,6 +70,7 @@ return {
         "html",
         "css",
         "javascript",
+		"dart",
         "hyprlang",
         "json",
         "toml",
@@ -103,16 +104,6 @@ return {
       "stevearc/dressing.nvim", -- optional for vim.ui.select
     },
     config = true,
-  },
-  {
-    "mrcjkb/rustaceanvim",
-    version = "^4",
-    lazy = false, -- This plugin is already lazy
-    ft = { "rust" },
-    dependencies = "neovim/nvim-lspconfig",
-    config = function()
-      require "configs.rustaceanvim"
-    end,
   },
   {
     "christoomey/vim-tmux-navigator",
