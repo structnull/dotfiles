@@ -23,14 +23,22 @@ map(
 map("n", "<leader>cc", function()
   local file = vim.fn.expand "%:t"
   local fp = vim.fn.expand "%:p:h"
-  local ft = vim.bo.ft
+  local ft = vim.bo.filetype
   local supported_ft = { "python", "cpp", "c" }
+
+  -- Check if it's a Dart file or part of a Flutter project
+  local is_flutter_project = vim.fn.filereadable "pubspec.yaml" == 1
+    and vim.fn.match(vim.fn.readfile "pubspec.yaml", "flutter") >= 0
+
+  if is_flutter_project then
+    vim.cmd "Telescope flutter commands"
+    return
+  end
 
   if not vim.tbl_contains(supported_ft, ft) then
     print "Error: Unsupported file type"
     return
   end
-
   require("nvchad.term").runner {
     id = "run",
     pos = "sp",
@@ -43,7 +51,7 @@ map("n", "<leader>cc", function()
       return "cd " .. fp .. " && clear && " .. ft_cmds[ft]
     end,
   }
-end, { desc = "Code Runner" })
+end, { desc = "Code Runner or Flutter Commands" })
 
 -- Keyboard users
 map("n", "<C-t>", function()
@@ -97,7 +105,7 @@ end
 map(
   { "n" },
   "<leader>fa",
-  "<cmd>Telescope find_files follow=true no_ignore=false hidden=true<CR>",
+  "<cmd>Telescope find_files no_ignore=false hidden=true<CR>",
   { desc = "telescope find all files" }
 )
 
