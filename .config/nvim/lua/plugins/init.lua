@@ -13,17 +13,19 @@ return {
       "nvim-telescope/telescope-fzf-native.nvim",
       build = "make",
       lazy = false,
+      require("telescope").setup {
+        extensions = {
+          fzf = {
+            fuzzy = false, -- false will only do exact matching
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true, -- override the file sorter
+            case_mode = "smart_case", -- or "ignore_case" or "respect_case" the default case_mode is "smart_case" }
+          },
+        },
+      },
       config = function()
         require("telescope").load_extension "fzf"
       end,
-    },
-    extensions = {
-      fzf = {
-        fuzzy = false, -- false will only do exact matching
-        override_generic_sorter = true, -- override the generic sorter
-        override_file_sorter = true, -- override the file sorter
-        case_mode = "smart_case", -- or "ignore_case" or "respect_case" the default case_mode is "smart_case" }
-      },
     },
   },
 
@@ -68,6 +70,7 @@ return {
         "html",
         "css",
         "javascript",
+        "hyprlang",
         "json",
         "toml",
         "c",
@@ -92,6 +95,15 @@ return {
   },
 
   --------------------------------------------- custom plugins ----------------------------------------------
+  {
+    "nvim-flutter/flutter-tools.nvim",
+    lazy = false,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "stevearc/dressing.nvim", -- optional for vim.ui.select
+    },
+    config = true,
+  },
   {
     "mrcjkb/rustaceanvim",
     version = "^4",
