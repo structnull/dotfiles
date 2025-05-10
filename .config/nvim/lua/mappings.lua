@@ -53,11 +53,6 @@ map("n", "<leader>cc", function()
   }
 end, { desc = "Code Runner or Flutter Commands" })
 
--- Keyboard users
-map("n", "<C-t>", function()
-  require("menu").open "default"
-end, {})
-
 -- mouse users + nvimtree users!
 map("n", "<RightMouse>", function()
   vim.cmd.exec '"normal! \\<RightMouse>"'
