@@ -19,6 +19,7 @@ map(
   ":lua require('base46').toggle_transparency()<CR>",
   { noremap = true, silent = true, desc = "Toggle Background Transparency" }
 )
+map("n", "<leader>ca", "<Cmd>lua vim.lsp.buf.code_action()<CR>", { desc = "code action" })
 
 map("n", "<leader>cc", function()
   local file = vim.fn.expand "%:t"
