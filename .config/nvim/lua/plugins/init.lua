@@ -27,7 +27,6 @@ return {
   {
     "neovim/nvim-lspconfig",
     config = function()
-      require("nvchad.configs.lspconfig").defaults()
       require "configs.lspconfig"
     end,
   },
@@ -122,6 +121,21 @@ return {
       "nvim-lua/plenary.nvim",
     },
     config = true,
+    opts = {
+      lsp = {
+        on_attach = function(_, bufnr)
+          local map = vim.keymap.set
+          local opts = { buffer = bufnr }
+
+          map("n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
+          map("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
+          map("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
+          map("n", "gs", "<cmd>Telescope lsp_document_symbols<CR>", opts)
+          map("n", "gS", "<cmd>Telescope lsp_workspace_symbols<CR>", opts)
+          map("n", "gy", "<cmd>Telescope lsp_type_definitions<CR>", opts)
+        end,
+      },
+    },
   },
   {
     "christoomey/vim-tmux-navigator",

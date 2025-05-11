@@ -11,8 +11,16 @@ M.base46 = {
      transparency = true,
 }
 
+
+-- M.ui = {
+--       tabufline = {
+--          lazyload = false
+--      }
+--}
+
+
 M.nvdash = {
-    load_on_startup = false,
+    load_on_startup = true,
     header = {
       [[                                                                       ]],
       [[                                                                     ]],
@@ -26,14 +34,6 @@ M.nvdash = {
       [[                                                                       ]],
     },
 }
-
--- M.ui = {
---       tabufline = {
---          lazyload = false
---      }
---}
-
-
 
 return M
 
