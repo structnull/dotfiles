@@ -185,17 +185,6 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/26- Contrition.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/28- And ... to the outside world.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/33- Fight! Fight! Fight! Fight!.flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/01 - Kansas City - Hey-Hey-Hey-Hey! (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/02 - Eight Days A Week (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/03 - You Like Me Too Much (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/04 - Bad Boy (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/05 - I Don't Want To Spoil The Party (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/06 - Words Of Love (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/07 - What You're Doing (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/08 - Yes It Is (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/09 - Dizzy Miss Lizzie (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/10 - Tell Me What You See (Mono).flac
-/home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/11 - Every Little Thing (Mono).flac
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/12 - Kansas City - Hey-Hey-Hey-Hey! (Stereo).flac
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/13 - Eight Days A Week (Stereo).flac
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/14 - You Like Me Too Much (Stereo).flac
