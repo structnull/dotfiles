@@ -1,0 +1,113 @@
+[
+	{
+		"name": "Weather",
+		"type": "weather",
+		"args": {
+			"location": "karunagapally",
+			"update_interval": 60
+		},
+		"actions": [
+			{
+				"name": "Show in Web",
+				"exec": "https://www.wttr.in/bremen",
+				"icon": "sherlock-link",
+				"method": "web_launcher"
+			}
+		],
+		"priority": 1,
+		"home": "OnlyHome",
+		"async": true,
+		"shortcut": false,
+		"spawn_focus": false
+	},
+	{
+		"name": "Spotify",
+		"type": "audio_sink",
+		"alias": "sm",
+		"args": {},
+		"async": true,
+		"priority": 1,
+		"home": "OnlyHome",
+		"spawn_focus": false,
+		"binds": [
+			{
+				"bind": "Return",
+				"callback": "playpause",
+				"exit": false
+			},
+			{
+				"bind": "control+l",
+				"callback": "next",
+				"exit": false
+			},
+			{
+				"bind": "control+h",
+				"callback": "previous",
+				"exit": false
+			}
+		],
+		"actions": [
+			{
+				"name": "Skip",
+				"icon": "media-seek-forward",
+				"method": "inner.next",
+				"exit": false
+			},
+			{
+				"name": "Previous",
+				"icon": "media-seek-backward",
+				"method": "inner.previous",
+				"exit": false
+			}
+		]
+	},
+	{
+		"name": "Calculator",
+		"type": "calculation",
+		"args": {
+			"capabilities": [
+				"calc.math",
+				"calc.units"
+			]
+		},
+		"priority": 1,
+		"on_return": "copy"
+	},
+	{
+		"name": "App Launcher",
+		"alias": "app",
+		"type": "app_launcher",
+		"args": {},
+		"priority": 3,
+		"home": "Home"
+	},
+	{
+		"name": "Kill Process",
+		"alias": "kill",
+		"type": "process",
+		"args": {},
+		"priority": 0
+	},
+	{
+		"name": "Bookmarks",
+		"type": "bookmarks",
+		"args": {
+			"icon": "sherlock-bookmark",
+			"icon_class": "reactive"
+		},
+		"priority": 3,
+		"home": "Search"
+	},
+	{
+		"name": "Web Search",
+		"display_name": "Google Search",
+		"tag_start": "{keyword}",
+		"alias": "gg",
+		"type": "web_launcher",
+		"args": {
+			"search_engine": "google",
+			"icon": "google"
+		},
+		"priority": 100
+	}
+]
