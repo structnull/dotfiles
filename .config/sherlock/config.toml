@@ -1,0 +1,78 @@
+[default_apps]
+teams = "teams-for-linux --enable-features=UseOzonePlatform --ozone-platform=wayland --url {meeting_url}"
+calendar_client = "thunderbird"
+terminal = "kitty"
+browser = "/usr/lib/firefox/firefox %u"
+
+[units]
+lengths = "meters"
+weights = "kg"
+volumes = "l"
+temperatures = "C"
+currency = "eur"
+
+[debug]
+try_suppress_errors = false
+try_suppress_warnings = false
+app_paths = []
+
+[appearance]
+width = 900
+height = 593
+gsk_renderer = "cairo"
+icon_paths = ["~/.config/sherlock/icons"]
+icon_size = 22
+use_base_css = true
+opacity = 1.0
+mod_key_ascii = ["⇧", "⇧", "⌘", "⌘", "⎇", "✦", "✦", "⌘"]
+
+[behavior]
+use_xdg_data_dir_icons = false
+animate = true
+
+[binds]
+up = "control-k"
+down = "control-j"
+left = "control-ih"
+right = "control-l"
+context = "control-i"
+modifier = "control"
+exec_inplace = "control-return"
+
+[files]
+config = "/home/adharsh/.config/sherlock/config.toml"
+css = "/home/adharsh/.config/sherlock/main.css"
+fallback = "/home/adharsh/.config/sherlock/fallback.json"
+alias = "/home/adharsh/.config/sherlock/sherlock_alias.json"
+ignore = "/home/adharsh/.config/sherlock/sherlockignore"
+actions = "/home/adharsh/.config/sherlock/sherlock_actions.json"
+
+[runtime]
+multi = false
+center = false
+photo_mode = false
+display_raw = false
+daemonize = false
+
+[caching]
+enable = true
+cache = "/home/adharsh/.cache/sherlock/sherlock_desktop_cache.json"
+
+[expand]
+enable = false
+edge = "top"
+margin = 0
+
+[backdrop]
+enable = false
+opacity = 0.6
+edge = "top"
+
+[status_bar]
+enable = true
+
+[search_bar_icon]
+enable = true
+icon = "system-search-symbolic"
+icon_back = "go-previous-symbolic"
+size = 22

@@ -10,9 +10,6 @@ mime_type="$(file --mime-type -b "$filepath")"
 type="${mime_type%%/*}"
 subtype="${mime_type##*/}"
 
-# Normalize for OpenXML formats (e.g., docx, xlsx, pptx)
-subtype_clean="$(echo "$subtype" | sed -E 's/^vnd\.openxmlformats-officedocument\.(wordprocessingml|spreadsheetml|presentationml)\..*/\1/')"
-
 # Extract file extension and handle compound extensions (e.g. .tar.gz)
 ext="$(basename "$filename" | grep -oE '\.[^.]+(\.[^.]+)?$' | sed 's/^\.//')"
 
@@ -33,39 +30,55 @@ case "$type" in
     target_dir="$HOME/Pictures/$subtype"
     ;;
 
-  application)
-    case "$subtype_clean" in
-      # Archives
-      zip|x-7z-compressed|x-rar|x-bzip2|x-xz|x-tar|x-gtar|x-iso9660-image|x-lzma|x-zstd)
-        target_dir="$HOME/Downloads/archives/${ext:-$subtype}"
-        ;;
-      # Office-like
-      pdf|msword|rtf|x-mswrite|epub)
-        target_dir="$HOME/Documents/$subtype"
-        ;;
-      # OpenXML docs
-      vnd.openxmlformats-officedocument.wordprocessingml.document)
-        target_dir="$HOME/Documents/word"
-        ;;
-      vnd.openxmlformats-officedocument.spreadsheetml.sheet)
-        target_dir="$HOME/Documents/spreadsheet"
-        ;;
-      vnd.openxmlformats-officedocument.presentationml.presentation)
-        target_dir="$HOME/Documents/presentation"
-        ;;
-      # Executables / binaries
-      x-sharedlib|x-dosexec|x-executable)
-        target_dir="$HOME/Downloads/binaries/$subtype"
-        ;;
-      # Code files
-      x-python-code|x-shellscript|x-csrc|x-c++src|x-java)
-        target_dir="$HOME/Downloads/code/$subtype"
-        ;;
-      octet-stream)
-        target_dir="$HOME/Documents/zim/"
-        ;;
-    esac
-    ;;
+application)
+  case "$subtype" in
+    # Archives
+    zip|x-7z-compressed|x-rar|x-bzip2|x-xz|x-tar|x-gtar|x-iso9660-image|x-lzma|x-zstd)
+      target_dir="$HOME/Downloads/archives/${ext:-$subtype}"
+      ;;
+
+    # Office-like
+    pdf|msword|rtf|x-mswrite|epub)
+      target_dir="$HOME/Documents/$subtype"
+      ;;
+
+    # OpenXML docs (use full MIME subtype)
+    vnd.openxmlformats-officedocument.wordprocessingml.document)
+      target_dir="$HOME/Documents/word"
+      ;;
+    vnd.openxmlformats-officedocument.spreadsheetml.sheet)
+      target_dir="$HOME/Documents/spreadsheet"
+      ;;
+    vnd.openxmlformats-officedocument.presentationml.presentation)
+      target_dir="$HOME/Documents/presentation"
+      ;;
+
+    # LibreOffice / ODF formats (e.g., ODP, ODS, ODT)
+    vnd.oasis.opendocument.text)
+      target_dir="$HOME/Documents/word"
+      ;;
+    vnd.oasis.opendocument.spreadsheet)
+      target_dir="$HOME/Documents/spreadsheet"
+      ;;
+    vnd.oasis.opendocument.presentation)
+      target_dir="$HOME/Documents/presentation"
+      ;;
+
+    # Executables / binaries
+    x-sharedlib|x-dosexec|x-executable)
+      target_dir="$HOME/Downloads/binaries/$subtype"
+      ;;
+
+    # Code files
+    x-python-code|x-shellscript|x-csrc|x-c++src|x-java)
+      target_dir="$HOME/Downloads/code/$subtype"
+      ;;
+
+    octet-stream)
+      target_dir="$HOME/Documents/$subtype"
+      ;;
+  esac
+  ;;
 
   text)
     case "$subtype_clean" in
