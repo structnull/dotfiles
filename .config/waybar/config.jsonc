@@ -77,8 +77,8 @@
 		"return-type": "json",
 		"interval": 1,
 		"exec": "echo '{\"class\": \"recording\"}'",
-		"exec-if": "pgrep wf-recorder",
-		"on-click": "killall -s SIGINT wf-recorder",
+		"exec-if": "pgrep -f gpu-screen-recorder",
+		"on-click": "killall -s SIGINT gpu-screen-recorder",
 	},
 	"custom/notification": {
 		"tooltip": true,
