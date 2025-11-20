@@ -1,32 +1,44 @@
 #!/bin/sh
 
 check_device() {
-    if [ -e "$1" ]; then
-        return 0
-    else
-        return 1
-    fi
+    [ -e "$1" ]
 }
 
-pid=$(pgrep wf-recorder)
+pid=$(pgrep -f gpu-screen-recorder)
 status=$?
 
 if [ $status != 0 ]; then
-    notify-send "Recording has started";
+    notify-send "GPU Screen Recorder" "Recording has started 🎥"
 
-    # Check if /dev/dri/renderD128 exists
-    if check_device "/dev/dri/renderD128" && wf-recorder --audio=alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -c h264_vaapi -d /dev/dri/renderD128 -f "$(xdg-user-dir VIDEOS)/Screencasts/screencast-$(date +'%d-%m-%Y-%H%M%S.mp4')" 2>/dev/null; then
+    # Choose GPU render device (optional check, can skip if gpu-screen-recorder auto-selects)
+    if check_device "/dev/dri/renderD128"; then
         device="/dev/dri/renderD128"
     elif check_device "/dev/dri/renderD129"; then
         device="/dev/dri/renderD129"
     else
-        echo "Neither /dev/dri/renderD128 nor /dev/dri/renderD129 is available or there was an error with both devices."
+        notify-send "GPU Screen Recorder" "No valid /dev/dri/renderD* device found ❌"
         exit 1
     fi
 
-    wf-recorder --audio=alsa_output.pci-0000_00_1f.3.analog-stereo.monitor -c h264_vaapi -d "$device" -f "$(xdg-user-dir VIDEOS)/Screencasts/screencast-$(date +'%d-%m-%Y-%H%M%S.mp4')";
+    # Directory setup
+    output_dir="$(xdg-user-dir VIDEOS)/Screencasts"
+    mkdir -p "$output_dir"
+
+    # Start recording (fullscreen, 60 FPS, with default output audio)
+    gpu-screen-recorder \
+        -w screen \
+        -f 60 \
+        -a default_output \
+        -k auto \
+        -bm qp \
+        -q very_high \
+        -tune quality \
+        -encoder gpu \
+        -o "$output_dir/screencast-$(date +'%d-%m-%Y-%H%M%S').mp4" \
+        >/dev/null 2>&1 &
 
 else
-    pkill --signal SIGINT wf-recorder
-    notify-send "Recording has stopped";
-fi;
+    # Stop recording (SIGINT saves and exits)
+    pkill -SIGINT -f gpu-screen-recorder
+    notify-send "GPU Screen Recorder" "Recording has stopped 💾"
+fi

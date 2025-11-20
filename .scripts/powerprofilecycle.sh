@@ -15,13 +15,13 @@ while getopts "mh" opt; do
     m)
       case $($PGET) in
         performance)
-          echo "    " && exit 0
+          echo "  " && exit 0
           ;;
         power-saver)
-          echo "    " && exit 0
+          echo "   " && exit 0
           ;;
         balanced)
-          echo "    " && exit 0 
+          echo "   " && exit 0 
       esac
       ;;
     h)
