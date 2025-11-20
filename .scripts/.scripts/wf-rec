@@ -1,2 +1,0 @@
- wf-recorder -c gif -g "$(slurp)" -f ~/Videos/Screencasts/$(date +"%Y%m%d_%H%M%S.gif")                   
-

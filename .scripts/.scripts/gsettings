@@ -1,2 +1,0 @@
-gsettings reset org.gnome.desktop.wm.preferences button-layout ##FOR RESET 
-gsettings set org.gnome.desktop.wm.preferences button-layout : ##FOR DISABLING WINDOW CONTROL BUTTONS
