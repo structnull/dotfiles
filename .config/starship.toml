@@ -12,9 +12,9 @@ add_newline = false
 disabled = true
 
 [character]
-success_symbol = "[➜](bold green)"
+success_symbol = "[➜ ](bold green)"
 error_symbol = " [✖](#df5b61)"
-vicmd_symbol = "[  ](#78b892)"
+vicmd_symbol = "[](#78b892)"
 
 [hostname]
 ssh_only = true
