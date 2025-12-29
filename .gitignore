@@ -1,0 +1,5 @@
+.config/*/cache
+.config/mpv/watch_later
+.config/cmus/cache
+.config/ncspot/userstate.cbor
+.config/*/state
