@@ -6,6 +6,9 @@
 ![image](https://user-images.githubusercontent.com/87846149/231363329-7b2c4e70-c36f-4332-b34b-e2358531568e.png)
 ![image](https://github.com/chiefdinkan/dotfiles/assets/87846149/2c17d467-7f4b-4706-8104-af353e89dfba)
 
+
+-  Dotfiles is managed by GNU Stow
+
 -   WM: [Hyprland][hypr]
 
 -   OS: [Arch][archurl] btw
