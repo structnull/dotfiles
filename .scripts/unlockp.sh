@@ -1,21 +1,29 @@
 #!/bin/bash
+set -e
 
-# Ask GPG to decrypt passcode into a variable (password prompt appears)
-pass=$(gpg --quiet --decrypt $HOME/gpg/ssed.gpg 2>/dev/null)
+DB="$HOME/keys/keepass/ssed.kdbx"
+ENTRY="android-phone"
+
+# Retrieve password (non-interactive)
+pass=$(keepassxc-cli show "$DB" "$ENTRY" -s -a Password)
 
 if [[ -z "$pass" ]]; then
-    echo "Failed to decrypt passcode!"
+    echo "❌ Failed to retrieve passcode (is KeePassXC unlocked?)"
     exit 1
 fi
 
-echo "Unlocking device..."
+# Escape spaces for adb
+escaped_pass=$(printf '%s' "$pass" | sed 's/ /%s/g')
 
-adb shell input keyevent 26           # Press lock/power button
+echo "🔓 Unlocking device..."
+
+adb shell input keyevent 26
 sleep 1
-adb shell input touchscreen swipe 930 880 930 380  # Swipe up
+adb shell input swipe 500 1600 500 400 300
 sleep 1
-adb shell input text "$pass"          # Input passcode
-adb shell input keyevent 66           # Press Enter
-sleep 1
-adb shell input keyevent 26           # Press lock/power button (lock again)
-echo "Done!"
+adb shell input text "$escaped_pass"
+adb shell input keyevent 66
+sleep 2
+adb shell input keyevent 26
+
+echo "✅ Done!"
