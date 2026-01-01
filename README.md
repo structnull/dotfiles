@@ -7,7 +7,7 @@
 ![image](https://github.com/chiefdinkan/dotfiles/assets/87846149/2c17d467-7f4b-4706-8104-af353e89dfba)
 
 
--  Dotfiles is managed by GNU Stow
+-   Dotfiles is managed by GNU Stow
 
 -   WM: [Hyprland][hypr]
 
