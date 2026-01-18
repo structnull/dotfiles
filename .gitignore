@@ -3,3 +3,5 @@
 .config/cmus/cache
 .config/ncspot/userstate.cbor
 .config/*/state
+
+*.log
