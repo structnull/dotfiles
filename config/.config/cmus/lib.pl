@@ -1,3 +1,7 @@
+/home/adharsh/Music/mpeg/2nd (audio-extractor.net).mp3
+/home/adharsh/Music/mpeg/malYlm_audio.mp3
+/home/adharsh/Music/x-wav/Compiler Design_ Analysis, Phases, and Lexical Analysis.wav
+/home/adharsh/Music/yt/brown.mp3
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/102 - APETITAN.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/104 - son2seaVer.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/106 - EREN Zahyou.flac
@@ -28,16 +32,16 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/212_ətˈæk 0N tάɪtn _WMId_ (Instrumental).flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/213_Before Lights Out (Instrumental).flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/214_Apple Seed (Instrumental).flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/01. Moon Music (Feat. Jon Hopkins).flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/02. Feelslikeimfallinginlove.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/03. We Pray (Feat. Little Simz, Burna Boy, Elyanna & Tini).flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/04. Jupiter.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/05. Good Feelings (Feat. Ayra Starr).flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/06. Rainbow.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/07. Iaam.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/08. Aeterna.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/09. All My Love.flac
-/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] ⭐️/10. One World.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /01. Moon Music (Feat. Jon Hopkins).flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /02. Feelslikeimfallinginlove.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /03. We Pray (Feat. Little Simz, Burna Boy, Elyanna & Tini).flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /04. Jupiter.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /05. Good Feelings (Feat. Ayra Starr).flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /06. Rainbow.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /07. Iaam.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /08. Aeterna.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /09. All My Love.flac
+/home/adharsh/Music/flac/Coldplay - Moon Music (2024) FLAC [PMEDIA] /10. One World.flac
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 1 - Homework/01. Daftendirekt.flac
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 1 - Homework/02. WDPK 83.7 FM.flac
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 1 - Homework/03. Revolution 909.flac
@@ -122,33 +126,118 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/31- Against the mega disastrous blow.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/34- Catastrophe never ends.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/35- The threat of the Bristle.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/01. STARS.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/02. KEYS TO MY LIFE.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/03. PAID.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/04. TALKING.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/05. BACK TO ME.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/06. HOODRAT.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/07. DO IT.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/08. PAPERWORK.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/09. BURN.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/10. FUK SUMN.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/11. VULTURES.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/12. CARNIVAL.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/13. BEG FORGIVENESS.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/14. GOOD (DON'T DIE).flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/15. PROBLEMATIC.flac
-/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/16. KING.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/01 From Zero (Intro).flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/02 The Emptiness Machine.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/03 Cut the Bridge.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/04 Heavy Is the Crown.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/05 Over Each Other.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/06 Casualty.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/07 Overflow.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/08 Two Faced.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/09 Stained.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/10 IGYEIH.flac
-/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] ⭐️/11 Good Things Go.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /01. STARS.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /02. KEYS TO MY LIFE.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /03. PAID.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /04. TALKING.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /05. BACK TO ME.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /06. HOODRAT.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /07. DO IT.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /08. PAPERWORK.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /09. BURN.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /10. FUK SUMN.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /11. VULTURES.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /12. CARNIVAL.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /13. BEG FORGIVENESS.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /14. GOOD (DON'T DIE).flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /15. PROBLEMATIC.flac
+/home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /16. KING.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/01. Good Times Bad Times - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/02. Babe I'm Gonna Leave You - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/03. You Shook Me - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/04. Dazed and Confused - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/05. Your Time Is Gonna Come - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/06. Black Mountain Side - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/07. Communication Breakdown - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/08. I Can't Quit You Baby - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/09. How Many More Times - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/01. Led Zeppelin - Whole Lotta Love.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/02. Led Zeppelin - What Is And What Should Never Be.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/03. Led Zeppelin - The Lemon Song.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/04. Led Zeppelin - Thank You.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/05. Led Zeppelin - Heartbreaker.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/06. Led Zeppelin - Living Loving Maid (She's Just A Woman).flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/07. Led Zeppelin - Ramble On.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/08. Led Zeppelin - Moby Dick.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - ll 1969/09. Led Zeppelin - Bring It On Home.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/01. Led Zeppelin - Immigrant Song.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/02. Led Zeppelin - Friends.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/03. Led Zeppelin - Celebration Day.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/04. Led Zeppelin - Since I've Been Loving You.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/05. Led Zeppelin - Out On The Tiles.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/06. Led Zeppelin - Gallows Pole.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/07. Led Zeppelin - Tangerine.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/08. Led Zeppelin - That's The Way.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/09. Led Zeppelin - Bron-Y-Aur Stomp.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin lll - 1970/10. Led Zeppelin - Hats Off To (Roy) Harper.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/01. Led Zeppelin - Black Dog.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/02. Led Zeppelin - Rock And Roll.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/03. Led Zeppelin - The Battle Of Evermore.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/04. Led Zeppelin - Stairway To Heaven.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/05. Led Zeppelin - Misty Mountain Hop.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/06. Led Zeppelin - Four Sticks.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/07. Led Zeppelin - Going To California.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - lV 1971/08. Led Zeppelin - When The Levee Breaks.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/01. Led Zeppelin - The Song Remains The Same.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/02. Led Zeppelin - The Rain Song.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/03. Led Zeppelin - Over The Hills And Far Away.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/04. Led Zeppelin - The Crunge.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/05. Led Zeppelin - Dancing Days.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/06. Led Zeppelin - D'yer Maker.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/07. Led Zeppelin - No Quarter.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Houses of the Holy 1973/08. Led Zeppelin - The Ocean.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/01. Led Zeppelin - Custard Pie.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/02. Led Zeppelin - The Rover.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/03. Led Zeppelin - In My Time Of Dying.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/04. Led Zeppelin - Houses Of The Holy.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/05. Led Zeppelin - Trampled Under Foot.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 1/06. Led Zeppelin - Kashmir.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/01. Led Zeppelin - In the Light.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/02. Led Zeppelin - Bron-Yr-Aur.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/03. Led Zeppelin - Down by the Seaside.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/04. Led Zeppelin - Ten Years Gone.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/05. Led Zeppelin - Night Flight.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/06. Led Zeppelin - The Wanton Song.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/07. Led Zeppelin - Boogie with Stu.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/08. Led Zeppelin - Black Country Woman.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Physical Graffiti 1975/Disc 2/09. Led Zeppelin - Sick Again.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/01. In The Evening - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/02. South Bound Saurez - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/03. Fool In The Rain - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/04. Hot Dog - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/05. Carouselambra - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/All My Love - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - In Through The Out Door 1979/07. I'm Gonna Crawl - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/01. We're Gonna Groove - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/02. Poor Tom - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/03. I Can't Quit You Baby - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/04. Walter's Walk - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/05. Ozone Baby - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/06. Darlene - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/07. Bonzo's Montreux - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/08. Wearing And Tearing - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/09. Baby Come On Home (Bonus) - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/10. Travelling Riverside Blues (Bonus) - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/11. White Summer - Black Mountain Side (Bonus) - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Coda 1982/12. Hey Hey What Can I Do (Bonus) - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/01. Achilles Last Stand - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/02. For Your Life - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/03. Royal Orleans - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/04. Nobody's Fault But Mine - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/05. Candy Store Rock - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/06. Hots On For Nowhere - Led Zeppelin.flac
+/home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - Presence 1976/07. Tea For One - Led Zeppelin.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /01 From Zero (Intro).flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /02 The Emptiness Machine.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /03 Cut the Bridge.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /04 Heavy Is the Crown.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /05 Over Each Other.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /06 Casualty.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /07 Overflow.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /08 Two Faced.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /09 Stained.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /10 IGYEIH.flac
+/home/adharsh/Music/flac/Linkin Park - From Zero (2024) [24Bit-48kHz] FLAC [PMEDIA] /11 Good Things Go.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/05-YAMANAIAME _MovieEdit_.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/213 - YAMANAIAME _FMv_.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/108 - YAMANAIAME.flac
@@ -177,6 +266,82 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/02-ymniam-MKorch.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/03-ymniam-orch.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/04-EMAymniam.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/1
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/01. 2 + 2 = 5 (The Lukewarm.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/2
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/02. Sit Down. Stand Up. (Snakes & Ladders.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/3
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/03. Sail To The Moon. (BrushThe Cobwebs Out Of The Sky.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/4
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/04. Backdrifts. (Honeymoon Is Over.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/5
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/05. Go To Sleep. (Little Man Being Erased.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/6
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/06. Where I End And You Begin. (The Sky Is Falling In.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/7
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/07. We Suck Young Blood. (Your Time Is Up.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/8
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/08. The Gloaming. (Softly Open Our Mouths In The Cold.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/9
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/09. There There. (The Boney King Of Nowhere.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/10
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/10. I Will. (No Man’s Land.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/11
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/11. A Punchup At A Wedding. (No No No No No No No No.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/12
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/12. Myxomatosis. (Judge, Jury & Executioner.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/13
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/13. Scatterbrain. (As Dead As Leaves.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/Radiohead - Hail To The Thief (1).cue/14
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 1/14. A Wolf At The Door. (It Girl. Rag Doll.).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/1
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/01. Paperbag Writer.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/2
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/02. Where Bluebirds Fly.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/3
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/03. I Am Citizen Insane.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/4
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/04. Fog (Again) (Live).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/5
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/05. Gagging Order.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/6
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/06. I Am A Wicked Child.flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/7
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/07. Remyxomatosis (Cristian Vogel Remix).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/8
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/08. There There (First Demo).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/9
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/09. Skttrbrain (Four Tet Remix).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/10
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/10. I Will (Los Angeles Version).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/11
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/11. Sail To The Moon (Jo Whiley Show – 28_05_03).flac
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/12. 2 + 2 = 5 (Live At Earls Court, London, 26_11_03).flac
+cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/Radiohead - Hail To The Thief (2).cue/13
+/home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe) [FLAC] 88/CD 2/13. Go To Sleep (Zane Lowe – 08_12_03).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/01 - Airbag (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/02 - Paranoid Android (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/03 - Subterranean Homesick Alien (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/04 - Exit Music (For A Film) (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/05 - Let Down (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/06 - Karma Police (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/07 - Fitter Happier (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/08 - Electioneering (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/09 - Climbing Up the Walls (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/10 - No Surprises (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/11 - Lucky (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/12 - The Tourist (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/13 - I Promise.flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/14 - Man of War.flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/15 - Lift.flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/16 - Lull (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/17 - Meeting in the Aisle.flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/18 - Melatonin (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/19 - A Reminder (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/20 - Polyethylene (Parts 1 & 2) (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/21 - Pearly_ (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/22 - Palo Alto (Remastered).flac
+/home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/23 - How I Made My Millions (Remastered).flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/02- A・o・T - Main Theme.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/06- To live if you win.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/09- Run away! Titan come hit!!.flac
