@@ -1,0 +1,63 @@
+# cpx configuration file
+# For more information, see: https://github.com/11happy/cpx/docs/configuration.md
+
+# Exclude patterns (glob syntax supported)
+# Example: patterns = ["*.tmp", "*.log", "node_modules", ".git"]
+[exclude]
+patterns = []
+
+
+# Copy operation settings
+[copy]
+parallel = 8
+recursive = false
+parents = false
+force = false
+interactive = false
+resume = false
+attributes_only = false
+remove_destination = false
+
+
+# Preserve file attributes
+# mode values: "none", "default", "all", or "mode,timestamps,ownership"
+[preserve]
+mode = "default"
+
+
+# Symlink handling
+# mode: "auto", "absolute", "relative"
+# follow: "never" (-P), "always" (-L), "command-line" (-H)
+[symlink]
+mode = ""
+follow = ""
+
+
+# Backup settings
+# mode: "none", "simple" (~), "numbered" (~1~, ~2~), "existing"
+[backup]
+mode = "none"
+
+
+# Copy-on-Write (reflink) settings
+# mode: "auto", "always", "never"
+[reflink]
+mode = "auto"
+
+
+# Progress bar settings
+
+[progress]
+style = "detailed"
+
+# Progress bar characters
+[progress.bar]
+filled = "="
+empty = "·"
+head = ">"
+
+
+# Supported progress bar colors: black, red, green, yellow, blue, magenta, cyan, white
+[progress.color]
+bar = "white"
+message = "white"
