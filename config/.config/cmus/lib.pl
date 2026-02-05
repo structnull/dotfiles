@@ -9,6 +9,7 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/215 - AOTs2M#2.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/216 - AOTs2M#3.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/217 - AOTs2M#4.flac
+/home/adharsh/Music/flac/KOMPA-2007/10 - Banm Pemisyon.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/101_K2-.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/103_SymphonicSuite[AoT]Part1-1st-0Sk.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/104_SymphonicSuite[AoT]Part1-2nd-一s十りA.flac
@@ -73,6 +74,8 @@
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 2 - Remixes/13. Around The World (RAW Dub).flac
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 2 - Remixes/14. Teachers (Extended Mix).flac
 /home/adharsh/Music/flac/Daft Punk - Homework (2022 25th Anniversary Edition) [FLAC] 88/CD 2 - Remixes/15. Revolution 909 (Revolution Accapella).flac
+/home/adharsh/Music/flac/KOMPA-2007/02 - Eskive.flac
+/home/adharsh/Music/flac/KOMPA-2007/14 - Eskive Live.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/110 - Shingeki st-hrn-egt20130629 Kyojin.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/112 - Shingeki st-hrn-gt-pf20130629 Kyojin.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/115 - Shingeki st-hrn-gt20130629 Kyojin.flac
@@ -91,6 +94,7 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/116_ERENthe標 _MOVIEver._.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/212 - TheWeightOfLives.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/214 - AOTs2M#1.flac
+/home/adharsh/Music/flac/KOMPA-2007/12 - Ouvè Le Ko.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Soundtrack [24bit]/03. eye-water.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Soundtrack [24bit]/04. 立body機motion.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Soundtrack [24bit]/05. cóunter・attàck-mˈænkάɪnd.flac
@@ -113,6 +117,7 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Soundtrack II [FLAC]/10 Shingeki st-hrn-gt20130629 Kyojin.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Soundtrack II [FLAC]/11 Shingeki pf-medley20130629 Kyojin.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Movie Soundtrack [FLAC]/02_ERENthe標 _MOVIEver._.flac
+/home/adharsh/Music/flac/KOMPA-2007/09 - Bonita.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/01- Slaughter them all!!.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/03- Prepare to fly, or Die.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/05- The Gigantic Titan.flac
@@ -142,6 +147,10 @@
 /home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /14. GOOD (DON'T DIE).flac
 /home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /15. PROBLEMATIC.flac
 /home/adharsh/Music/flac/Kanye West, Ty Dolla $ign - VULTURES 1 (2024) [24Bit-48kHz] FLAC [PMEDIA] /16. KING.flac
+/home/adharsh/Music/flac/KOMPA-2007/08 - Illusion.flac
+/home/adharsh/Music/flac/KOMPA-2007/13 - Kreyol La Pa Piyay.flac
+/home/adharsh/Music/flac/KOMPA-2007/04 - Negosyé.flac
+/home/adharsh/Music/flac/KOMPA-2007/06 - La tête Aux Pieds.flac
 /home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/01. Good Times Bad Times - Led Zeppelin.flac
 /home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/02. Babe I'm Gonna Leave You - Led Zeppelin.flac
 /home/adharsh/Music/flac/Led Zeppelin - Studio Discography 1969 - 1982 [FLAC] - Kitlope/Led Zeppelin - l 1969/03. You Shook Me - Led Zeppelin.flac
@@ -263,6 +272,7 @@
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/103 - YouSeeBIGGIRL-T-T.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 2 Soundtrack [24bit]/111 - So ist es immer.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Season 3 Soundtrack [24bit]/110_SymphonicSuite[AoT]Part2-1st-ətˈæk 0N tάɪtn _WMId_.flac
+/home/adharsh/Music/flac/KOMPA-2007/07 - Zanmi.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/02-ymniam-MKorch.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/03-ymniam-orch.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan Movie Part 1 Soundtrack [FLAC]/04-EMAymniam.flac
@@ -342,6 +352,7 @@ cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe)
 /home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/21 - Pearly_ (Remastered).flac
 /home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/22 - Palo Alto (Remastered).flac
 /home/adharsh/Music/flac/Radiohead - OK Computer OKNOTOK 1997 2017/23 - How I Made My Millions (Remastered).flac
+/home/adharsh/Music/flac/KOMPA-2007/03 - Kompa MMS.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/02- A・o・T - Main Theme.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/06- To live if you win.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/09- Run away! Titan come hit!!.flac
@@ -361,6 +372,8 @@ cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe)
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/20 - Dizzy Miss Lizzie (Stereo).flac
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/21 - Tell Me What You See (Stereo).flac
 /home/adharsh/Music/flac/The Beatles - Beatles VI (2014 Deluxe Edition FLAC) 88/22 - Every Little Thing (Stereo).flac
+/home/adharsh/Music/flac/KOMPA-2007/01 - Kitem Viv.flac
+/home/adharsh/Music/flac/KOMPA-2007/05 - Viktwa.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/04- Can I touch your arrrrrm!.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/07- Fool on the wall.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/10- Between hope and despair.flac
@@ -375,3 +388,4 @@ cue:///home/adharsh/Music/flac/Radiohead - Hail To The Thief (2003, 2009 Deluxe)
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/29- Ender's revenge, ever not.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/30- The great chase.flac
 /home/adharsh/Music/flac/[NoobTracks] Attack on Titan~Shingeki no Kyojin Soundtrack Collection [FLAC]/[NoobTracks] Attack on Titan~A.O.T. SOUNDTRACK [FLAC]/32- A red muffler.flac
+/home/adharsh/Music/flac/KOMPA-2007/11 - Séré Kozé.flac
