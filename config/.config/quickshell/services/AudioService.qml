@@ -1,0 +1,115 @@
+pragma Singleton
+pragma ComponentBehavior: Bound
+
+import Quickshell
+import Quickshell.Services.Pipewire
+import Quickshell.Io
+import QtQuick
+
+Singleton {
+    id: root
+
+    readonly property var sink: Pipewire.defaultAudioSink
+    readonly property PwNode source: Pipewire.defaultAudioSource
+
+    // Keeps the objects alive in memory
+    PwObjectTracker {
+        objects: [root.sink, root.source]
+    }
+
+    // Check if the sink is ready to operate
+    readonly property bool sinkReady: sink !== null && sink.audio !== null
+    readonly property bool sourceReady: source !== null && source.audio !== null
+
+    readonly property bool muted: sinkReady ? (sink.audio.muted ?? false) : false
+    readonly property real volume: {
+        if (!sinkReady)
+            return 0;
+        const vol = sink.audio.volume;
+        return Math.max(0, Math.min(1, vol));
+    }
+    readonly property int percentage: Math.round(volume * 100)
+
+    readonly property bool sourceMuted: sourceReady ? (source.audio.muted ?? false) : false
+    readonly property real sourceVolume: sourceReady ? (source.audio.volume ?? 0) : 0
+    readonly property int sourcePercentage: Math.round(sourceVolume * 100)
+    property string activeOutputPort: ""
+
+    readonly property string outputDeviceType: {
+        const sinkText = ((sink?.description ?? sink?.nickname ?? sink?.name ?? "") + "").toLowerCase();
+        const port = activeOutputPort.toLowerCase();
+        if (sinkText.includes("bluez") || sinkText.includes("bluetooth") || port.includes("bluez") || port.includes("bluetooth"))
+            return "bluetooth";
+        if (port.includes("headphone") || port.includes("headset") || port.includes("ear"))
+            return "headphones";
+        if (port.includes("speaker"))
+            return "speaker";
+        return "speaker";
+    }
+
+    readonly property string systemIcon: {
+        if (!sinkReady || muted || volume <= 0)
+            return "";
+
+        if (volume < 0.33)
+            return "";
+
+        if (volume < 0.67)
+            return "";
+
+        return "";
+    }
+
+    function setVolume(newVolume) {
+        if (sinkReady) {
+            sink.audio.muted = false;
+            sink.audio.volume = Math.max(0, Math.min(1, newVolume));
+        }
+    }
+
+    function toggleMute() {
+        if (sinkReady) {
+            sink.audio.muted = !sink.audio.muted;
+        }
+    }
+
+    function increaseVolume() {
+        setVolume(volume + 0.05);
+    }
+
+    function decreaseVolume() {
+        setVolume(volume - 0.05);
+    }
+
+    function setSourceVolume(newVolume) {
+        if (sourceReady && source.audio) {
+            source.audio.muted = false;
+            source.audio.volume = Math.max(0, Math.min(1.5, newVolume));
+        }
+    }
+
+    function toggleSourceMute() {
+        if (sourceReady && source.audio) {
+            source.audio.muted = !source.audio.muted;
+        }
+    }
+
+    Process {
+        id: outputPortProc
+        command: ["bash", "-c", "def=$(pactl get-default-sink 2>/dev/null); [ -z \"$def\" ] && exit 0; " + "pactl list sinks 2>/dev/null | awk -v def=\"$def\" '" + "/^[[:space:]]*Name: / {name=$2} " + "/^[[:space:]]*Active Port: / {if (name==def) {print $3; exit}}" + "'"]
+        stdout: SplitParser {
+            onRead: data => {
+                const port = data.trim();
+                if (port !== "")
+                    root.activeOutputPort = port;
+            }
+        }
+    }
+
+    Timer {
+        interval: 2500
+        running: true
+        repeat: true
+        onTriggered: outputPortProc.running = true
+    }
+}

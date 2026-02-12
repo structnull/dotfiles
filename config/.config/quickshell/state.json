@@ -1,0 +1,17 @@
+{
+  "wallpaper": {
+    "current": "/home/adharsh/Pictures/wall/wallpapers/wallpapers/uyruyr.png"
+  },
+  "theme": {
+    "mode": "preset",
+    "scheme": "dark",
+    "name": "monochrome"
+  },
+  "nightLight": {
+    "enabled": true,
+    "intensity": 0.5675733612804879
+  },
+  "opacity": {
+    "background": 0.48
+  }
+}
