@@ -1,0 +1,154 @@
+pragma ComponentBehavior: Bound
+import Quickshell
+import Quickshell.Wayland
+import QtQuick
+import QtQuick.Layouts
+import qs.config
+import qs.services
+import "../../components/"
+import "../quickSettings/"
+import "../notifications/"
+import "../systemMonitor/"
+import "../calendar/"
+import "../powerProfile/"
+import "../battery/"
+
+Scope {
+    id: root
+
+    readonly property int gapIn: 4
+    readonly property int gapOut: 10
+    readonly property int floatPadX: 8
+    readonly property int floatPadY: 2
+
+    Variants {
+        model: Quickshell.screens
+
+        PanelWindow {
+            id: panelWindow
+            required property var modelData
+
+            property bool enableAutoHide: StateService.get("bar.autoHide", false)
+
+            // NameSpace
+            WlrLayershell.namespace: "qs_modules"
+
+            // --- BAR CONFIGURATION ---
+            implicitHeight: StateService.get("bar.height", 30) + (root.floatPadY * 2)
+            color: "transparent"
+            screen: modelData
+
+            // Overlay ensures it stays above games/fullscreen
+            // WlrLayershell.layer: WlrLayer.Overlay
+
+            // Set the exclusion mode
+            exclusionMode: enableAutoHide ? ExclusionMode.Ignore : ExclusionMode.Normal
+
+            // Ensure reserved area size when in Normal mode
+            exclusiveZone: enableAutoHide ? 0 : height
+
+            anchors {
+                top: true
+                left: true
+                right: true
+            }
+
+            // --- AUTOHIDE LOGIC ---
+            // If mouse is hovering, margin is 0 (show everything).
+            // Otherwise, margin is -29 (hide, leaving 1px at the top to catch the mouse).
+            margins.top: {
+                if (WindowManagerService.anyModuleOpen || !enableAutoHide || mouseSensor.hovered)
+                    return 0;
+
+                return (-1 * (height - 1));
+            }
+
+            // Smooth window movement animation
+            Behavior on margins.top {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: Easing.OutExpo
+                }
+            }
+
+            // --- MOUSE SENSOR ---
+            // Covers the entire window. Since the window never "disappears" (only moves off-screen),
+            // the remaining 1px still detects the mouse.
+            HoverHandler {
+                id: mouseSensor
+            }
+
+            Rectangle {
+                id: barContent
+                anchors {
+                    fill: parent
+                    leftMargin: root.floatPadX
+                    rightMargin: root.floatPadX
+                    topMargin: root.floatPadY
+                    bottomMargin: root.floatPadY
+                }
+                color: Config.backgroundTransparentColor
+                radius: 8
+                border.width: 1
+                border.color: Qt.alpha(Config.textColor, 0.2)
+
+                // --- LEFT ---
+                RowLayout {
+                    anchors.left: parent.left
+                    anchors.leftMargin: root.gapOut
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: root.gapIn
+
+                    Workspaces {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    Item {
+                        Layout.preferredWidth: 6
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    ActiveWindow {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
+
+                // --- CENTER ---
+                RowLayout {
+                    anchors.centerIn: parent
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: root.gapIn
+
+                    CalendarButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
+
+                // --- RIGHT ---
+                RowLayout {
+                    anchors.right: parent.right
+                    anchors.rightMargin: root.gapOut
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: root.gapIn
+
+                    PowerProfileButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    SystemMonitorButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    TrayWidget {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    QuickSettingsButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    BatteryStatusButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                    NotificationButton {
+                        Layout.alignment: Qt.AlignVCenter
+                    }
+                }
+            }
+        }
+    }
+}
