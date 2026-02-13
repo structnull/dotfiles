@@ -89,7 +89,7 @@ Scope {
                 color: Config.backgroundTransparentColor
                 radius: 8
                 border.width: 1
-                border.color: Qt.alpha(Config.textColor, 0.2)
+                border.color: Qt.alpha(Config.textColor, 0.15)
 
                 // --- LEFT ---
                 RowLayout {
