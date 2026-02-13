@@ -3,7 +3,6 @@
     "current": "/home/adharsh/Pictures/wall/wallpapers/wallpapers/uyruyr.png"
   },
   "theme": {
-    "mode": "preset",
     "scheme": "dark",
     "name": "monochrome"
   },
@@ -13,5 +12,8 @@
   },
   "opacity": {
     "background": 0.48
+  },
+  "caffeine": {
+    "enabled": false
   }
 }

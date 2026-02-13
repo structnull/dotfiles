@@ -116,14 +116,6 @@ Item {
                 }
             }
 
-            // Theme color
-            ActionButton {
-                icon: "󰏘"
-                textColor: Config.accentColor
-                hoverTextColor: Config.accentColor
-                onClicked: pageStack.currentIndex = 4
-            }
-
             // Power Menu
             ClearButton {
                 icon: "⏻"

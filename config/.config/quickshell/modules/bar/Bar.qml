@@ -10,7 +10,6 @@ import "../quickSettings/"
 import "../notifications/"
 import "../systemMonitor/"
 import "../calendar/"
-import "../powerProfile/"
 import "../battery/"
 
 Scope {
@@ -57,7 +56,7 @@ Scope {
             // If mouse is hovering, margin is 0 (show everything).
             // Otherwise, margin is -29 (hide, leaving 1px at the top to catch the mouse).
             margins.top: {
-                if (WindowManagerService.anyModuleOpen || !enableAutoHide || mouseSensor.hovered)
+                if (!enableAutoHide || mouseSensor.hovered)
                     return 0;
 
                 return (-1 * (height - 1));
@@ -129,13 +128,10 @@ Scope {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: root.gapIn
 
-                    PowerProfileButton {
+                    TrayWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     SystemMonitorButton {
-                        Layout.alignment: Qt.AlignVCenter
-                    }
-                    TrayWidget {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     QuickSettingsButton {

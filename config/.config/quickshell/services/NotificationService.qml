@@ -4,6 +4,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
 import qs.config
+import qs.services
 
 Singleton {
     id: root
@@ -14,32 +15,45 @@ Singleton {
 
     property bool dndEnabled: false
 
-    function toggleDnd() {
-        dndEnabled = !dndEnabled;
-        
-        if (dndEnabled) {
-            // When DND is enabled, remove all active popups
-            for (let i = 0; i < notifications.length; i++) {
-                if (notifications[i] && notifications[i].popup) {
-                    notifications[i].popup = false;
-                    notifications[i].tickTimer.stop();
-                }
+    function clearActivePopups() {
+        for (let i = 0; i < notifications.length; i++) {
+            if (notifications[i] && notifications[i].popup) {
+                notifications[i].popup = false;
+                notifications[i].tickTimer.stop();
             }
         }
     }
 
+    function applyDndState(enabled: bool) {
+        if (dndEnabled === enabled)
+            return;
+
+        dndEnabled = enabled;
+        if (enabled)
+            clearActivePopups();
+    }
+
+    function syncDndFromState() {
+        const persisted = StateService.get("notifications.dnd", dndEnabled);
+        applyDndState(persisted);
+    }
+
+    function toggleDnd() {
+        setDnd(!dndEnabled);
+    }
+
     function setDnd(enabled: bool) {
-        if (dndEnabled !== enabled) {
-            dndEnabled = enabled;
-            if (enabled) {
-                // Remove active popups
-                for (let i = 0; i < notifications.length; i++) {
-                    if (notifications[i] && notifications[i].popup) {
-                        notifications[i].popup = false;
-                        notifications[i].tickTimer.stop();
-                    }
-                }
-            }
+        applyDndState(enabled);
+        StateService.set("notifications.dnd", dndEnabled);
+    }
+
+    Component.onCompleted: syncDndFromState()
+
+    Connections {
+        target: StateService
+
+        function onStateLoaded() {
+            root.syncDndFromState();
         }
     }
 

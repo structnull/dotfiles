@@ -30,7 +30,7 @@ Scope {
             }
 
             margins {
-                top: 10
+                top: Config.barHeight + 10
                 right: 10
             }
 

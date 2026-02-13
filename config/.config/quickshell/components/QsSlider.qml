@@ -12,6 +12,9 @@ Item {
     property real to: 1
     property string icon: ""
     property bool showPercentage: true
+    property bool alwaysShowPercentage: false
+    property bool percentageFromRawValue: false
+    property color fillColor: Config.accentColor
 
     // SIGNALS
     signal moved(real newValue)
@@ -110,12 +113,18 @@ Item {
                             return parent.width * percent;
                         }
 
-                        color: Config.accentColor
+                        color: root.fillColor
 
                         Behavior on width {
                             NumberAnimation {
                                 duration: Config.animDurationShort
                                 easing.type: Easing.OutQuad
+                            }
+                        }
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Config.animDurationShort
                             }
                         }
                     }
@@ -125,7 +134,11 @@ Item {
                         visible: root.showPercentage
                         anchors.centerIn: parent
 
-                        text: Math.round(((root.value - root.from) / (root.to - root.from)) * 100) + "%"
+                        text: {
+                            if (root.percentageFromRawValue)
+                                return Math.round(root.value * 100) + "%";
+                            return Math.round(((root.value - root.from) / (root.to - root.from)) * 100) + "%";
+                        }
 
                         font.family: Config.font
                         font.bold: true
@@ -135,7 +148,7 @@ Item {
                         property bool isCovered: fill.width > (parent.width / 2)
                         color: isCovered ? Config.textReverseColor : Config.textColor
 
-                        opacity: (sliderMouse.containsMouse || sliderMouse.pressed) ? 1.0 : 0.0
+                        opacity: root.alwaysShowPercentage || (sliderMouse.containsMouse || sliderMouse.pressed) ? 1.0 : 0.0
                         Behavior on opacity {
                             NumberAnimation {
                                 duration: Config.animDuration

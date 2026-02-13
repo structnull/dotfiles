@@ -4,14 +4,13 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
-import Quickshell.Widgets
 import qs.services
 import qs.config
+import "../../components/"
 
 Scope {
     id: root
 
-    // Icons for each type (Nerd Font)
     readonly property var icons: ({
             "volume_off": "󰖁",
             "volume_low": "󰕿",
@@ -23,48 +22,91 @@ Scope {
             "brightness_high": "󰃠"
         })
 
-    function getIcon(): string {
-        if (OsdService.type === "mute" || OsdService.muted) {
+    readonly property real normalizedValue: Math.max(0, Math.min(1, OsdService.value))
+
+    readonly property real sliderValue: {
+        if (OsdService.type === "brightness")
+            return Math.max(0.05, Math.min(1.0, BrightnessService.brightness));
+        if (AudioService.muted)
+            return 0;
+        return Math.max(0, Math.min(1.5, AudioService.volume));
+    }
+
+    readonly property real sliderTo: OsdService.type === "brightness" ? 1.0 : 1.5
+
+    function getIcon() {
+        if (OsdService.muted)
             return icons.mute;
-        }
+
         if (OsdService.type === "brightness") {
-            if (OsdService.value < 0.3)
+            if (normalizedValue < 0.3)
                 return icons.brightness_low;
-            if (OsdService.value < 0.6)
+            if (normalizedValue < 0.6)
                 return icons.brightness_medium;
             return icons.brightness_high;
         }
-        // Volume
-        if (OsdService.value < 0.01)
+
+        if (normalizedValue < 0.01)
             return icons.volume_off;
-        if (OsdService.value < 0.33)
+        if (normalizedValue < 0.33)
             return icons.volume_low;
-        if (OsdService.value < 0.66)
+        if (normalizedValue < 0.66)
             return icons.volume_medium;
         return icons.volume_high;
     }
 
-    function getTitle(): string {
-        if (OsdService.type === "brightness")
-            return "Brightness";
-        if (OsdService.muted)
-            return "Muted";
-        return "Volume";
+    function updateValue(newValue) {
+        if (OsdService.type === "brightness") {
+            const brightnessValue = Math.max(0.05, Math.min(1.0, newValue));
+            BrightnessService.setBrightness(brightnessValue);
+            OsdService.showBrightness(brightnessValue);
+            return;
+        }
+
+        const volumeValue = Math.max(0, Math.min(1.5, newValue));
+        AudioService.setVolume(volumeValue);
+        OsdService.showVolume(volumeValue, false);
+    }
+
+    function toggleCurrentType() {
+        if (OsdService.type === "brightness") {
+            BrightnessService.toggleBrightness();
+            OsdService.showBrightness(Math.max(0.05, Math.min(1.0, BrightnessService.brightness)));
+            return;
+        }
+
+        const nextMuted = !AudioService.muted;
+        AudioService.toggleMute();
+        OsdService.showVolume(Math.max(0, Math.min(1.5, AudioService.volume)), nextMuted);
     }
 
     LazyLoader {
-        active: OsdService.visible
+        active: true
 
         PanelWindow {
             id: osdWindow
+            visible: OsdService.visible || content.opacity > 0.01
 
-            // Screen is intentionally unset so compositor chooses active monitor.
             anchors {
                 top: true
                 left: true
             }
-            margins.left: Math.max(0, (((screen?.width ?? 1920) - content.width) / 2))
-            margins.top: Math.max(0, (((screen?.height ?? 1080) - content.height) / 2))
+
+            margins.left: {
+                const screenWidth = screen ? screen.width : 1920;
+                const screenOffsetX = screen ? screen.x : 0;
+                const localAnchorX = OsdService.anchorX - screenOffsetX;
+                const targetX = OsdService.anchorX > 0 ? localAnchorX - (content.width / 2) : (screenWidth - content.width - 16);
+                return Math.max(10, Math.min(screenWidth - content.width - 10, targetX));
+            }
+            margins.top: {
+                const screenHeight = screen ? screen.height : 1080;
+                const screenOffsetY = screen ? screen.y : 0;
+                const localAnchorY = OsdService.anchorY - screenOffsetY;
+                const targetY = OsdService.anchorY > 0 ? (localAnchorY + 8) : (Config.barHeight + 10);
+                return Math.max(Config.barHeight + 4, Math.min(screenHeight - content.height - 10, targetY));
+            }
+
             exclusionMode: ExclusionMode.Ignore
             exclusiveZone: 0
 
@@ -75,109 +117,52 @@ Scope {
             implicitHeight: content.height
             color: "transparent"
 
-            // Prevent blocking mouse events behind the OSD
-            mask: Region {}
-
             Rectangle {
                 id: content
-                width: 130
-                height: 165
-                radius: 28
-                color: Qt.rgba(0, 0, 0, 0.5)
-                border.color: Qt.rgba(1, 1, 1, 0.16)
+                width: 360
+                height: 62
+                radius: 16
+                color: Qt.rgba(0.11, 0.11, 0.12, 0.76)
                 border.width: 1
+                border.color: Qt.rgba(1, 1, 1, 0.2)
 
-                // Entry animation
-                scale: OsdService.visible ? 1 : 0.8
-                opacity: OsdService.visible ? 1 : 0
-
-                Behavior on scale {
-                    NumberAnimation {
-                        duration: Config.animDuration
-                        easing.type: Easing.OutBack
-                        easing.overshoot: 1.2
-                    }
-                }
+                opacity: OsdService.visible ? 1.0 : 0.0
+                y: OsdService.visible ? 0 : -8
 
                 Behavior on opacity {
                     NumberAnimation {
-                        duration: Config.animDuration
+                        duration: 170
+                        easing.type: Easing.OutCubic
+                    }
+                }
+
+                Behavior on y {
+                    NumberAnimation {
+                        duration: 190
+                        easing.type: Easing.OutCubic
                     }
                 }
 
                 ColumnLayout {
                     anchors.fill: parent
-                    anchors.margins: 14
-                    spacing: 8
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    anchors.topMargin: 10
+                    anchors.bottomMargin: 10
+                    spacing: 0
 
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: root.getIcon()
-                        font.family: Config.font
-                        font.pixelSize: 30
-                        color: OsdService.muted ? Qt.rgba(1, 1, 1, 0.65) : Qt.rgba(1, 1, 1, 0.95)
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Config.animDurationShort
-                            }
-                        }
-                    }
-
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter
-                        text: root.getTitle()
-                        font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
-                        font.bold: true
-                        color: Qt.rgba(1, 1, 1, 0.9)
-                    }
-
-                    Rectangle {
+                    QsSlider {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: 7
-                        radius: 4
-                        color: Qt.rgba(1, 1, 1, 0.2)
-
-                        Rectangle {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-
-                            width: parent.width * Math.min(1, OsdService.value)
-                            radius: parent.radius
-                            color: OsdService.muted ? Qt.rgba(1, 1, 1, 0.55) : Qt.rgba(1, 1, 1, 0.95)
-
-                            Behavior on width {
-                                NumberAnimation {
-                                    duration: Config.animDurationShort
-                                    easing.type: Easing.OutCubic
-                                }
-                            }
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: Config.animDurationShort
-                                }
-                            }
-                        }
-                    }
-
-                    Text {
-                        text: Math.round(OsdService.value * 100) + "%"
-                        font.family: Config.font
-                        font.pixelSize: Config.fontSizeNormal
-                        font.weight: Font.DemiBold
-                        color: OsdService.muted ? Qt.rgba(1, 1, 1, 0.75) : Qt.rgba(1, 1, 1, 0.95)
-                        horizontalAlignment: Text.AlignHCenter
-                        Layout.alignment: Qt.AlignHCenter
-                        Layout.topMargin: 4
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Config.animDurationShort
-                            }
-                        }
+                        value: root.sliderValue
+                        from: 0
+                        to: root.sliderTo
+                        icon: root.getIcon()
+                        showPercentage: true
+                        alwaysShowPercentage: true
+                        percentageFromRawValue: OsdService.type === "volume"
+                        fillColor: (OsdService.type === "volume" && OsdService.muted) ? Config.surface2Color : Config.accentColor
+                        onMoved: newValue => root.updateValue(newValue)
+                        onIconClicked: root.toggleCurrentType()
                     }
                 }
             }

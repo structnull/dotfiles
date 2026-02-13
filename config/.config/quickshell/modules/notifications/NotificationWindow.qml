@@ -12,7 +12,6 @@ QsPopupWindow {
     popupWidth: 400
     popupMaxHeight: 600
     anchorSide: "right"
-    moduleName: "NotificationWindow"
     contentImplicitHeight: popupMaxHeight - 32
 
     ColumnLayout {
