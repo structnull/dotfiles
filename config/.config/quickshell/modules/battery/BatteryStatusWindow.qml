@@ -11,7 +11,6 @@ QsPopupWindow {
     popupWidth: 340
     popupMaxHeight: 420
     anchorSide: "right"
-    moduleName: "BatteryStatus"
     contentImplicitHeight: content.implicitHeight
 
     readonly property color accentInfo: "#8ab4ff"

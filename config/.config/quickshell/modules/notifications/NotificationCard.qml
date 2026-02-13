@@ -154,7 +154,10 @@ Item {
         ColumnLayout {
             id: contentColumn
             anchors.fill: parent
-            anchors.margins: 12
+            anchors.leftMargin: 12
+            anchors.topMargin: 12
+            anchors.bottomMargin: 12
+            anchors.rightMargin: root.popupMode ? 38 : 12
             spacing: 8
 
             // Main row: Icon + Text
@@ -270,6 +273,7 @@ Item {
                 }
             }
         }
+
     }
 
     // Outer border (hover state)
@@ -306,6 +310,46 @@ Item {
                 if (root.popupMode) {
                     root.startExitAnimation(false);
                 }
+            }
+        }
+    }
+
+    Rectangle {
+        id: closeButton
+        visible: root.popupMode
+        width: 22
+        height: 22
+        radius: 11
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 8
+        anchors.rightMargin: 8
+        color: closeMouseArea.containsMouse ? Config.surface2Color : Qt.alpha(Config.surface1Color, 0.8)
+        z: 3
+
+        Behavior on color {
+            ColorAnimation {
+                duration: Config.animDurationShort
+            }
+        }
+
+        Text {
+            anchors.centerIn: parent
+            text: "󰅖"
+            font.family: Config.font
+            font.pixelSize: 11
+            color: Config.textColor
+        }
+
+        MouseArea {
+            id: closeMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+            acceptedButtons: Qt.LeftButton
+            cursorShape: Qt.PointingHandCursor
+            onClicked: mouse => {
+                mouse.accepted = true;
+                root.startExitAnimation(true);
             }
         }
     }

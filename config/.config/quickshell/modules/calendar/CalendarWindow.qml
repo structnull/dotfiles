@@ -12,7 +12,6 @@ QsPopupWindow {
     popupWidth: 300
     popupMaxHeight: 500
     anchorSide: "left"
-    moduleName: "Calendar"
     contentImplicitHeight: calendarContent.implicitHeight
 
     // Calendar state

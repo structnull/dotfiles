@@ -14,34 +14,29 @@ Singleton {
     }
 
     // ========================================================================
-    // PALETTE (from ThemeService — defined in .data/themes/<name>.json)
+    // PALETTE
     // ========================================================================
-    readonly property color backgroundColor: ThemeService.color("background", "#0c1118")
+    readonly property color backgroundColor: "#0c1118"
     readonly property real backgroundOpacity: getState("opacity.background", 0.48)
     readonly property color backgroundTransparentColor: Qt.alpha(backgroundColor, backgroundOpacity)
-    readonly property color surface0Color: ThemeService.color("surface0", "#121923")
-    readonly property color surface1Color: ThemeService.color("surface1", "#1a2430")
-    readonly property color surface2Color: ThemeService.color("surface2", "#273447")
-    readonly property color surface3Color: ThemeService.color("surface3", "#33465e")
+    readonly property color surface0Color: "#121923"
+    readonly property color surface1Color: "#1a2430"
+    readonly property color surface2Color: "#273447"
+    readonly property color surface3Color: "#33465e"
 
-    readonly property color textColor: ThemeService.color("text", "#ffffff")
-    readonly property color textReverseColor: ThemeService.color("textReverse", "#000000")
-    readonly property color subtextColor: ThemeService.color("subtext", "#d7dfeb")
-    readonly property color subtextReverseColor: ThemeService.color("subtextReverse", "#7b8798")
+    readonly property color textColor: "#ffffff"
+    readonly property color textReverseColor: "#000000"
+    readonly property color subtextColor: "#d7dfeb"
+    readonly property color subtextReverseColor: "#7b8798"
 
-    readonly property color accentColor: ThemeService.color("accent", "#d6e9ff")
-    readonly property color successColor: ThemeService.color("success", "#7ee2a8")
-    readonly property color warningColor: ThemeService.color("warning", "#ffcc66")
-    readonly property color errorColor: ThemeService.color("error", "#ff5f57")
+    readonly property color accentColor: "#d6e9ff"
+    readonly property color successColor: "#7ee2a8"
+    readonly property color warningColor: "#ffcc66"
+    readonly property color errorColor: "#ff5f57"
 
-    readonly property color mutedColor: ThemeService.color("muted", "#9aa8bc")
-    readonly property color greyBlueColor: ThemeService.color("greyBlue", "#243141")
-    readonly property color blueDarkColor: ThemeService.color("blueDark", "#0d141d")
-
-    // ========================================================================
-    // WALLPAPER
-    // ========================================================================
-    readonly property bool dynamicWallpaper: getState("wallpaper.dynamic", true)
+    readonly property color mutedColor: "#9aa8bc"
+    readonly property color greyBlueColor: "#243141"
+    readonly property color blueDarkColor: "#0d141d"
 
     // ========================================================================
     // GEOMETRY & LAYOUT

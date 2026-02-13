@@ -12,10 +12,10 @@ QsPopupWindow {
     popupWidth: 400
     popupMaxHeight: 700
     anchorSide: "right"
-    moduleName: "QuickSettings"
     contentImplicitHeight: pageStack.children[pageStack.currentIndex]?.implicitHeight ?? popupMaxHeight - 32
 
     onClosing: pageStack.currentIndex = 0
+    onVisibleChanged: OsdService.suppressed = visible
 
     StackLayout {
         id: pageStack
@@ -59,11 +59,5 @@ QsPopupWindow {
             onBackRequested: pageStack.currentIndex = 0
         }
 
-        // ==========================
-        // PAGE 4: THEME
-        // ==========================
-        ThemePage {
-            onBackRequested: pageStack.currentIndex = 0
-        }
     }
 }

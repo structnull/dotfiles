@@ -7,7 +7,6 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.services
 import "./modules/bar/"
-import "./modules/screenshot/"
 
 ShellRoot {
     id: root
@@ -16,7 +15,89 @@ ShellRoot {
     // GLOBAL MODULE STATE
     // =========================================================================
 
-    property bool screenshotActive: false
+    property real osdTrackedVolume: 0
+    property bool osdTrackedMuted: false
+    property real osdTrackedBrightness: 1.0
+    property bool osdAudioReady: false
+    property bool osdBrightnessReady: false
+    readonly property bool suppressOsdInQuickSettings: OsdService.suppressed
+
+    function maybeShowVolumeOsd() {
+        const volumeNow = Math.max(0, Math.min(1.5, AudioService.volumeForOsd));
+        const mutedNow = AudioService.muted;
+
+        if (!osdAudioReady) {
+            osdTrackedVolume = volumeNow;
+            osdTrackedMuted = mutedNow;
+            return;
+        }
+
+        const volumeChanged = Math.abs(volumeNow - osdTrackedVolume) > 0.003;
+        const muteChanged = mutedNow !== osdTrackedMuted;
+
+        osdTrackedVolume = volumeNow;
+        osdTrackedMuted = mutedNow;
+
+        if (!volumeChanged && !muteChanged)
+            return;
+        if (suppressOsdInQuickSettings)
+            return;
+
+        OsdService.showVolume(volumeNow, mutedNow);
+    }
+
+    function maybeShowBrightnessOsd() {
+        const brightnessNow = Math.max(0.05, Math.min(1.0, BrightnessService.brightness));
+
+        if (!osdBrightnessReady) {
+            osdTrackedBrightness = brightnessNow;
+            return;
+        }
+
+        const brightnessChanged = Math.abs(brightnessNow - osdTrackedBrightness) > 0.003;
+        osdTrackedBrightness = brightnessNow;
+
+        if (!brightnessChanged)
+            return;
+        if (suppressOsdInQuickSettings)
+            return;
+
+        OsdService.showBrightness(brightnessNow);
+    }
+
+    Timer {
+        id: osdStateArmTimer
+        interval: 800
+        running: true
+        repeat: false
+        onTriggered: {
+            root.osdTrackedVolume = Math.max(0, Math.min(1.5, AudioService.volumeForOsd));
+            root.osdTrackedMuted = AudioService.muted;
+            root.osdTrackedBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness));
+            root.osdAudioReady = true;
+            root.osdBrightnessReady = true;
+        }
+    }
+
+    Connections {
+        target: AudioService
+
+        function onVolumeForOsdChanged() {
+            root.maybeShowVolumeOsd();
+        }
+
+        function onMutedChanged() {
+            root.maybeShowVolumeOsd();
+        }
+    }
+
+    Connections {
+        target: BrightnessService
+
+        function onBrightnessChanged() {
+            root.maybeShowBrightnessOsd();
+        }
+    }
 
     // =========================================================================
     // BLUETOOTH AGENT
@@ -68,54 +149,12 @@ ShellRoot {
         }
     }
 
-    // Screenshot Manager
-    Loader {
-        id: screenshotLoader
-        active: root.screenshotActive
-        source: "./modules/screenshot/ScreenshotManager.qml"
 
-        onStatusChanged: {
-            if (status === Loader.Ready) {
-                console.log("[Shell] ScreenshotManager loaded");
-                screenshotLoader.item.startCapture();
-            }
-        }
-
-        // Deactivate when screenshot finishes
-        Connections {
-            target: screenshotLoader.item
-            enabled: screenshotLoader.status === Loader.Ready
-
-            function onActiveChanged() {
-                if (screenshotLoader.item && !screenshotLoader.item.active) {
-                    root.screenshotActive = false;
-                }
-            }
-        }
-    }
-
-    // Launcher
-    Loader {
-        active: LauncherService.visible
-        source: "./modules/launcher/Launcher.qml"
-    }
 
     // OSD
     Loader {
-        active: OsdService.visible
+        active: true
         source: "./modules/osd/OsdOverlay.qml"
-    }
-
-    // Wallpaper Picker
-    Loader {
-        active: WallpaperService.pickerVisible
-        source: "./modules/wallpaper/WallpaperPicker.qml"
-    }
-
-    // Clipboard History
-    Loader {
-        active: ClipboardService.visible
-        source: "./modules/clipboard/ClipboardHistory.qml"
     }
 
     // Keybinds Overlay
@@ -149,21 +188,6 @@ ShellRoot {
         }
     }
 
-    // =========================================================================
-    // GLOBAL SHORTCUTS
-    // =========================================================================
-
-    // Shortcut: Screenshot (Print)
-    GlobalShortcut {
-        name: "take_screenshot"
-        description: "Screenshot capture"
-
-        onPressed: {
-            console.log("[Shell] Screenshot requested");
-            root.screenshotActive = true;
-        }
-    }
-
     // Shortcut: Power Menu
     GlobalShortcut {
         name: "power_menu"
@@ -175,13 +199,6 @@ ShellRoot {
         }
     }
 
-    // Shortcut: Launcher
-    GlobalShortcut {
-        name: "app_launcher"
-        description: "App Launcher"
-
-        onPressed: LauncherService.show()
-    }
 
     // Shortcut: Volume Up
     GlobalShortcut {
@@ -189,9 +206,8 @@ ShellRoot {
         description: "Increase volume"
 
         onPressed: {
-            const nextVolume = Math.max(0, Math.min(1, AudioService.volume + 0.05));
+            const nextVolume = Math.max(0, Math.min(1.5, AudioService.volume + 0.05));
             AudioService.setVolume(nextVolume);
-            OsdService.showVolume(nextVolume, false);
         }
     }
 
@@ -201,9 +217,8 @@ ShellRoot {
         description: "Decrease volume"
 
         onPressed: {
-            const nextVolume = Math.max(0, Math.min(1, AudioService.volume - 0.05));
+            const nextVolume = Math.max(0, Math.min(1.5, AudioService.volume - 0.05));
             AudioService.setVolume(nextVolume);
-            OsdService.showVolume(nextVolume, false);
         }
     }
 
@@ -213,9 +228,7 @@ ShellRoot {
         description: "Mute volume"
 
         onPressed: {
-            const nextMuted = !AudioService.muted;
             AudioService.toggleMute();
-            OsdService.showVolume(AudioService.volume, nextMuted);
         }
     }
 
@@ -227,7 +240,6 @@ ShellRoot {
         onPressed: {
             const nextBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness + 0.05));
             BrightnessService.setBrightness(nextBrightness);
-            OsdService.showBrightness(nextBrightness);
         }
     }
 
@@ -239,24 +251,7 @@ ShellRoot {
         onPressed: {
             const nextBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness - 0.05));
             BrightnessService.setBrightness(nextBrightness);
-            OsdService.showBrightness(nextBrightness);
         }
-    }
-
-    // Shortcut: Wallpaper Picker
-    GlobalShortcut {
-        name: "wallpaper_picker"
-        description: "Wallpaper picker"
-
-        onPressed: WallpaperService.toggle()
-    }
-
-    // Shortcut: Clipboard History
-    GlobalShortcut {
-        name: "clipboard_history"
-        description: "Clipboard history"
-
-        onPressed: ClipboardService.toggle()
     }
 
     // Shortcut: Keybinds Help

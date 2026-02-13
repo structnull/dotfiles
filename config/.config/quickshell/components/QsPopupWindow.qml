@@ -5,7 +5,6 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import qs.config
-import qs.services
 
 PanelWindow {
     id: root
@@ -14,7 +13,6 @@ PanelWindow {
     property int popupMaxHeight: 700
     property Item anchorItem: null
     property string anchorSide: "left"
-    property string moduleName: ""
     property real contentImplicitHeight: 0
     property real resolvedLeftMargin: 10
     property real resolvedTopMargin: Config.barHeight + 10
@@ -38,6 +36,7 @@ PanelWindow {
     function recalculatePosition() {
         const screenWidth = screen ? screen.width : 1920;
         const screenHeight = screen ? screen.height : 1080;
+        const minPopupTop = Config.barHeight + 10;
 
         let centerX = 0;
         let popupTop = Config.barHeight + 10;
@@ -54,7 +53,7 @@ PanelWindow {
         }
 
         resolvedLeftMargin = Math.max(10, Math.min(screenWidth - popupWidth - 10, centerX - (popupWidth / 2)));
-        resolvedTopMargin = Math.max(0, Math.min(screenHeight - 10, popupTop));
+        resolvedTopMargin = Math.max(minPopupTop, Math.min(screenHeight - 10, popupTop));
     }
 
     margins {
@@ -116,14 +115,10 @@ PanelWindow {
             positionRefreshTimer.restart();
             isClosing = false;
             isOpening = true;
-            if (moduleName !== "")
-                WindowManagerService.registerOpen(moduleName);
             grabTimer.restart();
         } else {
             focusGrab.active = false;
             isOpening = false;
-            if (moduleName !== "")
-                WindowManagerService.registerClose(moduleName);
         }
     }
 
@@ -147,23 +142,32 @@ PanelWindow {
             border.color: Config.surface2Color
             clip: true
 
-            transformOrigin: root.anchorSide === "left" ? Item.TopLeft : Item.TopRight
+            transformOrigin: Item.Top
 
             property bool showState: visible && !root.isClosing && root.isOpening
 
-            scale: showState ? 1.0 : 0.9
+            y: showState ? 0 : -12
+            scale: showState ? 1.0 : 0.97
             opacity: showState ? 1.0 : 0.0
 
-            Behavior on scale {
+            Behavior on y {
                 NumberAnimation {
                     duration: Config.animDurationLong
                     easing.type: Easing.OutExpo
                 }
             }
 
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Config.animDurationLong
+                    easing.type: Easing.OutCubic
+                }
+            }
+
             Behavior on opacity {
                 NumberAnimation {
-                    duration: Config.animDurationShort
+                    duration: Config.animDuration
+                    easing.type: Easing.OutQuad
                 }
             }
 

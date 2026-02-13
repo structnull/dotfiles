@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Services.UPower
 import qs.config
 import qs.services
 import "../../components/"
@@ -11,7 +12,6 @@ QsPopupWindow {
     popupWidth: 380
     popupMaxHeight: 700
     anchorSide: "left"
-    moduleName: "SystemMonitor"
     contentImplicitHeight: content.implicitHeight
 
     readonly property bool hasGpu: SystemMonitorService.gpuType !== "unknown"
@@ -36,6 +36,48 @@ QsPopupWindow {
             return warnColor;
         return okColor;
     }
+
+    function profileForIndex(index: int): int {
+        if (index === 0)
+            return PowerProfile.PowerSaver;
+        if (index === 2)
+            return PowerProfile.Performance;
+        return PowerProfile.Balanced;
+    }
+
+    function indexForProfile(profile: int): int {
+        if (profile === PowerProfile.PowerSaver)
+            return 0;
+        if (profile === PowerProfile.Performance)
+            return 2;
+        return 1;
+    }
+
+    function profileIcon(profile: int): string {
+        if (profile === PowerProfile.PowerSaver)
+            return "";
+        if (profile === PowerProfile.Performance)
+            return "";
+        return "";
+    }
+
+    function profileLabel(profile: int): string {
+        if (profile === PowerProfile.PowerSaver)
+            return "Saver";
+        if (profile === PowerProfile.Performance)
+            return "Perf";
+        return "Balanced";
+    }
+
+    function profileColor(profile: int): color {
+        if (profile === PowerProfile.PowerSaver)
+            return okColor;
+        if (profile === PowerProfile.Performance)
+            return warnColor;
+        return infoColor;
+    }
+
+    readonly property int selectedPowerIndex: indexForProfile(PowerProfiles.profile)
 
     ColumnLayout {
         id: content
@@ -96,6 +138,158 @@ QsPopupWindow {
                         font.pixelSize: Config.fontSizeSmall
                         font.bold: true
                         color: Config.mutedColor
+                    }
+                }
+            }
+        }
+
+        // ==================== POWER PROFILE ====================
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 8
+
+                Text {
+                    text: "󱐋"
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeLarge
+                    color: root.profileColor(PowerProfiles.profile)
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
+                }
+
+                Text {
+                    text: "Power Profile"
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeNormal
+                    font.bold: true
+                    color: Config.textColor
+                    Layout.fillWidth: true
+                }
+
+                Text {
+                    text: root.profileLabel(PowerProfiles.profile)
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeSmall
+                    font.bold: true
+                    color: root.profileColor(PowerProfiles.profile)
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                id: powerSegment
+                Layout.fillWidth: true
+                Layout.preferredHeight: 42
+                radius: Config.radius
+                color: Config.surface1Color
+                border.width: 1
+                border.color: Config.surface2Color
+
+                readonly property real slotWidth: (width - 8) / 3
+
+                Rectangle {
+                    id: powerSelection
+                    y: 4
+                    x: 4 + (root.selectedPowerIndex * powerSegment.slotWidth)
+                    width: powerSegment.slotWidth
+                    height: powerSegment.height - 8
+                    radius: Config.radius
+                    color: Qt.alpha(root.profileColor(root.profileForIndex(root.selectedPowerIndex)), 0.22)
+                    border.width: 1
+                    border.color: Qt.alpha(root.profileColor(root.profileForIndex(root.selectedPowerIndex)), 0.45)
+
+                    Behavior on x {
+                        NumberAnimation {
+                            duration: Config.animDuration
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
+
+                    Behavior on border.color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
+                }
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    spacing: 0
+
+                    Repeater {
+                        model: 3
+
+                        delegate: Item {
+                            id: profileItem
+                            required property int index
+
+                            readonly property int profile: root.profileForIndex(index)
+                            readonly property bool selected: root.selectedPowerIndex === index
+                            readonly property bool disabled: index === 2 && !PowerProfiles.hasPerformanceProfile
+
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+
+                            RowLayout {
+                                anchors.centerIn: parent
+                                spacing: 5
+
+                                Text {
+                                    text: root.profileIcon(profileItem.profile)
+                                    font.family: Config.font
+                                    font.pixelSize: Config.fontSizeNormal
+                                    color: {
+                                        if (profileItem.disabled)
+                                            return Qt.alpha(Config.subtextColor, 0.45);
+                                        if (profileItem.selected)
+                                            return root.profileColor(profileItem.profile);
+                                        return Config.subtextColor;
+                                    }
+                                }
+
+                                Text {
+                                    text: root.profileLabel(profileItem.profile)
+                                    font.family: Config.font
+                                    font.pixelSize: 11
+                                    font.bold: profileItem.selected
+                                    color: {
+                                        if (profileItem.disabled)
+                                            return Qt.alpha(Config.subtextColor, 0.45);
+                                        if (profileItem.selected)
+                                            return root.profileColor(profileItem.profile);
+                                        return Config.subtextColor;
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                enabled: !profileItem.disabled
+                                hoverEnabled: true
+                                cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                onClicked: PowerProfiles.profile = profileItem.profile
+                            }
+                        }
                     }
                 }
             }

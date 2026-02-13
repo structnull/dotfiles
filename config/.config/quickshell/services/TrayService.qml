@@ -5,41 +5,21 @@ import Quickshell.Services.SystemTray
 QtObject {
     id: root
 
-    // List of tray items
+    // Docs v0.2.1: SystemTray.items is ObjectModel<SystemTrayItem>.
+    // Use .values for a reactive list in normal QML bindings/repeaters.
     readonly property var items: SystemTray.items.values
+    readonly property var itemsModel: SystemTray.items
 
-    // Checks whether there are items in the tray
-    readonly property bool hasItems: items.length > 0
+    // Checks whether there are items in the tray.
+    readonly property int itemCount: (items && typeof items.length === "number") ? items.length : 0
+    readonly property bool hasItems: itemCount > 0
 
     // --- ICON LOGIC ---
     function getIconSource(iconString) {
         if (!iconString)
             return "image://icon/image-missing";
-
-        // Fix for URL parameters (common in Electron/Steam apps)
-        if (iconString.includes("?path=")) {
-            const split = iconString.split("?path=");
-            if (split.length === 2) {
-                const name = split[0];
-                const path = split[1];
-                let fileName = name;
-                if (fileName.includes("/")) {
-                    fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-                }
-                return "file://" + path + "/" + fileName;
-            }
-        }
-
-        // Absolute file paths
-        if (iconString.startsWith("/"))
-            return "file://" + iconString;
-
-        // Already a fully qualified URL (file://, image://qsimage/, image://icon/, etc.)
-        if (iconString.startsWith("file://") || iconString.startsWith("image://"))
-            return iconString;
-
-        // Theme icon name (Freedesktop standard)
-        return "image://icon/" + iconString;
+        // Docs v0.2.1: SystemTrayItem.icon can be used directly as an Image source.
+        return iconString;
     }
 
     // Resolves menu item icon source, returning empty string for missing icons
