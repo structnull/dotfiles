@@ -53,7 +53,7 @@ BarButton {
         readonly property bool bluetoothOutput: AudioService.outputDeviceType === "bluetooth"
         readonly property bool headphoneOutput: AudioService.outputDeviceType === "headphones"
         readonly property bool speakerOutput: !bluetoothOutput && !headphoneOutput
-        readonly property bool outputSilent: AudioService.muted || AudioService.volume <= 0.001
+        readonly property bool outputSilent: AudioService.outputSilent
 
         function outputIcon() {
             if (speakerOutput && outputSilent)

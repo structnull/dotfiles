@@ -71,14 +71,12 @@ Singleton {
 
     function disconnect() {
         if (wifiInterface !== "") {
-            console.log("Disconnecting interface: " + wifiInterface);
             disconnectProc.command = ["nmcli", "dev", "disconnect", wifiInterface];
             disconnectProc.running = true;
         }
     }
 
     function connect(ssid, password) {
-        console.log("Attempting to connect to:", ssid);
         root.connectingSsid = ssid; // Mark which one we are trying
 
         if (password && password.length > 0) {
@@ -91,7 +89,6 @@ Singleton {
     }
 
     function forget(ssid) {
-        console.log("Forgetting network: " + ssid);
         forgetProc.command = ["nmcli", "connection", "delete", "id", ssid];
         forgetProc.running = true;
     }
@@ -109,9 +106,6 @@ Singleton {
     Process {
         id: connectProc
 
-        stdout: SplitParser {
-            onRead: data => console.log("[Wifi] " + data)
-        }
         stderr: SplitParser {
             onRead: data => console.error("[Wifi Error] " + data)
         }
@@ -125,8 +119,6 @@ Singleton {
                 if (root.connectingSsid !== "") {
                     root.cleanUpBadConnection(root.connectingSsid);
                 }
-            } else {
-                console.log("Connected successfully!");
             }
 
             // Reset state and update lists

@@ -15,10 +15,13 @@ Item {
     property bool alwaysShowPercentage: false
     property bool percentageFromRawValue: false
     property color fillColor: Config.accentColor
+    property bool hasDetails: false
+    property string detailsIcon: ""
 
     // SIGNALS
     signal moved(real newValue)
     signal iconClicked
+    signal openDetails
 
     // Component size
     implicitHeight: 40
@@ -185,6 +188,45 @@ Item {
                     else
                         root.moved(Math.max(root.from, root.value - step));
                 }
+            }
+        }
+
+        Rectangle {
+            id: detailsBtn
+            visible: root.hasDetails
+            Layout.fillHeight: true
+            Layout.preferredWidth: height
+            radius: Config.radiusLarge
+            color: detailsMouse.containsMouse ? Config.surface2Color : Config.surface1Color
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: Config.animDurationShort
+                }
+            }
+
+            Text {
+                anchors.centerIn: parent
+                text: root.detailsIcon
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeNormal
+                font.bold: true
+                color: Config.textColor
+
+                scale: detailsMouse.pressed ? 0.8 : 1.0
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: Config.animDurationShort
+                    }
+                }
+            }
+
+            MouseArea {
+                id: detailsMouse
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.openDetails()
             }
         }
     }

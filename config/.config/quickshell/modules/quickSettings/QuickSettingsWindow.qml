@@ -59,5 +59,12 @@ QsPopupWindow {
             onBackRequested: pageStack.currentIndex = 0
         }
 
+        // ==========================
+        // PAGE 4: AUDIO
+        // ==========================
+        AudioPage {
+            onBackRequested: pageStack.currentIndex = 0
+        }
+
     }
 }

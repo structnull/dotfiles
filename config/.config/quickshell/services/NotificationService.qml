@@ -86,8 +86,6 @@ Singleton {
         persistenceSupported: true
 
         onNotification: notif => {
-            console.log("[Notif] Received:", notif.appName, "-", notif.summary);
-
             notif.tracked = true;
 
             // If DND is active, don't show popup but still keep in history
@@ -100,13 +98,10 @@ Singleton {
 
             if (wrapper) {
                 root.notifications.push(wrapper);
-                
+
                 // Only start the lifecycle (timer) if not in DND
-                if (showPopup) {
+                if (showPopup)
                     wrapper.startLifecycle();
-                }
-                
-                console.log("[Notif] Wrapper created. Total:", root.notifications.length, "Popups:", root.popups.length, "DND:", root.dndEnabled);
             }
         }
     }
@@ -143,7 +138,6 @@ Singleton {
                         wrapper.progress = 1.0;
                         stop();
                         wrapper.popup = false;
-                        console.log("[Notif] Timer expired for:", wrapper.notifId);
                     }
                 }
             }
@@ -160,14 +154,11 @@ Singleton {
 
         onIsPausedChanged: {
             if (isPaused) {
-                if (tickTimer.running) {
+                if (tickTimer.running)
                     tickTimer.stop();
-                    console.log("[Notif] Paused:", notifId, "- Remaining:", remainingTime, "ms - Progress:", progress.toFixed(2));
-                }
             } else {
                 if (popup && remainingTime > 0 && !tickTimer.running) {
                     tickTimer.start();
-                    console.log("[Notif] Resumed:", notifId, "- Remaining:", remainingTime, "ms");
                 } else if (popup && remainingTime <= 0) {
                     popup = false;
                 }
@@ -210,7 +201,6 @@ Singleton {
             target: wrapper.notification ? wrapper.notification.Retainable : null
 
             function onDropped(): void {
-                console.log("[Notif] Dropped:", wrapper.notifId);
                 wrapper.tickTimer.stop();
                 root.notifications = root.notifications.filter(w => w !== wrapper);
             }

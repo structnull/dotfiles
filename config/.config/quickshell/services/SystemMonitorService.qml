@@ -182,7 +182,6 @@ Singleton {
             onRead: data => {
                 const type = data.trim();
                 internal.gpuType = type;
-                console.log("[SystemMonitor] Detected GPU type:", type);
 
                 if (type === "nvidia") {
                     updateNvidiaGpu.running = true;
