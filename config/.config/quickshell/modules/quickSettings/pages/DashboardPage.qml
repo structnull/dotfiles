@@ -2,7 +2,6 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Io
 import qs.config
 import qs.services
 import "../../quickSettings/"
@@ -146,7 +145,6 @@ Item {
                 icon: NetworkService.systemIcon
                 label: "Wi-Fi"
                 subLabel: NetworkService.statusText
-                property string ssid: NetworkService.accessPoints.find(ap => ap.active)?.ssid || "Connected"
                 active: NetworkService.wifiEnabled
                 hasDetails: true
                 onToggled: NetworkService.toggleWifi()
@@ -196,8 +194,13 @@ Item {
             QsSlider {
                 icon: AudioService.systemIcon
                 value: AudioService.volume
+                hasDetails: true
                 onMoved: val => AudioService.setVolume(val)
                 onIconClicked: AudioService.toggleMute()
+                onOpenDetails: {
+                    AudioService.refreshDevices();
+                    pageStack.currentIndex = 4;
+                }
             }
 
             // Brightness (only shows if available)

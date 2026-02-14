@@ -15,5 +15,8 @@
   },
   "caffeine": {
     "enabled": false
+  },
+  "notifications": {
+    "dnd": true
   }
 }

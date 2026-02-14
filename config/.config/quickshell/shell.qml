@@ -110,9 +110,6 @@ ShellRoot {
         command: ["python3", root.bluetoothAgentScriptPath]
         running: true
 
-        stdout: SplitParser {
-            onRead: data => console.log("[BluetoothAgent]: " + data)
-        }
         stderr: SplitParser {
             onRead: data => console.error("[BluetoothAgent]: " + data)
         }
@@ -130,11 +127,6 @@ ShellRoot {
         id: notificationLoader
         active: NotificationService.activePopupCount > 0 || NotificationService.popups.length > 0
         source: "./modules/notifications/NotificationOverlay.qml"
-
-        onStatusChanged: {
-            if (status === Loader.Ready)
-                console.log("[Shell] NotificationOverlay loaded");
-        }
     }
 
     // Power Overlay
@@ -142,15 +134,7 @@ ShellRoot {
         id: powerLoader
         active: PowerService.overlayVisible
         source: "./modules/power/PowerOverlay.qml"
-
-        onStatusChanged: {
-            if (status === Loader.Ready)
-                console.log("[Shell] PowerOverlay loaded");
-        }
     }
-
-
-
     // OSD
     Loader {
         active: true
@@ -193,13 +177,8 @@ ShellRoot {
         name: "power_menu"
         description: "Power menu"
 
-        onPressed: {
-            console.log("[Shell] Power menu requested");
-            PowerService.showOverlay();
-        }
+        onPressed: PowerService.showOverlay()
     }
-
-
     // Shortcut: Volume Up
     GlobalShortcut {
         name: "volume_up"

@@ -136,10 +136,6 @@ Singleton {
             return;
         }
 
-        if (device.state === BluetoothDeviceState.Connecting) {
-            console.log("Please wait, device is already connecting...");
-        }
-
         // Try to mark as trusted before connecting.
         // Vital for headphones on Linux without a visual PIN agent.
         try {

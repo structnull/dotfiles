@@ -30,8 +30,6 @@ Singleton {
     }
 
     function executeAction(actionId: string) {
-        console.log("[Power] Executing:", actionId);
-        
         switch (actionId) {
             case "shutdown":
                 shutdownProc.running = true;
@@ -52,7 +50,7 @@ Singleton {
                 logoutProc.running = true;
                 break;
         }
-        
+
         hideOverlay();
     }
 
