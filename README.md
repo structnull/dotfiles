@@ -1,35 +1,41 @@
-# A place to host dotfiles for whatever Window manager I'm currently using.
+# dotfiles
 
-![image](https://user-images.githubusercontent.com/87846149/231362373-a1d467fb-2207-4888-b2d1-81834fbf2a92.png)
-![image](https://user-images.githubusercontent.com/87846149/231362579-5dac9e34-0b83-45a7-b8dc-29e6dbe270ad.png)
-![image](https://user-images.githubusercontent.com/87846149/231362841-ef2c9025-c8bd-4aa7-8e92-90b6219b36c0.png)
-![image](https://user-images.githubusercontent.com/87846149/231363329-7b2c4e70-c36f-4332-b34b-e2358531568e.png)
-![image](https://github.com/chiefdinkan/dotfiles/assets/87846149/2c17d467-7f4b-4706-8104-af353e89dfba)
+Personal Linux dotfiles managed with `GNU Stow`.
 
+## Packages
 
--   Dotfiles is managed by GNU Stow
+- `config` -> `~/.config/*`
+- `shell` -> `~/.zshrc`, `~/.bashrc`
+- `git` -> `~/.gitconfig`
+- `scripts` -> `~/.scripts/*`
 
--   WM: [Hyprland][hypr]
+## Screenshots
 
--   OS: [Arch][archurl] btw
+## Setup
 
--   Term: [kitty][kittyurl]
+1. Install prerequisites:
+   - `git`
+   - `stow`
+2. Clone this repo:
 
--   Launcher: [rofi-ibonn][rofiurl]
+```bash
+git clone https://github.com/structnull/dotfiles ~/.dotfiles
+cd ~/.dotfiles
+```
 
--   Shell: [Zsh][zshurl]
+3. Preview symlinks (dry run):
 
--   Editor : Neovim , Vscode
+```bash
+stow -nv -t "$HOME" config shell git scripts
+```
 
--   Music: [cmus][cmusurl],[ncspot](https://github.com/hrkfdn/ncspot)
+4. Apply symlinks:
 
--   Hardware: [Asus Tuf f15][asus]
+```bash
+stow -t "$HOME" config shell git scripts
+```
 
-[hypr]: https://github.com/hyprwm/Hyprland
-[archurl]: https://archlinux.org/
-[kittyurl]: https://github.com/kovidgoyal/kitty
-[rofiurl]: https://github.com/lbonn/rofi
-[waybarurl]: https://github.com/Alexays/Waybar
-[zshurl]: https://www.zsh.org/
-[cmusurl]: https://cmus.github.io/
-[asus]: https://www.asus.com/laptops/for-gaming/tuf-gaming/asus-tuf-gaming-f15-2022/
+## Maintenance
+
+- Restow after changes: `stow -R -t "$HOME" config shell git scripts`
+- Remove a package: `stow -D -t "$HOME" shell`
