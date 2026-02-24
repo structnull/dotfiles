@@ -17,6 +17,6 @@
     "enabled": false
   },
   "notifications": {
-    "dnd": true
+    "dnd": false
   }
 }
