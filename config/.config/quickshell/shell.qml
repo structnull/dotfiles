@@ -121,14 +121,12 @@ ShellRoot {
 
     // Bar - always active (main component)
     Bar {}
-
     // Notifications
     Loader {
         id: notificationLoader
         active: NotificationService.activePopupCount > 0 || NotificationService.popups.length > 0
         source: "./modules/notifications/NotificationOverlay.qml"
     }
-
     // Power Overlay
     Loader {
         id: powerLoader
@@ -139,105 +137,5 @@ ShellRoot {
     Loader {
         active: true
         source: "./modules/osd/OsdOverlay.qml"
-    }
-
-    // Keybinds Overlay
-    Loader {
-        id: keybindsLoader
-        active: false
-        source: "./modules/keybinds/KeybindsOverlay.qml"
-
-        function toggle() {
-            if (active && item) {
-                item.hide();
-                active = false;
-            } else {
-                active = true;
-            }
-        }
-
-        Connections {
-            target: keybindsLoader.item
-            enabled: keybindsLoader.status === Loader.Ready
-
-            function onShowingChanged() {
-                if (keybindsLoader.item && !keybindsLoader.item.showing)
-                    keybindsLoader.active = false;
-            }
-        }
-
-        onStatusChanged: {
-            if (status === Loader.Ready && item)
-                item.showing = true;
-        }
-    }
-
-    // Shortcut: Power Menu
-    GlobalShortcut {
-        name: "power_menu"
-        description: "Power menu"
-
-        onPressed: PowerService.showOverlay()
-    }
-    // Shortcut: Volume Up
-    GlobalShortcut {
-        name: "volume_up"
-        description: "Increase volume"
-
-        onPressed: {
-            const nextVolume = Math.max(0, Math.min(1.5, AudioService.volume + 0.05));
-            AudioService.setVolume(nextVolume);
-        }
-    }
-
-    // Shortcut: Volume Down
-    GlobalShortcut {
-        name: "volume_down"
-        description: "Decrease volume"
-
-        onPressed: {
-            const nextVolume = Math.max(0, Math.min(1.5, AudioService.volume - 0.05));
-            AudioService.setVolume(nextVolume);
-        }
-    }
-
-    // Shortcut: Volume Mute
-    GlobalShortcut {
-        name: "volume_mute"
-        description: "Mute volume"
-
-        onPressed: {
-            AudioService.toggleMute();
-        }
-    }
-
-    // Shortcut: Brightness Up
-    GlobalShortcut {
-        name: "brightness_up"
-        description: "Increase brightness"
-
-        onPressed: {
-            const nextBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness + 0.05));
-            BrightnessService.setBrightness(nextBrightness);
-        }
-    }
-
-    // Shortcut: Brightness Down
-    GlobalShortcut {
-        name: "brightness_down"
-        description: "Decrease brightness"
-
-        onPressed: {
-            const nextBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness - 0.05));
-            BrightnessService.setBrightness(nextBrightness);
-        }
-    }
-
-    // Shortcut: Keybinds Help
-    GlobalShortcut {
-        name: "keybinds_help"
-        description: "Keybinds help"
-
-        onPressed: keybindsLoader.toggle()
     }
 }
