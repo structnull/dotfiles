@@ -302,6 +302,69 @@ QsPopupWindow {
             color: Config.surface1Color
         }
 
+        // ==================== GPU TOGGLE ====================
+        RowLayout {
+            Layout.fillWidth: true
+            visible: root.hasGpu
+            spacing: 8
+
+            Text {
+                text: "󰢮"
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeLarge
+                color: SystemMonitorService.gpuMonitorEnabled ? root.infoColor : Config.subtextColor
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Config.animDuration
+                    }
+                }
+            }
+
+            Text {
+                text: "GPU Monitor"
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeNormal
+                font.bold: true
+                color: Config.textColor
+                Layout.fillWidth: true
+            }
+
+            Rectangle {
+                Layout.preferredHeight: 22
+                Layout.preferredWidth: gpuStatusText.implicitWidth + 12
+                radius: Config.radius
+                color: SystemMonitorService.gpuMonitorEnabled ? Qt.alpha(root.okColor, 0.15) : Config.surface1Color
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Config.animDuration
+                    }
+                }
+
+                Text {
+                    id: gpuStatusText
+                    anchors.centerIn: parent
+                    text: SystemMonitorService.gpuMonitorEnabled ? "ON" : "OFF"
+                    font.family: Config.font
+                    font.pixelSize: 10
+                    font.bold: true
+                    color: SystemMonitorService.gpuMonitorEnabled ? root.okColor : Config.mutedColor
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
+                }
+            }
+
+            QsSwitch {
+                checked: SystemMonitorService.gpuMonitorEnabled
+                onToggled: SystemMonitorService.toggleGpuMonitor()
+            }
+        }
+
         // ==================== GAUGES (CPU + GPU) ====================
         RowLayout {
             Layout.fillWidth: true
@@ -324,6 +387,14 @@ QsPopupWindow {
                 temp: SystemMonitorService.gpuTemp
                 arcColor: root.usageColor(SystemMonitorService.gpuUsage)
                 badgeColor: root.tempColor(SystemMonitorService.gpuTemp)
+                opacity: SystemMonitorService.gpuMonitorEnabled ? 1.0 : 0.35
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: Config.animDuration
+                        easing.type: Easing.OutCubic
+                    }
+                }
             }
         }
 

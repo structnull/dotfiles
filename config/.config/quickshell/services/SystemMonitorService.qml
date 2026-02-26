@@ -4,6 +4,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
 Singleton {
     id: root
@@ -24,6 +25,36 @@ Singleton {
     readonly property int gpuTemp: internal.gpuTemp
     readonly property string gpuIcon: "󰢮"
     readonly property string gpuType: internal.gpuType // "nvidia", "amd", "intel", "unknown"
+    property bool gpuMonitorEnabled: StateService.get("gpuMonitor.enabled", false)
+
+    Connections {
+        target: StateService
+        function onStateLoaded() {
+            root.gpuMonitorEnabled = StateService.get("gpuMonitor.enabled", false);
+        }
+    }
+
+    function toggleGpuMonitor() {
+        gpuMonitorEnabled = !gpuMonitorEnabled;
+        StateService.set("gpuMonitor.enabled", gpuMonitorEnabled);
+        if (!gpuMonitorEnabled) {
+            internal.gpuUsage = 0;
+            internal.gpuTemp = 0;
+        } else if (internal.gpuType !== "unknown") {
+            _triggerGpuUpdate();
+        }
+    }
+
+    function _triggerGpuUpdate() {
+        if (internal.gpuType === "nvidia") {
+            updateNvidiaGpu.running = true;
+        } else if (internal.gpuType === "amd") {
+            updateAmdGpuUsage.running = true;
+            updateAmdGpuTemp.running = true;
+        } else if (internal.gpuType === "intel") {
+            updateIntelGpuTemp.running = true;
+        }
+    }
 
     // ========================================================================
     // RAM PROPERTIES
@@ -123,13 +154,8 @@ Singleton {
             updateNetwork.running = true;
             updateUptime.running = true;
 
-            if (internal.gpuType === "nvidia") {
-                updateNvidiaGpu.running = true;
-            } else if (internal.gpuType === "amd") {
-                updateAmdGpuUsage.running = true;
-                updateAmdGpuTemp.running = true;
-            } else if (internal.gpuType === "intel") {
-                updateIntelGpuTemp.running = true;
+            if (root.gpuMonitorEnabled) {
+                root._triggerGpuUpdate();
             }
         }
     }
@@ -183,13 +209,8 @@ Singleton {
                 const type = data.trim();
                 internal.gpuType = type;
 
-                if (type === "nvidia") {
-                    updateNvidiaGpu.running = true;
-                } else if (type === "amd") {
-                    updateAmdGpuUsage.running = true;
-                    updateAmdGpuTemp.running = true;
-                } else if (type === "intel") {
-                    updateIntelGpuTemp.running = true;
+                if (root.gpuMonitorEnabled) {
+                    root._triggerGpuUpdate();
                 }
             }
         }
