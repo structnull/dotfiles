@@ -116,6 +116,33 @@ ShellRoot {
     }
 
     // =========================================================================
+    // IPC TARGETS
+    // =========================================================================
+
+    IpcHandler {
+        target: "power"
+
+        function showOverlay() {
+            PowerService.showOverlay();
+        }
+
+        function hideOverlay() {
+            PowerService.hideOverlay();
+        }
+
+        function toggleOverlay() {
+            if (PowerService.overlayVisible)
+                PowerService.hideOverlay();
+            else
+                PowerService.showOverlay();
+        }
+
+        function execute(actionId: string) {
+            PowerService.executeAction(actionId);
+        }
+    }
+
+    // =========================================================================
     // UI COMPONENTS - LAZY LOADING
     // =========================================================================
 
