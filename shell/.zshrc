@@ -235,3 +235,6 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 [[ -f /home/adharsh/.dart-cli-completion/zsh-config.zsh ]] && . /home/adharsh/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
 
+
+# OpenFang
+export PATH=/home/adharsh/.openfang/bin:$PATH

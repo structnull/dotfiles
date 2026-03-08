@@ -17,9 +17,9 @@
     "enabled": false
   },
   "notifications": {
-    "dnd": true
+    "dnd": false
   },
   "gpuMonitor": {
-    "enabled": false
+    "enabled": true
   }
 }
