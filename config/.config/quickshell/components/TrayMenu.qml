@@ -15,6 +15,8 @@ PanelWindow {
     property var rootMenuHandle: null
     property int anchorX: 0
     property int anchorY: 0
+    property bool isClosing: false
+    property real openProgress: 0.0
 
     // --- WINDOW CONFIGURATION ---
     color: "transparent"
@@ -76,14 +78,50 @@ PanelWindow {
     }
 
     function open() {
+        menuStack.clear();
+        isClosing = false;
+        closeAnimation.stop();
+        openProgress = 0;
         root.visible = true;
+        openAnimation.restart();
         focusTimer.restart();
     }
 
     function close() {
-        root.visible = false;
-        menuStack.clear(); // Resets navigation on close
-        focusGrab.active = false;
+        if (!root.visible || isClosing)
+            return;
+
+        isClosing = true;
+        openAnimation.stop();
+        closeAnimation.restart();
+    }
+
+    NumberAnimation {
+        id: openAnimation
+        target: root
+        property: "openProgress"
+        from: 0
+        to: 1
+        duration: Config.animDurationLong
+        easing.type: Easing.OutCubic
+    }
+
+    NumberAnimation {
+        id: closeAnimation
+        target: root
+        property: "openProgress"
+        to: 0
+        duration: Config.animDuration
+        easing.type: Easing.InCubic
+        onFinished: {
+            if (!root.isClosing)
+                return;
+
+            root.visible = false;
+            menuStack.clear(); // Resets navigation on close
+            focusGrab.active = false;
+            root.isClosing = false;
+        }
     }
 
     Timer {
@@ -110,6 +148,11 @@ PanelWindow {
         border.width: 1
         radius: Config.radius
         clip: true
+        transformOrigin: Item.Top
+
+        y: (1 - root.openProgress) * -10
+        scale: 0.97 + (root.openProgress * 0.03)
+        opacity: root.openProgress
 
         focus: true
         Keys.onEscapePressed: {

@@ -67,19 +67,37 @@ PanelWindow {
     color: "transparent"
 
     property bool isClosing: false
-    property bool isOpening: false
+    property real openProgress: 0.0
 
     function closeWindow() {
-        if (!visible)
+        if (!visible || isClosing)
             return;
         isClosing = true;
-        closeTimer.restart();
+        openAnimation.stop();
+        closeAnimation.restart();
     }
 
-    Timer {
-        id: closeTimer
-        interval: Config.animDuration
-        onTriggered: {
+    NumberAnimation {
+        id: openAnimation
+        target: root
+        property: "openProgress"
+        from: 0
+        to: 1
+        duration: Config.animDurationLong
+        easing.type: Easing.OutCubic
+    }
+
+    NumberAnimation {
+        id: closeAnimation
+        target: root
+        property: "openProgress"
+        to: 0
+        duration: Config.animDuration
+        easing.type: Easing.InCubic
+        onFinished: {
+            if (!root.isClosing)
+                return;
+
             root.closing();
             root.visible = false;
             root.isClosing = false;
@@ -114,11 +132,16 @@ PanelWindow {
             recalculatePosition();
             positionRefreshTimer.restart();
             isClosing = false;
-            isOpening = true;
+            closeAnimation.stop();
+            openProgress = 0;
+            openAnimation.restart();
             grabTimer.restart();
         } else {
             focusGrab.active = false;
-            isOpening = false;
+            openAnimation.stop();
+            closeAnimation.stop();
+            openProgress = 0;
+            isClosing = false;
         }
     }
 
@@ -144,32 +167,9 @@ PanelWindow {
 
             transformOrigin: Item.Top
 
-            property bool showState: visible && !root.isClosing && root.isOpening
-
-            y: showState ? 0 : -12
-            scale: showState ? 1.0 : 0.97
-            opacity: showState ? 1.0 : 0.0
-
-            Behavior on y {
-                NumberAnimation {
-                    duration: Config.animDurationLong
-                    easing.type: Easing.OutExpo
-                }
-            }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: Config.animDurationLong
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Config.animDuration
-                    easing.type: Easing.OutQuad
-                }
-            }
+            y: (1 - root.openProgress) * -16
+            scale: 0.965 + (root.openProgress * 0.035)
+            opacity: root.openProgress
 
             Behavior on height {
                 NumberAnimation {
