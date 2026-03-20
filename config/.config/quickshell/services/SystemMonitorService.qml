@@ -15,7 +15,6 @@ Singleton {
 
     readonly property int cpuUsage: internal.cpuUsage
     readonly property int cpuTemp: internal.cpuTemp
-    readonly property string cpuIcon: "󰻠"
 
     // ========================================================================
     // GPU PROPERTIES
@@ -23,7 +22,6 @@ Singleton {
 
     readonly property int gpuUsage: internal.gpuUsage
     readonly property int gpuTemp: internal.gpuTemp
-    readonly property string gpuIcon: "󰢮"
     readonly property string gpuType: internal.gpuType // "nvidia", "amd", "intel", "unknown"
     property bool gpuMonitorEnabled: StateService.get("gpuMonitor.enabled", false)
 

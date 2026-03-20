@@ -34,9 +34,6 @@ Singleton {
         return devicesList.filter(dev => dev.connected);
     }
 
-    // Count (For use in the UI)
-    readonly property int connectedDevicesCount: connectedDevices.length
-
     // Smart text (For the Dashboard sublabel)
     readonly property string statusText: {
         if (!isPowered)

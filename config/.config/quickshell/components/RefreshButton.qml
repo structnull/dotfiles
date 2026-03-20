@@ -8,7 +8,6 @@ Rectangle {
 
     property bool loading: false
     property int size: 36
-    property string tooltipText: "Refresh"
 
     signal clicked
 

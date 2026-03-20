@@ -7,7 +7,6 @@ QtObject {
 
     // Docs v0.2.1: SystemTray.items is ObjectModel<SystemTrayItem>.
     // Use .values for a reactive list in normal QML bindings/repeaters.
-    readonly property var items: SystemTray.items.values
     readonly property var itemsModel: SystemTray.items
     // Keeps reference to the currently open menu to ensure only 1 exists in the entire system
     property var activeMenu: null

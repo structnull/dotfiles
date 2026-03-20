@@ -15,9 +15,6 @@ Rectangle {
     property int size: 36
     property int iconSize: Config.fontSizeIconSmall
 
-    readonly property bool hovered: mouseArea.containsMouse
-    readonly property bool pressed: mouseArea.pressed
-
     signal clicked
 
     implicitHeight: size

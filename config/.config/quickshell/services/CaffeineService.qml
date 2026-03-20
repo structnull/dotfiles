@@ -23,11 +23,6 @@ Singleton {
         StateService.set("caffeine.enabled", enabled);
     }
 
-    function setEnabled(value: bool) {
-        enabled = value;
-        StateService.set("caffeine.enabled", enabled);
-    }
-
     Process {
         id: idleInhibitProc
         command: ["systemd-inhibit", "--what=idle", "--mode=block", "--who=quickshell", "--why=Caffeine mode", "sleep", "infinity"]

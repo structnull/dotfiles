@@ -17,6 +17,8 @@ Item {
     property color fillColor: Config.accentColor
     property bool hasDetails: false
     property string detailsIcon: ""
+    property real visualValue: 0
+    readonly property real clampedValue: clampValue(value)
 
     // SIGNALS
     signal moved(real newValue)
@@ -26,6 +28,19 @@ Item {
     // Component size
     implicitHeight: 40
     Layout.fillWidth: true
+
+    function clampValue(rawValue) {
+        return Math.max(from, Math.min(to, rawValue));
+    }
+
+    Component.onCompleted: {
+        visualValue = clampedValue;
+    }
+
+    onClampedValueChanged: {
+        if (!sliderMouse.pressed)
+            visualValue = clampedValue;
+    }
 
     RowLayout {
         anchors.fill: parent
@@ -111,7 +126,7 @@ Item {
 
                         // Width based on percentage
                         width: {
-                            var percent = (root.value - root.from) / (root.to - root.from);
+                            var percent = (root.visualValue - root.from) / (root.to - root.from);
                             percent = Math.max(0, Math.min(1, percent));
                             return parent.width * percent;
                         }
@@ -120,8 +135,8 @@ Item {
 
                         Behavior on width {
                             NumberAnimation {
-                                duration: Config.animDurationShort
-                                easing.type: Easing.OutQuad
+                                duration: Config.animDuration
+                                easing.type: Easing.OutCubic
                             }
                         }
 
@@ -139,8 +154,8 @@ Item {
 
                         text: {
                             if (root.percentageFromRawValue)
-                                return Math.round(root.value * 100) + "%";
-                            return Math.round(((root.value - root.from) / (root.to - root.from)) * 100) + "%";
+                                return Math.round(root.visualValue * 100) + "%";
+                            return Math.round(((root.visualValue - root.from) / (root.to - root.from)) * 100) + "%";
                         }
 
                         font.family: Config.font
@@ -172,9 +187,11 @@ Item {
                     let percent = mouseX / width;
                     percent = Math.max(0, Math.min(1, percent));
                     let val = root.from + (root.to - root.from) * percent;
+                    root.visualValue = val;
                     root.moved(val);
                 }
 
+                preventStealing: true
                 onPressed: mouse => updateFromMouse(mouse.x)
                 onPositionChanged: mouse => {
                     if (pressed)
@@ -184,9 +201,11 @@ Item {
                 onWheel: wheel => {
                     let step = (root.to - root.from) * 0.05;
                     if (wheel.angleDelta.y > 0)
-                        root.moved(Math.min(root.to, root.value + step));
+                        root.visualValue = Math.min(root.to, root.visualValue + step);
                     else
-                        root.moved(Math.max(root.from, root.value - step));
+                        root.visualValue = Math.max(root.from, root.visualValue - step);
+
+                    root.moved(root.visualValue);
                 }
             }
         }

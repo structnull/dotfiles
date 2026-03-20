@@ -1,7 +1,6 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
-import QtQuick
 import Quickshell
 import Quickshell.Io
 
@@ -13,7 +12,6 @@ Singleton {
     // ========================================================================
 
     property bool overlayVisible: false
-    property string pendingAction: ""
 
     // ========================================================================
     // PUBLIC FUNCTIONS
@@ -21,12 +19,10 @@ Singleton {
 
     function showOverlay() {
         overlayVisible = true;
-        pendingAction = "";
     }
 
     function hideOverlay() {
         overlayVisible = false;
-        pendingAction = "";
     }
 
     function executeAction(actionId: string) {
@@ -53,15 +49,6 @@ Singleton {
 
         hideOverlay();
     }
-
-    // Quick shortcuts
-    function shutdown() { executeAction("shutdown"); }
-    function reboot() { executeAction("reboot"); }
-    function suspend() { executeAction("suspend"); }
-    function hibernate() { executeAction("hibernate"); }
-    function lock() { executeAction("lock"); }
-    function logout() { executeAction("logout"); }
-
     // ========================================================================
     // PROCESSES
     // ========================================================================

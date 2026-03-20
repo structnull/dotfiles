@@ -15,7 +15,6 @@ Singleton {
     property string type: "volume" // "volume", "brightness"
     property real value: 0
     property bool muted: false
-    property int serial: 0
     property real anchorX: -1
     property real anchorY: -1
     property bool suppressed: false
@@ -40,7 +39,6 @@ Singleton {
         root.type = "volume";
         root.value = Math.max(0, Math.min(1.5, vol));
         root.muted = isMuted;
-        root.serial += 1;
         root.visible = true;
         hideTimer.restart();
     }
@@ -51,7 +49,6 @@ Singleton {
         root.type = "brightness";
         root.value = Math.max(0.05, Math.min(1, brightness));
         root.muted = false;
-        root.serial += 1;
         root.visible = true;
         hideTimer.restart();
     }
@@ -59,9 +56,5 @@ Singleton {
     onSuppressedChanged: {
         if (suppressed)
             root.visible = false;
-    }
-
-    function hide() {
-        root.visible = false;
     }
 }

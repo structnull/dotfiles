@@ -9,18 +9,16 @@ Singleton {
     id: root
 
     property real brightness: 0.5
-    property real maxBrightness: 1.0
-    readonly property real level: brightness
-    readonly property int percentage: Math.round(brightness * 100)
 
     property string backlightDevice: "amdgpu_bl1"
     readonly property string backlightPath: "/sys/class/backlight/" + backlightDevice + "/brightness"
     readonly property string maxBrightnessPath: "/sys/class/backlight/" + backlightDevice + "/max_brightness"
 
-    property int currentValue: 0
     property int maxValue: 0
     property bool hasBacklight: false
+    property real pendingBrightness: NaN
     readonly property bool available: hasBacklight && maxValue > 0
+    readonly property bool hasPendingBrightness: !isNaN(pendingBrightness)
 
     readonly property string icon: {
         if (brightness <= 0.1)
@@ -37,7 +35,6 @@ Singleton {
     property bool nightLightEnabled: StateService.get("nightLight.enabled", false)
     property int nightLightTemperature: 4000
     property real nightLightIntensity: StateService.get("nightLight.intensity", 0.5)
-    readonly property string nightLightIcon: nightLightEnabled ? "󰌵" : "󰌶"
 
     Component.onCompleted: {
         detectBacklightDevice.running = true;
@@ -62,21 +59,39 @@ Singleton {
         brightnessProcess.running = true;
     }
 
+    function clampBrightness(value) {
+        return Math.max(0.05, Math.min(1.0, value));
+    }
+
+    function applyBrightnessReading(rawValue) {
+        if (isNaN(rawValue))
+            return;
+
+        const nextBrightness = clampBrightness(root.maxValue > 0 ? rawValue / root.maxValue : root.brightness);
+
+        if (hasPendingBrightness) {
+            if (Math.abs(nextBrightness - pendingBrightness) <= 0.01) {
+                pendingBrightness = NaN;
+                brightnessSettleTimer.stop();
+            } else if (brightnessSettleTimer.running) {
+                return;
+            } else {
+                pendingBrightness = NaN;
+            }
+        }
+
+        root.brightness = nextBrightness;
+    }
+
     function setBrightness(value) {
-        const newValue = Math.max(0.05, Math.min(1.0, value));
+        const newValue = clampBrightness(value);
         const percent = Math.round(newValue * 100);
 
+        root.pendingBrightness = newValue;
         root.brightness = newValue;
+        brightnessSettleTimer.restart();
         setBrightnessProcess.command = ["/bin/sh", "-c", "brightnessctl set " + percent + "% >/dev/null 2>&1 && cat " + backlightPath];
         setBrightnessProcess.running = true;
-    }
-
-    function increaseBrightness() {
-        setBrightness(brightness + 0.05);
-    }
-
-    function decreaseBrightness() {
-        setBrightness(brightness - 0.05);
     }
 
     function toggleBrightness() {
@@ -85,14 +100,6 @@ Singleton {
             setBrightness(0.05);
         } else {
             setBrightness(lastBrightness);
-        }
-    }
-
-    function toggleNightLight() {
-        if (nightLightEnabled) {
-            disableNightLight();
-        } else {
-            enableNightLight();
         }
     }
 
@@ -180,7 +187,6 @@ Singleton {
                 const value = parseInt(data.trim());
                 if (!isNaN(value) && value > 0) {
                     root.maxValue = value;
-                    root.maxBrightness = value;
                 }
             }
         }
@@ -191,10 +197,7 @@ Singleton {
         stdout: SplitParser {
             onRead: data => {
                 const value = parseInt(data.trim());
-                if (!isNaN(value)) {
-                    root.currentValue = value;
-                    root.brightness = root.maxValue > 0 ? value / root.maxValue : 0;
-                }
+                root.applyBrightnessReading(value);
             }
         }
     }
@@ -204,10 +207,7 @@ Singleton {
         stdout: SplitParser {
             onRead: data => {
                 const value = parseInt(data.trim());
-                if (!isNaN(value)) {
-                    root.currentValue = value;
-                    root.brightness = root.maxValue > 0 ? value / root.maxValue : root.brightness;
-                }
+                root.applyBrightnessReading(value);
             }
         }
     }
@@ -229,6 +229,15 @@ Singleton {
         repeat: true
         triggeredOnStart: true
         onTriggered: root.readBrightness()
+    }
+
+    Timer {
+        id: brightnessSettleTimer
+        interval: 160
+        onTriggered: {
+            root.pendingBrightness = NaN;
+            root.readBrightness();
+        }
     }
 
     Process {

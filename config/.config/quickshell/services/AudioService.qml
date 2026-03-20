@@ -531,14 +531,6 @@ Singleton {
         }
     }
 
-    function increaseVolume() {
-        setVolume(volume + 0.05);
-    }
-
-    function decreaseVolume() {
-        setVolume(volume - 0.05);
-    }
-
     onSinkChanged: {
         refreshOutputType();
         schedulePortProbe();
