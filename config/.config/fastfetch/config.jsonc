@@ -1,172 +1,71 @@
 {
-    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-    "logo": {
-        "type": "auto",
-        "padding": {
-            "top": 1,
-            "right": 3
-        },
-        "height": 40
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "display": {
+    "key": {
+      "width": 10
     },
-    "display": {
-        "color": {
-            "keys": "magenta"
-        },
-        "separator": "",
-        "constants": [
-            "──────────────────────────────────────────────",
-            "\u001b[47D",
-            "\u001b[47C",
-            "\u001b[46C",
-            "══════════════════════════════════════════════",
-            "OKDA"
-        ],
-        "brightColor": true
+    "separator": ""
+  },
+  "modules": [
+    "break",
+    {
+      "type": "command",
+      "key": "󰀄 USER",
+      "keyColor": "#ccccff",
+      "text": "echo $USER@$(hostnamectl hostname)"
     },
-    "modules": [
-        {
-            "type": "custom",
-            "key": "╔═══════════════╦═{$5}╗\u001b[38D",
-            "format": "\u001b[1m{#magenta} {$6} "
-        },
-        {
-            "type": "os",
-            "key": "║  {icon}  \u001b[s{sysname}\u001b[u\u001b[10C║{$3}║{$2}"
-        },
-        {
-            "type": "datetime",
-            "key": "║  {icon}  Fetched   ║{$3}║{$2}",
-            "format": "{year}-{month-pretty}-{day-pretty} {hour-pretty}:{minute-pretty}:{second-pretty} {timezone-name}"
-        },
-        {
-            "type": "locale",
-            "key": "║  {icon}  Locale    ║{$3}║{$2}"
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}┌──────────────┬{$1}┐{#keys}║\u001b[37D",
-            "format": "{#bright_cyan} Hardware "
-        },
-        {
-            "type": "memory",
-            "key": "║{#cyan}│ {icon}  RAM       │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "swap",
-            "key": "║{#cyan}│ {icon}  SWAP      │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "cpu",
-            "key": "║{#cyan}│ {icon}  CPU       │{$4}│{#keys}║{$2}",
-            "showPeCoreCount": true
-        },
-        {
-            "type": "gpu",
-            "key": "║{#cyan}│ {icon}  GPU       │{$4}│{#keys}║{$2}",
-            "gpuType": "discrete"
-        },
-        {
-            "type": "disk",
-            "key": "║{#cyan}│ {icon}  Disk      │{$4}│{#keys}║{$2}",
-            "format": "{size-used} \/ {size-total} ({size-percentage}) - {filesystem}"
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}└──────────────┴{$1}┘{#keys}║",
-            "format": ""
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}┌──────────────┬{$1}┐{#keys}║\u001b[37D",
-            "format": "{#bright_cyan} Desktop "
-        },
-        {
-            "type": "de",
-            "key": "║{#cyan}│ {icon}  Desktop   │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "wm",
-            "key": "║{#cyan}│ {icon}  Session   │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "display",
-            "key": "║{#cyan}│ {icon}  Display   │{$4}│{#keys}║{$2}",
-            "compactType": "original-with-refresh-rate"
-        },
-        {
-            "type": "localip",
-            "key": "║{#cyan}│ {icon}  Local IP  │{$4}│{#keys}║{$2}",
-            "showIpv4": true,
-            "showIpv6": false
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}└──────────────┴{$1}┘{#keys}║",
-            "format": ""
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}┌──────────────┬{$1}┐{#keys}║\u001b[37D",
-            "format": "{#bright_cyan} Terminal "
-        },
-        {
-            "type": "shell",
-            "key": "║{#cyan}│ {icon}  Shell     │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "terminal",
-            "key": "║{#cyan}│ {icon}  Terminal  │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "terminaltheme",
-            "key": "║{#cyan}│ {icon}  Colors    │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "packages",
-            "key": "║{#cyan}│ {icon}  Packages  │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "version",
-            "key": "║{#cyan}│ {icon}  Fastfetch │{$4}│{#keys}║{$2}",
-            "format": "v{version}"
-        },
-        {
-            "type": "custom",
-            "key": "║{#cyan}└──────────────┴{$1}┘{#keys}║",
-            "format": ""
-        },
-        {
-            "type": "custom",
-            "key": "║{#magenta}└──────────────┴{$1}┘{#keys}║",
-            "format": ""
-        },
-        {
-            "type": "custom",
-            "key": "║{#magenta}┌──────────────┬{$1}┐{#keys}║\u001b[36D",
-            "format": "{#bright_magenta} Uptime "
-        },
-        {
-            "type": "uptime",
-            "key": "║{#magenta}│ {icon}  Uptime    │{$4}│{#keys}║{$2}"
-        },
-        {
-            "type": "disk",
-            "keyIcon": "󰃭",
-            "key": "║{#magenta}│ {icon}  OS Age    │{$4}│{#keys}║{$2}",
-            "folders": "/",
-            "format": "{create-time:10} [{days} days]"
-        },
-        {
-            "type": "custom",
-            "key": "║{#magenta}└──────────────┴{$1}┘{#keys}║",
-            "format": ""
-        },
-        {
-            "type": "custom",
-            "key": "╚═════════════════{$5}╝",
-            "format": ""
-        },
-        "break",
-        "colors"
-    ]
+    {
+      "type": "os",
+      "key": "󰣇 OS",
+      "keyColor": "#c9cfff",
+      "format": "{name} {version-id}"
+    },
+    {
+      "type": "command",
+      "key": "󰌽 KER",
+      "keyColor": "#c6d2ff",
+      "text": "echo $(uname -r | cut -d- -f1) $(uname -m)"
+    },
+    {
+      "type": "packages",
+      "key": "󰏗 PKG",
+      "keyColor": "#c4d4ff",
+      "format": "{all}"
+    },
+    {
+      "type": "terminal",
+      "key": "󰆍 TERM",
+      "keyColor": "#c1d7ff",
+      "format": "{pretty-name}"
+    },
+    {
+      "type": "shell",
+      "key": "󰞷 SH",
+      "keyColor": "#c0d9ff",
+      "format": "{pretty-name}"
+    },
+    {
+      "type": "uptime",
+      "keyColor": "#bedcff",
+      "key": "󰥔 UP"
+    },
+    {
+      "type": "memory",
+      "key": "󰍛 RAM",
+      "keyColor": "#bddeff",
+      "format": "{used} / {total} ({percentage})"
+    },
+    {
+      "type": "disk",
+      "folders": "/",
+      "key": "󰋊 SSD",
+      "keyColor": "#bde0fe",
+      "format": "{size-used} / {size-total} ({size-percentage})"
+    },
+    {
+      "type": "custom",
+      "format": "\u001b[90m \u001b[91m \u001b[92m \u001b[93m \u001b[94m \u001b[95m \u001b[96m \u001b[97m"
+    },
+    "break"
+  ]
 }
