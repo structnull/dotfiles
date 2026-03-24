@@ -1,8 +1,9 @@
-config/.config/*/cache
-config/.config/mpv/watch_later
-config/.config/cmus/cache
-config/.config/ncspot/userstate.cbor
-config/.config/*/state
-config/.config/*/Logs
+.config/*/cache
+.config/mpv/watch_later
+.config/cmus/cache
+.config/ncspot/userstate.cbor
+.config/*/state
+.config/*/Logs
 
 *.log
+*.log.json

@@ -1,193 +1,229 @@
-# Enable colors and change prompt:
-autoload -U colors && colors
-PS1="%F{yellow}%n%f%F{magenta}@%f%F{blue}%m%f %~ %F{green}❯%f "
+# Cache and helper setup
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+
+typeset -U path PATH
+
+command_exists() {
+  (( $+commands[$1] ))
+}
+
+safe_source() {
+  [[ -r "$1" ]] && source "$1"
+}
+
+add_path_front() {
+  [[ -d "$1" ]] && path=("$1" $path)
+}
+
+add_path_back() {
+  [[ -d "$1" ]] && path+=("$1")
+}
+
+mkdir -p "$XDG_CACHE_HOME/zsh" >/dev/null 2>&1
 
 
-# History:
+# Prompt
+autoload -Uz colors compinit edit-command-line
+colors
+
+if command_exists starship; then
+  [[ -t 1 ]] && eval "$(starship init zsh)"
+else
+  PROMPT='%F{yellow}%n%f%F{magenta}@%f%F{blue}%m%f %~ %F{green}❯%f '
+fi
+
+
+# History
 HISTSIZE=50000
 SAVEHIST=50000
-HISTFILE=~/.zsh_history
+HISTFILE="$HOME/.zsh_history"
 
-#Load zsh autosuggestion
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+setopt appendhistory
+setopt autocd
+setopt correct
+setopt extendedglob
+setopt histignorealldups
+setopt histignorespace
+setopt inc_append_history
+setopt nocaseglob
+setopt nocheckjobs
+setopt nobeep
+setopt numericglobsort
+setopt rcexpandparam
 
-#Load zsh history-substring-search
-source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
 
-#load zsh-system-clipboard
-source /usr/share/zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh
+# Plugins
+safe_source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+safe_source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+safe_source /usr/share/zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh
 
-#Basic auto/tab complete:
-autoload -U compinit
-zstyle ':completion:*' menu select
+
+# Completion
 zmodload zsh/complist
-compinit
-_comp_options+=(globdots)   # Include hidden files.
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' rehash true
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/zcompcache"
 
-# VI mode:
+_comp_options+=(globdots)
+compinit -d "$XDG_CACHE_HOME/zsh/zcompdump-${ZSH_VERSION}"
+
+
+# Vi mode and key bindings
 bindkey -v
 export KEYTIMEOUT=1
 
 bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -v '^?' backward-delete-char
+bindkey '^?' backward-delete-char
+bindkey '^e' edit-command-line
+bindkey -s '^f' 'yy\n'
 
-# Change cursor shape for different vi modes:
-function zle-keymap-select {
-  if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[1 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
+if (( $+widgets[history-substring-search-up] && $+widgets[history-substring-search-down] )); then
+  [[ -n ${terminfo[kcuu1]-} ]] && bindkey "${terminfo[kcuu1]}" history-substring-search-up
+  [[ -n ${terminfo[kcud1]-} ]] && bindkey "${terminfo[kcud1]}" history-substring-search-down
+  bindkey '^[[A' history-substring-search-up
+  bindkey '^[[B' history-substring-search-down
+fi
+
+if (( $+widgets[zsh-system-clipboard-vicmd-vi-yank-eol] )); then
+  bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
+fi
+
+zle-keymap-select() {
+  if [[ $KEYMAP == vicmd || $1 == block ]]; then
+    [[ -t 1 ]] && printf '\e[1 q'
+  elif [[ $KEYMAP == main || $KEYMAP == viins || -z $KEYMAP || $1 == beam ]]; then
+    [[ -t 1 ]] && printf '\e[5 q'
   fi
 }
 zle -N zle-keymap-select
+
 zle-line-init() {
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
+  zle -K viins
+  [[ -t 1 ]] && printf '\e[5 q'
 }
 zle -N zle-line-init
-echo -ne '\e[5 q' # Use beam shape cursor on startup.
-preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
-# Edit line in vim:
-autoload edit-command-line; zle -N edit-command-line
-bindkey '^e' edit-command-line
+precmd() {
+  [[ -t 1 ]] && printf '\e[5 q'
+}
 
-bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
+preexec() {
+  [[ -t 1 ]] && printf '\e[5 q'
+}
+
+[[ -t 1 ]] && printf '\e[5 q'
 
 
-# Archive extraction:
-ex () {
-  if [ -f "$1" ]; then
+# Helpers
+ex() {
+  [[ -n "$1" ]] || {
+    echo "usage: ex <archive>"
+    return 1
+  }
+
+  if [[ -f "$1" ]]; then
     case "$1" in
-      *.tar.bz2)   tar xjvf "$1" ;;    
-      *.tar.gz)    tar xzvf "$1" ;;
-      *.bz2)       bunzip2 -v "$1" ;;
-      *.rar)       unrar x -y "$1" ;;   
-      *.gz)        gunzip -v "$1" ;;
-      *.tar)       tar xvf "$1" ;;
-      *.tbz2)      tar xjvf "$1" ;;
-      *.tgz)       tar xzvf "$1" ;;
-      *.zip)       unzip "$1" ;;     
-      *.Z)         uncompress -v "$1" ;;
-      *.7z)        7z x "$1" ;;         
-      *.deb)       ar x "$1" ;;         
-      *.tar.xz)    tar xvJf "$1" ;;     
-      *.tar.zst)   tar --zstd -xvf "$1" ;;
-      *)           echo "'$1' cannot be extracted" ;;
+      *.tar.bz2) tar xjvf "$1" ;;
+      *.tar.gz) tar xzvf "$1" ;;
+      *.bz2) bunzip2 -v "$1" ;;
+      *.rar) unrar x -y "$1" ;;
+      *.gz) gunzip -v "$1" ;;
+      *.tar) tar xvf "$1" ;;
+      *.tbz2) tar xjvf "$1" ;;
+      *.tgz) tar xzvf "$1" ;;
+      *.zip) unzip "$1" ;;
+      *.Z) uncompress -v "$1" ;;
+      *.7z) 7z x "$1" ;;
+      *.deb) ar x "$1" ;;
+      *.tar.xz) tar xvJf "$1" ;;
+      *.tar.zst) tar --zstd -xvf "$1" ;;
+      *) echo "'$1' cannot be extracted" ;;
     esac
   else
     echo "'$1' is not a valid file"
   fi
 }
 
-function yy() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-	yazi "$@" --cwd-file="$tmp"
-	if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-		cd -- "$cwd"
-	fi
-	rm -f -- "$tmp"
+yy() {
+  local tmp cwd
+
+  tmp="$(mktemp -t yazi-cwd.XXXXXX)" || return 1
+  yazi "$@" --cwd-file="$tmp"
+
+  if cwd="$(cat -- "$tmp")" && [[ -n "$cwd" && "$cwd" != "$PWD" ]]; then
+    cd -- "$cwd" || return
+  fi
+
+  rm -f -- "$tmp"
 }
 
-bindkey -s '^f' 'yy\n'
-
-# Open ranger in current directory:
-#run_ranger () {
-#    echo
-#    ranger --choosedir=$HOME/.rangerdir < $TTY
-#    LASTDIR=`cat $HOME/.rangerdir`
-#    cd "$LASTDIR"
-#    zle reset-prompt
-#}
-#zle -N run_ranger
-#bindkey '^f' run_ranger
-
-
-## Options section
-setopt correct                                                  # Auto correct mistakes
-setopt extendedglob                                             # Extended globbing. Allows using regular expressions with *
-setopt nocaseglob                                               # Case insensitive globbing
-setopt rcexpandparam                                            # Array expension with parameters
-setopt nocheckjobs                                              # Don't warn about running processes when exiting
-setopt numericglobsort                                          # Sort filenames numerically when it makes sense
-setopt nobeep                                                   # No beep
-setopt appendhistory                                            # Immediately append history instead of overwriting
-setopt histignorealldups                                        # If a new command is a duplicate, remove the older one
-setopt autocd                                                   # if only directory path is entered, cd there.
-setopt inc_append_history                                       # save commands are added to the history immediately, otherwise only when shell exits.
-setopt histignorespace                                          # Don't save commands that start with space
+mp3() {
+  mkdir -p "$HOME/Music/yt" || return 1
+  yt-dlp \
+    --ignore-errors \
+    -f bestaudio \
+    --extract-audio \
+    --audio-format mp3 \
+    --audio-quality 0 \
+    -o "$HOME/Music/yt/%(title)s.%(ext)s" \
+    "$1"
+}
 
 
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'       # Case insensitive tab completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"         # Colored completion (different colors for dirs/files/etc)
-zstyle ':completion:*' rehash true                              # automatically find new executables in path 
-# Speed up completions
-zstyle ':completion:*' accept-exact '*(N)'
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path  ~/.cache/zcache
-
-
-# bind UP and DOWN arrow keys to history substring search
-bindkey '^[[A' history-substring-search-up			
-bindkey '^[[B' history-substring-search-down
-
-# Resizing issue fix
+# Environment
 unset LINES
 unset COLUMNS
 
-# EXPORTS
 export FZF_COMPLETION_OPTS="--multi"
-# Default Apps
 export EDITOR="nvim"
-export READER="zathura"
 export VISUAL="nvim"
+export READER="zathura"
 export TERMINAL="kitty"
 export BROWSER="brave"
+export TRUEBROWSER="brave"
 export VIDEO="mpv"
 export IMAGE="imv"
-export COLORTERM="truecolor"
 export OPENER="mimeopen"
-export LANG=en_US.UTF-8
+export LANG="en_US.UTF-8"
+export COLORTERM="truecolor"
 export MANPAGER='nvim +Man!'
-export TRUEBROWSER='brave'
 export BAT_THEME='base16-256'
 
-
-
 # export JAVA_HOME='/usr/lib/jvm/java-17-openjdk'
-export ANDROID_SDK_ROOT='$HOME/Android/Sdk/'
-export CHROME_EXECUTABLE='/usr/bin/google-chrome-stable'
-# export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/
-# export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools/
-# export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin/
-# export PATH=$PATH:$ANDROID_ROOT/emulator
-# export PATH=$PATH:$ANDROID_SDK_ROOT/tools/
+export ANDROID_SDK_ROOT="$HOME/Android/Sdk"
+export CHROME_EXECUTABLE="/usr/bin/google-chrome-stable"
 
-
-#export paths
+add_path_front "$HOME/.local/bin"
+add_path_front "$HOME/.cargo/bin"
+[[ -n ${JAVA_HOME-} ]] && add_path_front "$JAVA_HOME/bin"
+add_path_back "$HOME/.pub-cache/bin"
+add_path_front "$HOME/.openfang/bin"
 export PATH
-export PATH="$HOME/.local/bin:$PATH"
-export PATH=/home/adharsh/.cargo/bin:$PATH
-export PATH=$JAVA_HOME/bin:$PATH 
-export PATH="$PATH":"$HOME/.pub-cache/bin"
-export XDG_CACHE_HOME="$HOME/.cache"
 
-# aliases
+# Android SDK tools if you need them:
+# add_path_back "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin"
+# add_path_back "$ANDROID_SDK_ROOT/platform-tools"
+# add_path_back "$ANDROID_SDK_ROOT/tools/bin"
+# add_path_back "$ANDROID_SDK_ROOT/emulator"
+
+export XCURSOR_PATH="${XCURSOR_PATH:+$XCURSOR_PATH:}$HOME/.local/share/icons"
+
+
+# Aliases
 alias neofetch='fastfetch'
 alias scrcpy='SDL_VIDEODRIVER=wayland scrcpy'
 alias ls='ls -Gh --color=auto'
 alias ll='ls -alF'
-# alias code='GTK_USE_PORTAL=1 code'
 alias la='ls -A'
-alias ta='tmux attach-session'
 alias l='ls -CF'
+alias ta='tmux attach-session'
 alias v='nvim'
 alias vim='nvim'
 alias win='/media/windows/'
@@ -198,43 +234,28 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias py='python3'
 alias paclist="pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'"
-alias zshrc="nvim ~/.zshrc"
-alias wttr="curl wttr.in"
-alias bkup="/media/windows/stuff/dotfiles"
-alias cava="TERM=st-256color cava"
-alias code="codium"
-alias deck="STEAM_MULTIPLE_XWAYLANDS=1 gamescope -W 1920 -H 1080 -f --xwayland-count 2 -r 60 -e --prefer-vk-device 8086:9a60 --adaptive-sync -- steam -gamepadui -steamdeck --pipewire-dmabuf"
+alias zshrc='nvim ~/.zshrc'
+alias wttr='curl wttr.in'
+alias bkup='/media/windows/stuff/dotfiles'
+alias cava='TERM=st-256color cava'
+alias code='codium'
+alias deck='STEAM_MULTIPLE_XWAYLANDS=1 gamescope -W 1920 -H 1080 -f --xwayland-count 2 -r 60 -e --prefer-vk-device 8086:9a60 --adaptive-sync -- steam -gamepadui -steamdeck --pipewire-dmabuf'
 
 
-# alias fzf='fzfub'
-# alias hyprcrash="cat /tmp/hypr/$(ls -t /tmp/hypr/ | head -n 2 | tail -n 1)/hyprland.log >> sed && paste.sh sed && rm sed"
-# fzf
-source /usr/share/fzf/key-bindings.zsh
-source /usr/share/fzf/completion.zsh
-export FZF_DEFAULT_COMMAND='ag --hidden -p .gitignore -g ""'
+# FZF
+if [[ -t 0 && -t 1 ]]; then
+  safe_source /usr/share/fzf/key-bindings.zsh
+  safe_source /usr/share/fzf/completion.zsh
+fi
+
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow -g "!.git"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --preview "bat --color=always --style=numbers --line-range=:500 {}"'
-export XCURSOR_PATH=${XCURSOR_PATH}:~/.local/share/icons
+export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --preview "bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || sed -n '\''1,500p'\'' {}"'
 
 
-#youtube-dl
-mp3 () {
-	yt-dlp --ignore-errors -f bestaudio --extract-audio --audio-format mp3 --audio-quality 0 -o '~/Music/yt/%(title)s.%(ext)s' "$1"
-}
+# Extra completions
+safe_source /home/adharsh/.dart-cli-completion/zsh-config.zsh
 
 
-# Startup
-eval "$(starship init zsh)"
-
-
-# Load zsh-syntax-highlighting; should be last.
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
-
-## [Completion]
-## Completion scripts setup. Remove the following line to uninstall
-[[ -f /home/adharsh/.dart-cli-completion/zsh-config.zsh ]] && . /home/adharsh/.dart-cli-completion/zsh-config.zsh || true
-## [/Completion]
-
-
-# OpenFang
-export PATH=/home/adharsh/.openfang/bin:$PATH
+# Load last
+safe_source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
