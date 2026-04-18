@@ -14,7 +14,7 @@
     "background": 0.48
   },
   "caffeine": {
-    "enabled": true
+    "enabled": false
   },
   "notifications": {
     "dnd": false
