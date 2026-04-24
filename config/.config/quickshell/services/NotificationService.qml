@@ -97,7 +97,7 @@ Singleton {
             });
 
             if (wrapper) {
-                root.notifications.push(wrapper);
+                root.notifications.unshift(wrapper);
 
                 // Only start the lifecycle (timer) if not in DND
                 if (showPopup)

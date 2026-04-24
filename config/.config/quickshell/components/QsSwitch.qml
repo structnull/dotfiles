@@ -6,15 +6,18 @@ import qs.config
 Switch {
     id: root
 
-    implicitWidth: 46
-    implicitHeight: 26
+    implicitWidth: 44
+    implicitHeight: 24
 
     indicator: Rectangle {
         implicitWidth: root.implicitWidth
         implicitHeight: root.implicitHeight
-        radius: Config.radiusLarge
+        radius: height / 2
 
-        color: root.checked ? Config.accentColor : Config.surface2Color
+        // Subtle tint fill when on for contrast
+        color: root.checked ? Qt.alpha(Config.accentColor, 0.12) : "transparent"
+        border.width: 1.5
+        border.color: root.checked ? Config.accentColor : Qt.alpha(Config.textColor, 0.3)
 
         Behavior on color {
             ColorAnimation {
@@ -22,17 +25,31 @@ Switch {
             }
         }
 
-        Rectangle {
-            x: root.checked ? (parent.width - width - 4) : 4
-            anchors.verticalCenter: parent.verticalCenter
+        Behavior on border.color {
+            ColorAnimation {
+                duration: Config.animDuration
+            }
+        }
 
-            width: parent.height - 8
-            height: parent.height - 8
+        // Sliding dot
+        Rectangle {
+            x: root.checked ? (parent.width - width - 5) : 5
+            anchors.verticalCenter: parent.verticalCenter
+            width: root.checked ? 13 : 10
+            height: root.checked ? 13 : 10
             radius: width / 2
 
-            color: root.checked ? Config.textReverseColor : Config.textColor
+            color: root.checked ? Config.accentColor : "transparent"
+            border.width: root.checked ? 0 : 1.5
+            border.color: Qt.alpha(Config.textColor, 0.25)
 
             Behavior on color {
+                ColorAnimation {
+                    duration: Config.animDuration
+                }
+            }
+
+            Behavior on border.color {
                 ColorAnimation {
                     duration: Config.animDuration
                 }
@@ -41,12 +58,26 @@ Switch {
             Behavior on x {
                 NumberAnimation {
                     duration: Config.animDuration
-                    easing.type: Easing.OutExpo
+                    easing.type: Easing.OutBack
+                    easing.overshoot: 1.5
+                }
+            }
+
+            Behavior on width {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: Easing.OutCubic
+                }
+            }
+
+            Behavior on height {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: Easing.OutCubic
                 }
             }
         }
     }
 
-    // Remove the default text so it doesn't interfere with the layout
     contentItem: Item {}
 }

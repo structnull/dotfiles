@@ -29,7 +29,7 @@ Singleton {
     readonly property color subtextColor: "#d7dfeb"
     readonly property color subtextReverseColor: "#7b8798"
 
-    readonly property color accentColor: "#d6e9ff"
+    readonly property color accentColor: "#7eb8e8"
     readonly property color successColor: "#7ee2a8"
     readonly property color warningColor: "#ffcc66"
     readonly property color errorColor: "#ff5f57"

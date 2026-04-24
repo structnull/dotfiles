@@ -12,12 +12,10 @@ Rectangle {
     Layout.fillWidth: true
     readonly property int sourceRowHeight: MprisService.orderedPlayersCount > 1 ? 28 : 0
     readonly property int sourceExpandedExtra: (sourceDropdownOpen && MprisService.orderedPlayersCount > 1) ? (sourceListColumn.implicitHeight + 12) : 0
-    implicitHeight: 142 + sourceRowHeight + sourceExpandedExtra
-    radius: Config.radiusLarge
+    implicitHeight: 148 + sourceRowHeight + sourceExpandedExtra
+    radius: 4
     clip: true
-    color: Config.surface1Color
-    border.width: 1
-    border.color: Qt.alpha(Config.surface3Color, 0.55)
+    color: "transparent"
 
     property string transitionKey: MprisService.trackKey
     property bool sourceDropdownOpen: false
@@ -36,8 +34,8 @@ Rectangle {
     }
 
     onTransitionKeyChanged: {
-        if (progressBar)
-            progressBar.visualProgress = MprisService.progress;
+        if (progressWave)
+            progressWave.visualProgress = MprisService.progress;
         if (swapAnim.running)
             swapAnim.stop();
         swapAnim.start();
@@ -61,6 +59,41 @@ Rectangle {
         }
     }
 
+    // ====== DOTTED WIREFRAME BORDER ======
+    Canvas {
+        id: mediaBorder
+        anchors.fill: parent
+        antialiasing: true
+
+        property color strokeColor: Qt.alpha(Config.textColor, 0.2)
+
+        onStrokeColorChanged: requestPaint()
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+
+        onPaint: {
+            var ctx = getContext("2d");
+            ctx.reset();
+            ctx.setLineDash([6, 4]);
+            ctx.strokeStyle = strokeColor.toString();
+            ctx.lineWidth = 1;
+            var r = root.radius;
+            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.arcTo(x + w, y, x + w, y + r, r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            ctx.lineTo(x + r, y + h);
+            ctx.arcTo(x, y + h, x, y + h - r, r);
+            ctx.lineTo(x, y + r);
+            ctx.arcTo(x, y, x + r, y, r);
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+
     Item {
         id: contentWrap
         anchors.fill: parent
@@ -71,15 +104,15 @@ Rectangle {
             anchors.margins: 10
             spacing: 10
 
+            // Cover art with wireframe frame
             Rectangle {
                 id: coverShell
-                Layout.preferredWidth: 94
-                Layout.preferredHeight: 94
+                Layout.preferredWidth: 90
+                Layout.preferredHeight: 90
                 Layout.alignment: Qt.AlignVCenter
-                radius: Config.radiusLarge
-                color: Qt.alpha(Config.surface2Color, 0.95)
-                border.width: 1
-                border.color: Qt.alpha(Config.surface3Color, 0.85)
+                radius: 4
+                color: Qt.alpha(Config.surface1Color, 0.5)
+                border.width: 0
                 clip: true
 
                 Image {
@@ -94,49 +127,79 @@ Rectangle {
                     visible: status === Image.Ready
                 }
 
+                // Subtle vignette
                 Rectangle {
                     anchors.fill: parent
                     visible: coverImage.visible
                     gradient: Gradient {
                         GradientStop {
                             position: 0.0
-                            color: Qt.alpha(Config.backgroundColor, 0.0)
+                            color: "transparent"
                         }
                         GradientStop {
                             position: 1.0
-                            color: Qt.alpha(Config.backgroundColor, 0.18)
+                            color: Qt.alpha(Config.backgroundColor, 0.2)
                         }
                     }
                 }
 
+                // Fallback icon
                 Text {
                     anchors.centerIn: parent
                     visible: !coverImage.visible
                     text: ""
                     font.family: Config.font
                     font.pixelSize: Config.fontSizeIconLarge
-                    color: Qt.alpha(Config.subtextColor, 0.8)
+                    color: Qt.alpha(Config.subtextColor, 0.5)
                 }
 
+                // Play state badge
                 Rectangle {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    anchors.rightMargin: 6
-                    anchors.bottomMargin: 6
-                    width: 26
-                    height: 18
-                    radius: 9
-                    color: Qt.alpha(Config.surface0Color, 0.82)
+                    anchors.rightMargin: 5
+                    anchors.bottomMargin: 5
+                    width: 22
+                    height: 16
+                    radius: 8
+                    color: "transparent"
                     border.width: 1
-                    border.color: Qt.alpha(Config.surface3Color, 0.65)
+                    border.color: Qt.alpha(Config.textColor, 0.25)
 
                     Text {
                         anchors.centerIn: parent
                         text: MprisService.isPlaying ? "" : ""
                         font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
-                        color: Config.textColor
-                        anchors.horizontalCenterOffset: MprisService.isPlaying ? 0 : 1
+                        font.pixelSize: 8
+                        color: Config.subtextColor
+                        anchors.horizontalCenterOffset: MprisService.isPlaying ? 0 : 0.5
+                    }
+                }
+
+                // Dotted frame around cover
+                Canvas {
+                    anchors.fill: parent
+                    antialiasing: true
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.reset();
+                        ctx.setLineDash([4, 3]);
+                        ctx.strokeStyle = Qt.alpha(Config.textColor, 0.2).toString();
+                        ctx.lineWidth = 1;
+                        var r = 4;
+                        var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
+                        ctx.beginPath();
+                        ctx.moveTo(x + r, y);
+                        ctx.lineTo(x + w - r, y);
+                        ctx.arcTo(x + w, y, x + w, y + r, r);
+                        ctx.lineTo(x + w, y + h - r);
+                        ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+                        ctx.lineTo(x + r, y + h);
+                        ctx.arcTo(x, y + h, x, y + h - r, r);
+                        ctx.lineTo(x, y + r);
+                        ctx.arcTo(x, y, x + r, y, r);
+                        ctx.closePath();
+                        ctx.stroke();
                     }
                 }
             }
@@ -144,8 +207,9 @@ Rectangle {
             ColumnLayout {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                spacing: 4
+                spacing: 3
 
+                // Status pill
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 6
@@ -154,26 +218,24 @@ Rectangle {
                         Layout.fillWidth: true
                     }
 
-                    Rectangle {
-                        Layout.preferredHeight: 20
-                        Layout.preferredWidth: statusLabel.implicitWidth + 12
-                        radius: 10
-                        color: MprisService.isPlaying ? Qt.alpha(Config.successColor, 0.18) : Qt.alpha(Config.surface3Color, 0.34)
-                        border.width: 1
-                        border.color: MprisService.isPlaying ? Qt.alpha(Config.successColor, 0.45) : Qt.alpha(Config.surface3Color, 0.7)
+                    Text {
+                        text: MprisService.isPlaying ? "▸ PLAYING" : "‖ PAUSED"
+                        font.family: Config.font
+                        font.pixelSize: 9
+                        font.bold: true
+                        font.letterSpacing: 1.5
+                        color: MprisService.isPlaying ? Config.accentColor : Config.mutedColor
+                        opacity: 0.7
 
-                        Text {
-                            id: statusLabel
-                            anchors.centerIn: parent
-                            text: MprisService.isPlaying ? "Playing" : "Paused"
-                            color: MprisService.isPlaying ? Config.successColor : Config.subtextColor
-                            font.family: Config.font
-                            font.pixelSize: Config.fontSizeSmall
-                            font.bold: true
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Config.animDuration
+                            }
                         }
                     }
                 }
 
+                // Title
                 Text {
                     Layout.fillWidth: true
                     text: MprisService.title
@@ -184,15 +246,18 @@ Rectangle {
                     elide: Text.ElideRight
                 }
 
+                // Artist
                 Text {
                     Layout.fillWidth: true
-                    text: MprisService.album !== "" ? (MprisService.artist + " • " + MprisService.album) : MprisService.artist
-                    color: Qt.alpha(Config.subtextColor, 0.88)
+                    text: MprisService.album !== "" ? (MprisService.artist + " · " + MprisService.album) : MprisService.artist
+                    color: Config.subtextColor
+                    opacity: 0.7
                     font.family: Config.font
                     font.pixelSize: Config.fontSizeSmall
                     elide: Text.ElideRight
                 }
 
+                // Source picker
                 Item {
                     id: sourcePickerBlock
                     visible: MprisService.orderedPlayersCount > 1
@@ -205,10 +270,16 @@ Rectangle {
                         anchors.right: parent.right
                         anchors.top: parent.top
                         height: 26
-                        radius: 8
-                        color: sourceButtonMouse.containsMouse ? Qt.alpha(Config.surface3Color, 0.9) : Qt.alpha(Config.surface2Color, 0.8)
+                        radius: 4
+                        color: "transparent"
                         border.width: 1
-                        border.color: Qt.alpha(Config.surface3Color, 0.62)
+                        border.color: sourceButtonMouse.containsMouse ? Qt.alpha(Config.textColor, 0.4) : Qt.alpha(Config.textColor, 0.2)
+
+                        Behavior on border.color {
+                            ColorAnimation {
+                                duration: Config.animDurationShort
+                            }
+                        }
 
                         RowLayout {
                             anchors.fill: parent
@@ -217,15 +288,15 @@ Rectangle {
                             spacing: 6
 
                             Rectangle {
-                                width: 6
-                                height: 6
-                                radius: 3
-                                color: MprisService.isPlaying ? Config.successColor : Config.mutedColor
+                                width: 5
+                                height: 5
+                                radius: 2.5
+                                color: MprisService.isPlaying ? Config.accentColor : Config.mutedColor
                             }
 
                             Text {
                                 text: "Source: " + (MprisService.playerIdentity !== "" ? MprisService.playerIdentity : "Media")
-                                color: Config.textColor
+                                color: Config.subtextColor
                                 font.family: Config.font
                                 font.pixelSize: Config.fontSizeSmall
                                 elide: Text.ElideRight
@@ -247,12 +318,6 @@ Rectangle {
                             cursorShape: Qt.PointingHandCursor
                             onClicked: sourceDropdownOpen = !sourceDropdownOpen
                         }
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Config.animDurationShort
-                            }
-                        }
                     }
 
                     Rectangle {
@@ -262,10 +327,10 @@ Rectangle {
                         anchors.left: parent.left
                         anchors.right: parent.right
                         height: sourceListColumn.implicitHeight + 8
-                        radius: 8
+                        radius: 4
                         color: Qt.alpha(Config.surface0Color, 0.96)
                         border.width: 1
-                        border.color: Qt.alpha(Config.surface3Color, 0.7)
+                        border.color: Qt.alpha(Config.textColor, 0.2)
                         visible: sourceDropdownOpen
                         opacity: visible ? 1 : 0
                         transformOrigin: Item.Top
@@ -305,11 +370,11 @@ Rectangle {
                                     readonly property bool playing: modelData?.isPlaying ?? false
 
                                     width: sourceListColumn.width
-                                    height: 30
-                                    radius: 8
-                                    color: active ? Qt.alpha(Config.accentColor, 0.95) : Qt.alpha(Config.surface1Color, 0.95)
-                                    border.width: active ? 0 : 1
-                                    border.color: Qt.alpha(Config.surface3Color, 0.6)
+                                    height: 28
+                                    radius: 4
+                                    color: active ? Qt.alpha(Config.accentColor, 0.12) : "transparent"
+                                    border.width: active ? 1 : 0.5
+                                    border.color: active ? Qt.alpha(Config.accentColor, 0.3) : Qt.alpha(Config.textColor, 0.15)
 
                                     RowLayout {
                                         anchors.fill: parent
@@ -318,10 +383,10 @@ Rectangle {
                                         spacing: 6
 
                                         Rectangle {
-                                            width: 6
-                                            height: 6
-                                            radius: 3
-                                            color: playing ? Config.successColor : Qt.alpha(Config.mutedColor, 0.8)
+                                            width: 5
+                                            height: 5
+                                            radius: 2.5
+                                            color: playing ? Config.accentColor : Qt.alpha(Config.mutedColor, 0.6)
                                         }
 
                                         Text {
@@ -329,16 +394,16 @@ Rectangle {
                                             font.family: Config.font
                                             font.pixelSize: Config.fontSizeSmall
                                             font.bold: active
-                                            color: active ? Config.textReverseColor : Config.textColor
+                                            color: active ? Config.accentColor : Config.textColor
                                             elide: Text.ElideRight
                                             Layout.fillWidth: true
                                         }
 
                                         Text {
-                                            text: active ? "" : (playing ? "" : "")
+                                            text: active ? "" : (playing ? "" : "")
                                             font.family: Config.font
                                             font.pixelSize: Config.fontSizeSmall
-                                            color: active ? Qt.alpha(Config.textReverseColor, 0.86) : Qt.alpha(Config.subtextColor, 0.86)
+                                            color: active ? Config.accentColor : Config.subtextColor
                                         }
                                     }
 
@@ -363,10 +428,11 @@ Rectangle {
                     }
                 }
 
-                Item {
-                    id: progressBar
+                // ====== SINE WAVE PROGRESS ======
+                Canvas {
+                    id: progressWave
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 24
+                    Layout.preferredHeight: 32
 
                     property real visualProgress: MprisService.progress
 
@@ -390,39 +456,70 @@ Rectangle {
                     Connections {
                         target: MprisService
                         function onProgressChanged() {
-                            progressBar.syncProgress();
+                            progressWave.syncProgress();
                         }
                     }
 
-                    Rectangle {
-                        id: progressTrack
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
-                        height: 5
-                        radius: 2
-                        color: Qt.alpha(Config.surface2Color, 0.85)
-                    }
+                    onVisualProgressChanged: requestPaint()
+                    onWidthChanged: requestPaint()
+                    onHeightChanged: requestPaint()
 
-                    Rectangle {
-                        id: progressFill
-                        anchors.left: progressTrack.left
-                        anchors.verticalCenter: progressTrack.verticalCenter
-                        width: progressTrack.width * progressBar.clamped(progressBar.visualProgress)
-                        height: progressTrack.height
-                        radius: progressTrack.radius
-                        color: Qt.alpha(Config.accentColor, 0.96)
-                    }
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.reset();
 
-                    Rectangle {
-                        width: 9
-                        height: 9
-                        radius: 5
-                        y: progressTrack.y + (progressTrack.height - height) / 2
-                        x: Math.max(0, Math.min(progressTrack.width - width, progressFill.width - (width / 2)))
-                        color: Qt.alpha(Config.textColor, 0.94)
-                        border.width: 1
-                        border.color: Qt.alpha(Config.backgroundColor, 0.42)
+                        var w = width;
+                        var h = height;
+                        var cy = h / 2;
+                        var amp = 8;
+                        var freq = 0.18;
+                        var prog = clamped(visualProgress);
+                        var splitX = w * prog;
+
+                        var accent = Config.accentColor.toString();
+                        var muted = Qt.alpha(Config.textColor, 0.2).toString();
+
+                        // Draw played portion
+                        if (splitX > 0) {
+                            ctx.beginPath();
+                            ctx.moveTo(0, cy);
+                            for (var x = 0; x <= splitX; x += 1) {
+                                var y = cy + Math.sin(x * freq) * amp;
+                                ctx.lineTo(x, y);
+                            }
+                            ctx.strokeStyle = accent;
+                            ctx.lineWidth = 2;
+                            ctx.stroke();
+                        }
+
+                        // Draw remaining portion
+                        if (splitX < w) {
+                            ctx.beginPath();
+                            ctx.moveTo(splitX, cy + Math.sin(splitX * freq) * amp);
+                            for (var x2 = splitX; x2 <= w; x2 += 1) {
+                                var y2 = cy + Math.sin(x2 * freq) * amp;
+                                ctx.lineTo(x2, y2);
+                            }
+                            ctx.strokeStyle = muted;
+                            ctx.lineWidth = 1;
+                            ctx.stroke();
+                        }
+
+                        // Current position marker
+                        if (prog > 0 && prog < 1) {
+                            var markerY = cy + Math.sin(splitX * freq) * amp;
+                            // Outer ring
+                            ctx.beginPath();
+                            ctx.arc(splitX, markerY, 6, 0, 2 * Math.PI);
+                            ctx.strokeStyle = accent;
+                            ctx.lineWidth = 1.5;
+                            ctx.stroke();
+                            // Center dot
+                            ctx.beginPath();
+                            ctx.arc(splitX, markerY, 2, 0, 2 * Math.PI);
+                            ctx.fillStyle = accent;
+                            ctx.fill();
+                        }
                     }
 
                     MouseArea {
@@ -433,8 +530,8 @@ Rectangle {
                         cursorShape: MprisService.canSeek ? Qt.PointingHandCursor : Qt.ArrowCursor
 
                         function updateFromMouse(mouseX) {
-                            const percent = progressBar.clamped(mouseX / width);
-                            progressBar.visualProgress = percent;
+                            const percent = progressWave.clamped(mouseX / width);
+                            progressWave.visualProgress = percent;
                             MprisService.seekToProgress(percent);
                         }
 
@@ -448,37 +545,46 @@ Rectangle {
                     }
                 }
 
+                // Controls row
                 RowLayout {
                     Layout.fillWidth: true
                     spacing: 8
 
                     Text {
                         text: MprisService.elapsedText
-                        color: Qt.alpha(Config.subtextColor, 0.74)
+                        color: Config.mutedColor
                         font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
+                        font.pixelSize: 10
                     }
 
                     Item {
                         Layout.fillWidth: true
                     }
 
-                    RoundIconButton {
+                    // Previous
+                    WireframeButton {
                         icon: ""
                         enabledState: MprisService.canGoPrevious
                         onClicked: MprisService.previous()
                     }
 
+                    // Play/Pause
                     Rectangle {
                         id: playButton
-                        width: 42
-                        height: 30
-                        radius: 15
-                        color: playMouse.containsMouse ? Qt.lighter(Config.accentColor, 1.06) : Config.accentColor
-                        border.width: 1
-                        border.color: Qt.alpha(Config.surface3Color, 0.45)
+                        width: 44
+                        height: 32
+                        radius: 16
+                        color: playMouse.containsMouse ? Qt.alpha(Config.accentColor, 0.15) : Qt.alpha(Config.accentColor, 0.08)
+                        border.width: 1.5
+                        border.color: playMouse.containsMouse ? Config.accentColor : Qt.alpha(Config.accentColor, 0.7)
                         enabled: MprisService.canControl
-                        opacity: enabled ? 1 : 0.45
+                        opacity: enabled ? 1 : 0.4
+
+                        Behavior on border.color {
+                            ColorAnimation {
+                                duration: Config.animDurationShort
+                            }
+                        }
 
                         Behavior on color {
                             ColorAnimation {
@@ -490,9 +596,17 @@ Rectangle {
                             anchors.centerIn: parent
                             text: MprisService.isPlaying ? "" : ""
                             font.family: Config.font
-                            font.pixelSize: Config.fontSizeLarge - 1
-                            color: Config.textReverseColor
+                            font.pixelSize: Config.fontSizeLarge
+                            font.bold: true
+                            color: Config.accentColor
                             anchors.horizontalCenterOffset: MprisService.isPlaying ? 0 : 1
+                        }
+
+                        scale: playMouse.pressed ? 0.9 : 1.0
+                        Behavior on scale {
+                            NumberAnimation {
+                                duration: 100
+                            }
                         }
 
                         MouseArea {
@@ -505,7 +619,8 @@ Rectangle {
                         }
                     }
 
-                    RoundIconButton {
+                    // Next
+                    WireframeButton {
                         icon: ""
                         enabledState: MprisService.canGoNext
                         onClicked: MprisService.next()
@@ -517,37 +632,63 @@ Rectangle {
 
                     Text {
                         text: MprisService.remainingText
-                        color: Qt.alpha(Config.subtextColor, 0.74)
+                        color: Config.mutedColor
                         font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
+                        font.pixelSize: 10
                     }
                 }
             }
         }
     }
 
-    component RoundIconButton: Rectangle {
+    // Wireframe icon button component
+    component WireframeButton: Rectangle {
         id: btn
 
         property string icon: ""
         property bool enabledState: true
-        property int size: 30
         signal clicked
 
-        width: size
-        height: size
-        radius: size / 2
-        color: buttonMouse.containsMouse ? Qt.alpha(Config.surface3Color, 0.9) : Qt.alpha(Config.surface2Color, 0.82)
-        opacity: enabledState ? 1 : 0.4
+        width: 32
+        height: 32
+        radius: 16
+        color: buttonMouse.containsMouse ? Qt.alpha(Config.textColor, 0.1) : "transparent"
         border.width: 1
-        border.color: Qt.alpha(Config.surface3Color, 0.55)
+        border.color: buttonMouse.containsMouse ? Qt.alpha(Config.textColor, 0.5) : Qt.alpha(Config.textColor, 0.25)
+        opacity: enabledState ? 1 : 0.3
+
+        Behavior on border.color {
+            ColorAnimation {
+                duration: Config.animDurationShort
+            }
+        }
+
+        Behavior on color {
+            ColorAnimation {
+                duration: Config.animDurationShort
+            }
+        }
 
         Text {
             anchors.centerIn: parent
             text: btn.icon
             font.family: Config.font
-            font.pixelSize: Config.fontSizeSmall
+            font.pixelSize: Config.fontSizeNormal
+            font.bold: true
             color: Config.textColor
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: Config.animDurationShort
+                }
+            }
+        }
+
+        scale: buttonMouse.pressed ? 0.85 : 1.0
+        Behavior on scale {
+            NumberAnimation {
+                duration: 100
+            }
         }
 
         MouseArea {
@@ -557,12 +698,6 @@ Rectangle {
             hoverEnabled: true
             cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
             onClicked: btn.clicked()
-        }
-
-        Behavior on color {
-            ColorAnimation {
-                duration: Config.animDurationShort
-            }
         }
     }
 }

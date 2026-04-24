@@ -6,7 +6,6 @@ import qs.config
 Item {
     id: root
 
-    // --- Properties ---
     property real value: 0
     property real from: 0
     property real to: 1
@@ -20,12 +19,10 @@ Item {
     property real visualValue: 0
     readonly property real clampedValue: clampValue(value)
 
-    // SIGNALS
     signal moved(real newValue)
     signal iconClicked
     signal openDetails
 
-    // Component size
     implicitHeight: 40
     Layout.fillWidth: true
 
@@ -46,26 +43,22 @@ Item {
         anchors.fill: parent
         spacing: 10
 
-        // --- THE ICON BUTTON ---
+        // Icon button: wireframe outline
         Rectangle {
             id: iconBtn
-
-            // Set the size: full component height and width equal to height (square)
             Layout.fillHeight: true
             Layout.preferredWidth: height
+            radius: Config.radius
+            color: "transparent"
+            border.width: 1
+            border.color: iconMouse.containsMouse ? Qt.alpha(Config.textColor, 0.4) : Qt.alpha(Config.textColor, 0.2)
 
-            radius: Config.radiusLarge
-
-            // Color changes on hover (button feedback)
-            color: iconMouse.containsMouse ? Config.surface2Color : Config.surface1Color
-
-            Behavior on color {
+            Behavior on border.color {
                 ColorAnimation {
-                    duration: Config.animDurationShort
+                    duration: 150
                 }
             }
 
-            // Icon
             Text {
                 anchors.centerIn: parent
                 text: root.icon
@@ -74,10 +67,16 @@ Item {
                 font.bold: true
                 color: Config.textColor
 
-                scale: iconMouse.pressed ? 0.8 : 1.0
+                scale: iconMouse.pressed ? 0.85 : 1.0
                 Behavior on scale {
                     NumberAnimation {
-                        duration: Config.animDurationShort
+                        duration: 100
+                    }
+                }
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 150
                     }
                 }
             }
@@ -91,92 +90,141 @@ Item {
             }
         }
 
-        // THE SLIDER BAR
+        // Slider track area
         Item {
             id: sliderContainer
-
-            // Layout magic: Takes up all remaining width
             Layout.fillWidth: true
-            Layout.preferredHeight: parent.height - 5
+            Layout.preferredHeight: parent.height
 
-            // Inner container for the scale animation
-            Item {
-                anchors.fill: parent
-                scale: sliderMouse.pressed ? 0.98 : 1.0
-                Behavior on scale {
+            readonly property real percent: {
+                var p = (root.visualValue - root.from) / (root.to - root.from);
+                return Math.max(0, Math.min(1, p));
+            }
+
+            // Background track line
+            Rectangle {
+                id: track
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                height: 2
+                radius: 1
+                color: Qt.alpha(Config.textColor, 0.15)
+            }
+
+            // Fill line
+            Rectangle {
+                id: fill
+                anchors.left: track.left
+                anchors.verticalCenter: track.verticalCenter
+                height: track.height
+                radius: 1
+                width: track.width * sliderContainer.percent
+                color: root.fillColor
+
+                Behavior on width {
                     NumberAnimation {
-                        duration: Config.animDurationShort
-                        easing.type: Easing.OutQuad
+                        duration: Config.animDuration
+                        easing.type: Easing.OutCubic
                     }
                 }
+            }
 
-                // Track Background
+            // Tick dots at 0%, 25%, 50%, 75%, 100%
+            Repeater {
+                model: 5
+
                 Rectangle {
-                    id: track
-                    anchors.fill: parent
-                    radius: Config.radiusLarge
-                    color: Config.surface1Color
-                    clip: true
+                    required property int index
 
-                    // Fill Bar
-                    Rectangle {
-                        id: fill
-                        height: parent.height
-                        radius: Config.radiusLarge
+                    readonly property real tickPos: index / 4
+                    readonly property bool active: tickPos <= sliderContainer.percent
 
-                        // Width based on percentage
-                        width: {
-                            var percent = (root.visualValue - root.from) / (root.to - root.from);
-                            percent = Math.max(0, Math.min(1, percent));
-                            return parent.width * percent;
-                        }
+                    x: track.x + (track.width * tickPos) - (width / 2)
+                    y: track.y + (track.height - height) / 2
+                    width: 4
+                    height: 4
+                    radius: 2
+                    color: active ? root.fillColor : Qt.alpha(Config.textColor, 0.2)
+                    opacity: 0.5
 
-                        color: root.fillColor
-
-                        Behavior on width {
-                            NumberAnimation {
-                                duration: Config.animDuration
-                                easing.type: Easing.OutCubic
-                            }
-                        }
-
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: Config.animDurationShort
-                            }
-                        }
-                    }
-
-                    // Percentage Text
-                    Text {
-                        visible: root.showPercentage
-                        anchors.centerIn: parent
-
-                        text: {
-                            if (root.percentageFromRawValue)
-                                return Math.round(root.visualValue * 100) + "%";
-                            return Math.round(((root.visualValue - root.from) / (root.to - root.from)) * 100) + "%";
-                        }
-
-                        font.family: Config.font
-                        font.bold: true
-                        font.pixelSize: Config.fontSizeNormal
-
-                        // Smart color
-                        property bool isCovered: fill.width > (parent.width / 2)
-                        color: isCovered ? Config.textReverseColor : Config.textColor
-
-                        opacity: root.alwaysShowPercentage || (sliderMouse.containsMouse || sliderMouse.pressed) ? 1.0 : 0.0
-                        Behavior on opacity {
-                            NumberAnimation {
-                                duration: Config.animDuration
-                            }
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
                         }
                     }
                 }
             }
 
-            // MouseArea
+            // Handle: outlined circle with center dot
+            Item {
+                id: handle
+                x: Math.max(0, Math.min(track.width - width, track.width * sliderContainer.percent - width / 2))
+                y: track.y + (track.height - height) / 2
+                width: 14
+                height: 14
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: parent.width / 2
+                    color: "transparent"
+                    border.width: 1.5
+                    border.color: root.fillColor
+
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 4
+                        height: 4
+                        radius: 2
+                        color: root.fillColor
+                    }
+                }
+
+                scale: sliderMouse.pressed ? 1.3 : (sliderMouse.containsMouse ? 1.15 : 1.0)
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 150
+                        easing.type: Easing.OutCubic
+                    }
+                }
+            }
+
+            // Floating percentage tooltip
+            Rectangle {
+                id: percentTooltip
+                visible: root.showPercentage
+                x: handle.x + (handle.width - width) / 2
+                y: handle.y - height - 8
+                width: percentText.implicitWidth + 12
+                height: 20
+                radius: 4
+                color: Config.surface0Color
+                border.width: 0.5
+                border.color: Qt.alpha(Config.textColor, 0.2)
+
+                opacity: (sliderMouse.containsMouse || sliderMouse.pressed || root.alwaysShowPercentage) ? 1.0 : 0.0
+
+                Behavior on opacity {
+                    NumberAnimation {
+                        duration: 150
+                    }
+                }
+
+                Text {
+                    id: percentText
+                    anchors.centerIn: parent
+                    text: {
+                        if (root.percentageFromRawValue)
+                            return Math.round(root.visualValue * 100) + "%";
+                        return Math.round(((root.visualValue - root.from) / (root.to - root.from)) * 100) + "%";
+                    }
+                    font.family: Config.font
+                    font.bold: true
+                    font.pixelSize: 10
+                    color: Config.subtextColor
+                }
+            }
+
             MouseArea {
                 id: sliderMouse
                 anchors.fill: parent
@@ -210,17 +258,20 @@ Item {
             }
         }
 
+        // Details button: wireframe outline
         Rectangle {
             id: detailsBtn
             visible: root.hasDetails
             Layout.fillHeight: true
             Layout.preferredWidth: height
-            radius: Config.radiusLarge
-            color: detailsMouse.containsMouse ? Config.surface2Color : Config.surface1Color
+            radius: Config.radius
+            color: "transparent"
+            border.width: 1
+            border.color: detailsMouse.containsMouse ? Qt.alpha(Config.textColor, 0.4) : Qt.alpha(Config.textColor, 0.2)
 
-            Behavior on color {
+            Behavior on border.color {
                 ColorAnimation {
-                    duration: Config.animDurationShort
+                    duration: 150
                 }
             }
 
@@ -228,14 +279,20 @@ Item {
                 anchors.centerIn: parent
                 text: root.detailsIcon
                 font.family: Config.font
-                font.pixelSize: Config.fontSizeNormal
+                font.pixelSize: Config.fontSizeLarge
                 font.bold: true
-                color: Config.textColor
+                color: detailsMouse.containsMouse ? Config.textColor : Qt.alpha(Config.textColor, 0.7)
 
-                scale: detailsMouse.pressed ? 0.8 : 1.0
+                scale: detailsMouse.pressed ? 0.85 : 1.0
                 Behavior on scale {
                     NumberAnimation {
-                        duration: Config.animDurationShort
+                        duration: 100
+                    }
+                }
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 150
                     }
                 }
             }

@@ -20,80 +20,62 @@ Item {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        spacing: 12
+        spacing: 14
 
-        // HEADER (Profile and Info)
+        // ==================== HEADER ====================
         RowLayout {
             Layout.fillWidth: true
-            spacing: 12
+            spacing: 10
 
-            // Avatar / System Icon
+            // Username label
+            Text {
+                text: Quickshell.env("USER").toUpperCase()
+                font.family: Config.font
+                font.pixelSize: 13
+                font.bold: true
+                font.letterSpacing: 3
+                color: Config.mutedColor
+                opacity: 0.7
+            }
+
+            // Separator dot
             Rectangle {
-                Layout.preferredWidth: 48
-                Layout.preferredHeight: 48
-                radius: Config.radiusLarge
-                gradient: Gradient {
-                    GradientStop {
-                        position: 0.0
-                        color: Config.surface2Color
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: Config.surface1Color
-                    }
-                }
-
-                Text {
-                    anchors.centerIn: parent
-                    text: "󰣇"
-                    font.family: Config.font
-                    font.pixelSize: Config.fontSizeIconLarge
-                    color: Config.accentColor
-                }
+                width: 4
+                height: 4
+                radius: 2
+                color: Config.accentColor
+                opacity: 0.4
             }
 
-            // Welcome Text
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: 2
-
-                Text {
-                    text: Quickshell.env("USER")
-                    color: Config.textColor
-                    font.family: Config.font
-                    font.bold: true
-                    font.pixelSize: Config.fontSizeLarge
-                }
-                Text {
-                    text: TimeService.format("ddd, dd MMM")
-                    color: Config.subtextColor
-                    font.family: Config.font
-                    font.pixelSize: Config.fontSizeSmall
-                }
-            }
-
-            // Spacer
-            Item {
+            // Date
+            Text {
+                text: TimeService.format("ddd, dd MMM")
+                font.family: Config.font
+                font.pixelSize: 12
+                color: Config.mutedColor
+                opacity: 0.5
                 Layout.fillWidth: true
             }
 
-            // Battery indicator (only shows if battery is present)
+            // Battery indicator
             Rectangle {
                 visible: BatteryService.hasBattery
-                Layout.preferredHeight: 36
-                Layout.preferredWidth: batteryContent.implicitWidth + 16
+                Layout.preferredHeight: 30
+                Layout.preferredWidth: batteryContent.implicitWidth + 14
                 radius: Config.radius
-                color: Config.surface1Color
+                color: Config.surface0Color
+                border.width: 0.5
+                border.color: Qt.alpha(Config.textColor, 0.2)
 
                 RowLayout {
                     id: batteryContent
                     anchors.centerIn: parent
-                    spacing: 6
+                    spacing: 5
 
                     Text {
                         text: BatteryService.getBatteryIcon()
                         font.family: Config.font
-                        font.pixelSize: Config.fontSizeLarge
+                        font.pixelSize: Config.fontSizeNormal
                         color: {
                             if (BatteryService.isCharging)
                                 return Config.successColor;
@@ -101,16 +83,22 @@ Item {
                                 return Config.errorColor;
                             if (BatteryService.percentage < 40)
                                 return Config.warningColor;
-                            return Config.textColor;
+                            return Config.subtextColor;
+                        }
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Config.animDuration
+                            }
                         }
                     }
 
                     Text {
                         text: BatteryService.percentage + "%"
                         font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
+                        font.pixelSize: 12
                         font.bold: true
-                        color: Config.textColor
+                        color: Config.subtextColor
                     }
                 }
             }
@@ -119,8 +107,8 @@ Item {
             ClearButton {
                 icon: "⏻"
 
-                Layout.preferredWidth: 36
-                Layout.preferredHeight: 36
+                Layout.preferredWidth: 30
+                Layout.preferredHeight: 30
 
                 onClicked: {
                     root.closeWindow();
@@ -129,67 +117,102 @@ Item {
             }
         }
 
+        // ==================== MEDIA ====================
         MediaWidget {
             Layout.fillWidth: true
         }
 
-        // BUTTON GRID
-        GridLayout {
-            columns: 2
-            columnSpacing: 10
-            rowSpacing: 10
+        // ==================== CONTROLS SECTION ====================
+        ColumnLayout {
             Layout.fillWidth: true
+            spacing: 10
 
-            // WI-FI BUTTON
-            QuickSettingsTile {
-                icon: NetworkService.systemIcon
-                label: "Wi-Fi"
-                subLabel: NetworkService.statusText
-                active: NetworkService.wifiEnabled
-                hasDetails: true
-                onToggled: NetworkService.toggleWifi()
-                onOpenDetails: pageStack.currentIndex = 1
+            // Section label
+            Text {
+                text: "CONTROLS"
+                font.family: Config.font
+                font.pixelSize: 11
+                font.bold: true
+                font.letterSpacing: 2.5
+                color: Config.mutedColor
+                opacity: 0.4
             }
 
-            // BLUETOOTH BUTTON
-            QuickSettingsTile {
-                visible: BluetoothService.adapter !== null
-                icon: BluetoothService.systemIcon
-                label: "Bluetooth"
-                subLabel: BluetoothService.statusText
-                active: BluetoothService.isPowered
-                hasDetails: true
-                onToggled: BluetoothService.togglePower()
-                onOpenDetails: pageStack.currentIndex = 3
-            }
+            GridLayout {
+                columns: 2
+                columnSpacing: 10
+                rowSpacing: 10
+                Layout.fillWidth: true
 
-            // Caffeine (Idle inhibit)
-            QuickSettingsTile {
-                icon: ""
-                label: "Caffeine"
-                subLabel: CaffeineService.enabled ? "Idle inhibit on" : "Idle inhibit off"
-                active: CaffeineService.enabled
-                hasDetails: false
-                onToggled: CaffeineService.toggle()
-            }
+                // WI-FI
+                QuickSettingsTile {
+                    icon: NetworkService.systemIcon
+                    label: "Wi-Fi"
+                    subLabel: NetworkService.statusText
+                    active: NetworkService.wifiEnabled
+                    hasDetails: true
+                    onToggled: NetworkService.toggleWifi()
+                    onOpenDetails: pageStack.currentIndex = 1
+                }
 
-            // DND (Do Not Disturb)
-            QuickSettingsTile {
-                Layout.columnSpan: BluetoothService.adapter === null ? 2 : 1
-                icon: NotificationService.dndEnabled ? "󰂛" : "󰂚"
-                label: "Do not disturb"
-                subLabel: NotificationService.dndEnabled ? "Enabled" : "Disabled"
-                active: NotificationService.dndEnabled
-                hasDetails: false
-                onToggled: NotificationService.toggleDnd()
+                // BLUETOOTH
+                QuickSettingsTile {
+                    visible: BluetoothService.adapter !== null
+                    icon: BluetoothService.systemIcon
+                    label: "Bluetooth"
+                    subLabel: BluetoothService.statusText
+                    active: BluetoothService.isPowered
+                    hasDetails: true
+                    onToggled: BluetoothService.togglePower()
+                    onOpenDetails: pageStack.currentIndex = 3
+                }
+
+                // CAFFEINE
+                QuickSettingsTile {
+                    icon: ""
+                    label: "Caffeine"
+                    subLabel: CaffeineService.enabled ? "Idle inhibit on" : "Idle inhibit off"
+                    active: CaffeineService.enabled
+                    hasDetails: false
+                    onToggled: CaffeineService.toggle()
+                }
+
+                // DND
+                QuickSettingsTile {
+                    Layout.columnSpan: BluetoothService.adapter === null ? 2 : 1
+                    icon: NotificationService.dndEnabled ? "󰂛" : "󰂚"
+                    label: "Do not disturb"
+                    subLabel: NotificationService.dndEnabled ? "Enabled" : "Disabled"
+                    active: NotificationService.dndEnabled
+                    hasDetails: false
+                    onToggled: NotificationService.toggleDnd()
+                }
             }
         }
 
-        // SLIDERS
+        // ==================== THIN RULE ====================
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            color: Qt.alpha(Config.textColor, 0.12)
+            opacity: 1
+        }
+
+        // ==================== AUDIO SECTION ====================
         ColumnLayout {
             Layout.fillWidth: true
             spacing: 12
-            Layout.topMargin: 4
+
+            // Section label
+            Text {
+                text: "AUDIO"
+                font.family: Config.font
+                font.pixelSize: 11
+                font.bold: true
+                font.letterSpacing: 2.5
+                color: Config.mutedColor
+                opacity: 0.4
+            }
 
             QsSlider {
                 icon: AudioService.systemIcon

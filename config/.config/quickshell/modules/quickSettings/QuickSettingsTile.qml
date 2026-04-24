@@ -6,7 +6,6 @@ import qs.config
 Rectangle {
     id: root
 
-    // --- Properties ---
     property string icon: ""
     property string label: ""
     property string subLabel: ""
@@ -14,46 +13,87 @@ Rectangle {
     property bool active: false
     property bool hasDetails: false
 
-    // --- Signals ---
     signal toggled
     signal openDetails
 
-    // --- Layout ---
     Layout.fillWidth: true
-    implicitHeight: 50
-    radius: Config.radiusLarge
+    implicitHeight: 54
+    radius: 3
+    color: "transparent"
 
-    // Colors and Animation
-    color: {
+    property color borderCol: {
         if (active)
             return Config.accentColor;
         if (mainMouse.containsMouse || (detailsMouse.containsMouse && hasDetails))
-            return Config.surface2Color;
-        return Config.surface1Color;
+            return Qt.alpha(Config.textColor, 0.5);
+        return Qt.alpha(Config.textColor, 0.25);
     }
 
-    Behavior on color {
+    Behavior on borderCol {
         ColorAnimation {
-            duration: Config.animDurationShort
+            duration: Config.animDuration
         }
     }
 
-    // Scale effect on click
-    scale: mainMouse.pressed || detailsMouse.pressed ? 0.98 : 1.0
+    // Scale on hover/press
+    scale: {
+        if (mainMouse.pressed || detailsMouse.pressed)
+            return 0.97;
+        if (mainMouse.containsMouse || (detailsMouse.containsMouse && hasDetails))
+            return 1.02;
+        return 1.0;
+    }
+
     Behavior on scale {
         NumberAnimation {
-            duration: Config.animDurationShort
+            duration: 150
+            easing.type: Easing.OutCubic
         }
     }
+
+    // ====== DOTTED WIREFRAME BORDER ======
+    Canvas {
+        id: borderCanvas
+        anchors.fill: parent
+        antialiasing: true
+
+        property color strokeColor: root.borderCol
+
+        onStrokeColorChanged: requestPaint()
+        onWidthChanged: requestPaint()
+        onHeightChanged: requestPaint()
+
+        onPaint: {
+            var ctx = getContext("2d");
+            ctx.reset();
+            ctx.setLineDash([5, 4]);
+            ctx.strokeStyle = strokeColor.toString();
+            ctx.lineWidth = 1;
+            var r = root.radius;
+            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.arcTo(x + w, y, x + w, y + r, r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+            ctx.lineTo(x + r, y + h);
+            ctx.arcTo(x, y + h, x, y + h - r, r);
+            ctx.lineTo(x, y + r);
+            ctx.arcTo(x, y, x + r, y, r);
+            ctx.closePath();
+            ctx.stroke();
+        }
+    }
+
 
     RowLayout {
         anchors.fill: parent
-        anchors.leftMargin: 15
-        anchors.rightMargin: 5
+        anchors.leftMargin: 14
+        anchors.rightMargin: 6
         spacing: 0
 
-        // TOGGLE AREA (Icon + Text)
-        // Takes up all remaining space
+        // Toggle area
         Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -62,45 +102,57 @@ Rectangle {
                 anchors.fill: parent
                 spacing: 12
 
-                // Icon
                 Text {
                     text: root.icon
                     font.family: Config.font
                     font.pixelSize: Config.fontSizeIcon
-                    // If active, dark text (contrast). If inactive, normal color.
-                    color: root.active ? Config.textReverseColor : Config.textColor
+                    color: root.active ? Config.accentColor : Config.textColor
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Config.animDuration
+                        }
+                    }
                 }
 
-                // Text (Title and Subtitle)
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 0
+                    spacing: 1
 
                     Text {
                         text: root.label
                         font.family: Config.font
                         font.bold: true
                         font.pixelSize: Config.fontSizeNormal
-                        color: root.active ? Config.textReverseColor : Config.textColor
+                        color: root.active ? Config.accentColor : Config.textColor
                         elide: Text.ElideRight
                         Layout.fillWidth: true
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Config.animDuration
+                            }
+                        }
                     }
 
-                    // Only show sublabel if there is text
                     Text {
                         visible: root.subLabel !== ""
                         text: root.subLabel
                         font.family: Config.font
                         font.pixelSize: Config.fontSizeSmall
-                        // Slight transparency on subtext
-                        color: root.active ? Qt.alpha(Config.textReverseColor, 0.8) : Config.subtextColor
+                        color: root.active ? Qt.alpha(Config.accentColor, 0.6) : Config.mutedColor
                         elide: Text.ElideRight
                         Layout.fillWidth: true
+
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: Config.animDuration
+                            }
+                        }
                     }
                 }
             }
 
-            // Main MouseArea (Toggle)
             MouseArea {
                 id: mainMouse
                 anchors.fill: parent
@@ -110,35 +162,40 @@ Rectangle {
             }
         }
 
-        // SEPARATOR (Only if there are details)
+        // Thin separator
         Rectangle {
             visible: root.hasDetails
             Layout.preferredWidth: 1
-            Layout.preferredHeight: parent.height * 0.6
+            Layout.preferredHeight: parent.height * 0.4
             Layout.alignment: Qt.AlignVCenter
-            Layout.leftMargin: 5
-            Layout.rightMargin: 5
-
-            // Separator color adapts to the background
-            color: root.active ? Qt.alpha(Config.textReverseColor, 0.3) : Config.surface2Color
+            Layout.leftMargin: 4
+            Layout.rightMargin: 4
+            color: Qt.alpha(root.borderCol, 0.5)
         }
 
-        // DETAILS BUTTON (Arrow/Gear)
+        // Details arrow
         Item {
             visible: root.hasDetails
-            Layout.preferredWidth: 30
+            Layout.preferredWidth: 28
             Layout.fillHeight: true
 
             Text {
                 anchors.centerIn: parent
                 text: ""
                 font.family: Config.font
-                font.pixelSize: Config.fontSizeNormal
+                font.pixelSize: Config.fontSizeNormal + 1
                 font.bold: true
-                color: root.active ? Config.textReverseColor : Config.textColor
+                color: {
+                    if (root.active)
+                        return detailsMouse.containsMouse ? Config.accentColor : Qt.alpha(Config.accentColor, 0.8);
+                    return detailsMouse.containsMouse ? Config.textColor : Qt.alpha(Config.textColor, 0.7);
+                }
 
-                // Subtle animation on the arrow when hovering over it
-                opacity: detailsMouse.containsMouse ? 1.0 : 0.7
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 150
+                    }
+                }
             }
 
             MouseArea {

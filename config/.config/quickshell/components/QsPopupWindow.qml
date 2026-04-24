@@ -161,7 +161,7 @@ PanelWindow {
             color: Config.backgroundTransparentColor
             radius: Config.radiusLarge
             border.width: 1.0
-            border.color: Config.surface2Color
+            border.color: Qt.alpha(Config.textColor, 0.2)
             clip: true
 
             transformOrigin: Item.Top
