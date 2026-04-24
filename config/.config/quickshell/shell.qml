@@ -140,6 +140,20 @@ ShellRoot {
         }
     }
 
+    IpcHandler {
+        target: "theme"
+
+        function generateFromImage(imagePath: string) {
+            ThemeService.generateFromImage(imagePath);
+        }
+
+        function generateFromColor(hex: string) {
+            ThemeService.generateFromColor(hex);
+        }
+
+
+    }
+
     // =========================================================================
     // UI COMPONENTS - LAZY LOADING
     // =========================================================================

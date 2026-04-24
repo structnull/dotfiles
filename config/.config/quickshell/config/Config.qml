@@ -14,29 +14,29 @@ Singleton {
     }
 
     // ========================================================================
-    // PALETTE
+    // PALETTE (driven by ThemeService / Matugen)
     // ========================================================================
-    readonly property color backgroundColor: "#0c1118"
+    readonly property color backgroundColor: ThemeService.colors.background || "#0c1118"
     readonly property real backgroundOpacity: getState("opacity.background", 0.48)
     readonly property color backgroundTransparentColor: Qt.alpha(backgroundColor, backgroundOpacity)
-    readonly property color surface0Color: "#121923"
-    readonly property color surface1Color: "#1a2430"
-    readonly property color surface2Color: "#273447"
-    readonly property color surface3Color: "#33465e"
+    readonly property color surface0Color: ThemeService.colors.surfaceDim || "#121923"
+    readonly property color surface1Color: ThemeService.colors.surfaceContainerLow || "#1a2430"
+    readonly property color surface2Color: ThemeService.colors.surfaceContainer || "#273447"
+    readonly property color surface3Color: ThemeService.colors.surfaceContainerHigh || "#33465e"
 
-    readonly property color textColor: "#ffffff"
-    readonly property color textReverseColor: "#000000"
-    readonly property color subtextColor: "#d7dfeb"
-    readonly property color subtextReverseColor: "#7b8798"
+    readonly property color textColor: ThemeService.colors.onSurface || "#ffffff"
+    readonly property color textReverseColor: ThemeService.colors.onPrimary || "#000000"
+    readonly property color subtextColor: ThemeService.colors.onSurfaceVariant || "#d7dfeb"
+    readonly property color subtextReverseColor: ThemeService.colors.outline || "#7b8798"
 
-    readonly property color accentColor: "#7eb8e8"
+    readonly property color accentColor: ThemeService.colors.primary || "#7eb8e8"
     readonly property color successColor: "#7ee2a8"
     readonly property color warningColor: "#ffcc66"
-    readonly property color errorColor: "#ff5f57"
+    readonly property color errorColor: ThemeService.colors.error || "#ff5f57"
 
-    readonly property color mutedColor: "#9aa8bc"
-    readonly property color greyBlueColor: "#243141"
-    readonly property color blueDarkColor: "#0d141d"
+    readonly property color mutedColor: ThemeService.colors.outline || "#9aa8bc"
+    readonly property color greyBlueColor: ThemeService.colors.surfaceContainerLow || "#243141"
+    readonly property color blueDarkColor: ThemeService.colors.surfaceDim || "#0d141d"
 
     // ========================================================================
     // GEOMETRY & LAYOUT

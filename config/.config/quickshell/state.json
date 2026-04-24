@@ -4,7 +4,8 @@
   },
   "theme": {
     "scheme": "dark",
-    "name": "monochrome"
+    "name": "monochrome",
+    "mode": "dark"
   },
   "nightLight": {
     "enabled": true,

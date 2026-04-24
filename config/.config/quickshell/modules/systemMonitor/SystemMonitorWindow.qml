@@ -15,7 +15,7 @@ QsPopupWindow {
     contentImplicitHeight: content.implicitHeight
 
     readonly property bool hasGpu: SystemMonitorService.gpuType !== "unknown"
-    readonly property color accentBlue: "#58a6ff"
+    readonly property color accentBlue: Config.accentColor
     readonly property color okColor: "#4fd18b"
     readonly property color warnColor: "#f2c14e"
     readonly property color dangerColor: "#ff6b6b"

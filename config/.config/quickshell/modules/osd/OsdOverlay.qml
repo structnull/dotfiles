@@ -127,29 +127,37 @@ Scope {
                 border.color: Qt.rgba(1, 1, 1, 0.2)
 
                 opacity: OsdService.visible ? 1.0 : 0.0
-                y: OsdService.visible ? 0 : -8
+                y: OsdService.visible ? 0 : -10
+                scale: OsdService.visible ? 1.0 : 0.96
 
                 Behavior on opacity {
                     NumberAnimation {
-                        duration: 170
-                        easing.type: Easing.OutCubic
+                        duration: 250
+                        easing.type: Easing.OutQuint
                     }
                 }
 
                 Behavior on y {
                     NumberAnimation {
-                        duration: 190
-                        easing.type: Easing.OutCubic
+                        duration: 280
+                        easing.type: Easing.OutQuint
                     }
                 }
 
-                ColumnLayout {
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 280
+                        easing.type: Easing.OutQuint
+                    }
+                }
+
+                RowLayout {
                     anchors.fill: parent
                     anchors.leftMargin: 10
                     anchors.rightMargin: 10
                     anchors.topMargin: 10
                     anchors.bottomMargin: 10
-                    spacing: 0
+                    spacing: 10
 
                     QsSlider {
                         Layout.fillWidth: true
@@ -157,12 +165,33 @@ Scope {
                         from: 0
                         to: root.sliderTo
                         icon: root.getIcon()
-                        showPercentage: true
-                        alwaysShowPercentage: true
+                        showPercentage: false
                         percentageFromRawValue: OsdService.type === "volume"
                         fillColor: (OsdService.type === "volume" && OsdService.muted) ? Config.surface2Color : Config.accentColor
                         onMoved: newValue => root.updateValue(newValue)
                         onIconClicked: root.toggleCurrentType()
+                    }
+
+                    // Inline percentage readout — bracket style
+                    Text {
+                        Layout.alignment: Qt.AlignVCenter
+                        text: {
+                            var pct;
+                            if (OsdService.type === "volume")
+                                pct = Math.round(root.sliderValue * 100);
+                            else
+                                pct = Math.round(((root.sliderValue - 0) / (root.sliderTo - 0)) * 100);
+                            return "[" + pct + "%]";
+                        }
+                        font.family: Config.font
+                        font.pixelSize: 13
+                        font.bold: true
+                        font.letterSpacing: 1
+                        color: (OsdService.type === "volume" && OsdService.muted) ? Config.mutedColor : Config.accentColor
+
+                        Behavior on color {
+                            ColorAnimation { duration: Config.animDuration }
+                        }
                     }
                 }
             }

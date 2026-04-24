@@ -86,19 +86,20 @@ PanelWindow {
         border.width: 1
         border.color: Config.surface2Color
 
-        scale: PowerService.overlayVisible ? 1.0 : 0.9
+        scale: PowerService.overlayVisible ? 1.0 : 0.92
         opacity: PowerService.overlayVisible ? 1.0 : 0.0
 
         Behavior on scale {
             NumberAnimation {
-                duration: 200
-                easing.type: Easing.OutBack
+                duration: 350
+                easing.type: Easing.OutQuint
             }
         }
 
         Behavior on opacity {
             NumberAnimation {
-                duration: 150
+                duration: 250
+                easing.type: Easing.OutQuint
             }
         }
 

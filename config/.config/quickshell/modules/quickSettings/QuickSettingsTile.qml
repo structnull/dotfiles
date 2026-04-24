@@ -66,22 +66,30 @@ Rectangle {
         onPaint: {
             var ctx = getContext("2d");
             ctx.reset();
-            ctx.setLineDash([5, 4]);
+            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
+            var r = 10; // Chamfer size
+            var cl = 6; // Corner extension length
+            
+            // Dotted edges
+            ctx.beginPath();
+            ctx.moveTo(x + r + cl, y); ctx.lineTo(x + w - r - cl, y);
+            ctx.moveTo(x + w, y + r + cl); ctx.lineTo(x + w, y + h - r - cl);
+            ctx.moveTo(x + w - r - cl, y + h); ctx.lineTo(x + r + cl, y + h);
+            ctx.moveTo(x, y + h - r - cl); ctx.lineTo(x, y + r + cl);
+            ctx.setLineDash([4, 4]);
             ctx.strokeStyle = strokeColor.toString();
             ctx.lineWidth = 1;
-            var r = root.radius;
-            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
+            ctx.stroke();
+            
+            // Solid corners
             ctx.beginPath();
-            ctx.moveTo(x + r, y);
-            ctx.lineTo(x + w - r, y);
-            ctx.arcTo(x + w, y, x + w, y + r, r);
-            ctx.lineTo(x + w, y + h - r);
-            ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
-            ctx.lineTo(x + r, y + h);
-            ctx.arcTo(x, y + h, x, y + h - r, r);
-            ctx.lineTo(x, y + r);
-            ctx.arcTo(x, y, x + r, y, r);
-            ctx.closePath();
+            ctx.moveTo(x, y + r + cl); ctx.lineTo(x, y + r); ctx.lineTo(x + r, y); ctx.lineTo(x + r + cl, y);
+            ctx.moveTo(x + w - r - cl, y); ctx.lineTo(x + w - r, y); ctx.lineTo(x + w, y + r); ctx.lineTo(x + w, y + r + cl);
+            ctx.moveTo(x + w, y + h - r - cl); ctx.lineTo(x + w, y + h - r); ctx.lineTo(x + w - r, y + h); ctx.lineTo(x + w - r - cl, y + h);
+            ctx.moveTo(x + r + cl, y + h); ctx.lineTo(x + r, y + h); ctx.lineTo(x, y + h - r); ctx.lineTo(x, y + h - r - cl);
+            ctx.setLineDash([]);
+            ctx.strokeStyle = strokeColor.toString();
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
     }

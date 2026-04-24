@@ -68,6 +68,10 @@ PanelWindow {
     property bool isClosing: false
     property real openProgress: 0.0
 
+    // Content opacity derived from openProgress — content fades in after
+    // container is partially visible, and fades out before container fully closes.
+    readonly property real contentOpacity: Math.max(0, Math.min(1, (openProgress - 0.15) / 0.65))
+
     function closeWindow() {
         if (!visible || isClosing)
             return;
@@ -76,22 +80,24 @@ PanelWindow {
         closeAnimation.restart();
     }
 
+    // -- Open: smooth deceleration --
     NumberAnimation {
         id: openAnimation
         target: root
         property: "openProgress"
         from: 0
         to: 1
-        duration: Config.animDurationLong
-        easing.type: Easing.OutCubic
+        duration: 380
+        easing.type: Easing.OutQuart
     }
 
+    // -- Close: natural settle-back --
     NumberAnimation {
         id: closeAnimation
         target: root
         property: "openProgress"
         to: 0
-        duration: Config.animDuration
+        duration: 300
         easing.type: Easing.InCubic
         onFinished: {
             if (!root.isClosing)
@@ -167,7 +173,7 @@ PanelWindow {
             transformOrigin: Item.Top
 
             y: (1 - root.openProgress) * -16
-            scale: 0.965 + (root.openProgress * 0.035)
+            scale: 0.95 + (root.openProgress * 0.05)
             opacity: root.openProgress
 
             Behavior on height {
@@ -183,6 +189,7 @@ PanelWindow {
                 id: contentContainer
                 anchors.fill: parent
                 anchors.margins: 16
+                opacity: root.contentOpacity
             }
         }
     }

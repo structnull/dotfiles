@@ -14,7 +14,7 @@ QsPopupWindow {
     anchorSide: "right"
     contentImplicitHeight: content.implicitHeight
 
-    readonly property color accentInfo: "#8ab4ff"
+    readonly property color accentInfo: Config.accentColor
     readonly property color accentGood: "#7ee2a8"
     readonly property color accentWarn: "#ffcc66"
     readonly property color accentDanger: "#ff5f57"

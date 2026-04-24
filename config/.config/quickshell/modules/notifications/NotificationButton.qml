@@ -45,7 +45,7 @@ BarButton {
         height: 14
         radius: 7
 
-        color: Config.errorColor
+        color: "#ff0000"
 
         Text {
             id: badgeText
@@ -54,7 +54,7 @@ BarButton {
             font.family: Config.font
             font.pixelSize: 9
             font.bold: true
-            color: Config.textColor
+            color: "#ffffff"
         }
     }
 
