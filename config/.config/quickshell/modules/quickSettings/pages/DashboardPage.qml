@@ -63,7 +63,7 @@ Item {
                 Layout.preferredHeight: 30
                 Layout.preferredWidth: batteryContent.implicitWidth + 14
                 radius: Config.radius
-                color: Config.surface0Color
+                color: Config.backgroundTransparentColor
                 border.width: 0.5
                 border.color: Qt.alpha(Config.textColor, 0.2)
 

@@ -462,7 +462,7 @@ QsPopupWindow {
                 spacing: 2
                 
                 Text { 
-                    text: BatteryService.isCharging ? "SYS DRAW" : "PWR"
+                    text: BatteryService.isCharging ? "DRAW" : "PWR"
                     font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 2; color: Config.mutedColor; anchors.horizontalCenter: parent.horizontalCenter
                 }
                 Text { 
