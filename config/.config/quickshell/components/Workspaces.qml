@@ -96,7 +96,7 @@ Item {
     property int monitorOffset: Math.floor((activeId - 1) / 100) * 100
     property var visibleWorkspaceIds: []
 
-    implicitWidth: isSpecialWorkspace ? specialIndicator.width : Math.max(activeWidth, workspaceRow.width)
+    implicitWidth: Math.max(activeWidth, indicatorRow.implicitWidth)
     implicitHeight: activeHeight + 4
 
     // --- Special Workspaces Config ---
@@ -189,7 +189,6 @@ Item {
                 }
             }
             if (event.name === "workspace") {
-                root.manualSpecialName = "";
                 workspaceUpdateTimer.restart();
             }
             const refreshEvents = ["createworkspace", "destroyworkspace", "movewindow", "openwindow", "closewindow"];
@@ -199,176 +198,188 @@ Item {
     }
 
     // =========================================================================
-    // SPECIAL WORKSPACE INDICATOR
+    // WORKSPACE INDICATOR ROW
     // =========================================================================
-    Rectangle {
-        id: specialIndicator
-        visible: opacity > 0
+    Row {
+        id: indicatorRow
         anchors.centerIn: parent
+        spacing: root.isSpecialWorkspace ? 5 : 0
 
-        // Opacity depends only on whether the state is special
-        opacity: root.isSpecialWorkspace ? (specialHover.hovered ? 0.8 : 1.0) : 0
-
-        scale: root.isSpecialWorkspace ? 1.0 : 0.9
-        property int yOffset: root.isSpecialWorkspace ? 0 : 5
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.verticalCenterOffset: yOffset
-
-        width: specialContent.width + Config.padding * 3
-        height: root.activeHeight
-        radius: Config.radius
-
-        color: root.cachedColor
-        border.width: 1
-
-        Behavior on opacity {
+        Behavior on spacing {
             NumberAnimation {
                 duration: Config.animDurationShort
-            }
-        }
-        Behavior on scale {
-            NumberAnimation {
-                duration: Config.animDuration
                 easing.type: Easing.OutCubic
             }
         }
-        Behavior on anchors.verticalCenterOffset {
-            NumberAnimation {
-                duration: Config.animDuration
-                easing.type: Easing.OutCubic
-            }
-        }
-        Behavior on color {
-            ColorAnimation {
-                duration: Config.animDuration
-            }
-        }
 
-        Row {
-            id: specialContent
-            anchors.centerIn: parent
-            spacing: Config.padding * 0.8
+        // =========================================================================
+        // NORMAL WORKSPACES LIST
+        // =========================================================================
+        Item {
+            id: workspacesContainer
+            width: workspaceRow.implicitWidth
+            height: root.activeHeight + 4
+            anchors.verticalCenter: parent.verticalCenter
 
-            Text {
-                // Uses the cached icon
-                text: root.cachedIcon
-                font {
-                    family: Config.font
-                    pixelSize: Config.fontSizeLarge
-                }
-                color: Config.textReverseColor
-                anchors.verticalCenter: parent.verticalCenter
-            }
+            Row {
+                id: workspaceRow
+                anchors.centerIn: parent
+                spacing: root.itemSpacing
 
-            Text {
-                // Uses the cached name
-                text: root.cachedName
-                font {
-                    family: Config.font
-                    bold: true
-                    pixelSize: Config.fontSizeNormal
-                }
-                color: Config.textReverseColor
-                anchors.verticalCenter: parent.verticalCenter
-            }
-        }
+                Repeater {
+                    model: root.visibleWorkspaceIds
+                    delegate: Item {
+                        id: workspaceItem
+                        required property var modelData
+                        readonly property int workspaceId: Number(modelData)
+                        readonly property int displayId: workspaceId - root.monitorOffset
+                        readonly property bool isActive: workspaceId === root.activeId
+                        width: isActive ? root.activeWidth : root.itemWidth
+                        height: isActive ? root.activeHeight : root.itemHeight
+                        opacity: !isActive ? (workspaceHover.hovered ? 0.8 : 1.0) : 1
 
-        TapHandler {
-            onTapped: {
-                if (root.specialWorkspaceName)
-                    Hyprland.dispatch("togglespecialworkspace " + root.specialWorkspaceName);
-            }
-        }
-        HoverHandler {
-            id: specialHover
-            cursorShape: Qt.PointingHandCursor
-        }
-    }
-
-    // =========================================================================
-    // NORMAL WORKSPACES LIST
-    // =========================================================================
-    Item {
-        id: workspacesContainer
-        visible: !root.isSpecialWorkspace
-        opacity: visible ? 1 : 0
-        width: workspaceRow.width
-        height: parent.height
-        anchors.centerIn: parent
-
-        Behavior on opacity {
-            NumberAnimation {
-                duration: Config.animDuration
-            }
-        }
-
-        Row {
-            id: workspaceRow
-            anchors.centerIn: parent
-            spacing: root.itemSpacing
-
-            Repeater {
-                model: root.visibleWorkspaceIds
-                delegate: Item {
-                    id: workspaceItem
-                    required property var modelData
-                    readonly property int workspaceId: Number(modelData)
-                    readonly property int displayId: workspaceId - root.monitorOffset
-                    readonly property bool isActive: workspaceId === root.activeId
-                    width: isActive ? root.activeWidth : root.itemWidth
-                    height: isActive ? root.activeHeight : root.itemHeight
-                    opacity: !isActive ? (workspaceHover.hovered ? 0.8 : 1.0) : 1
-
-                    Text {
-                        anchors.centerIn: parent
-                        visible: workspaceItem.isActive
-                        text: root.toRoman(workspaceItem.displayId)
-                        font.family: Config.font
-                        font.pixelSize: Config.fontSizeNormal
-                        font.bold: true
-                        color: Qt.alpha(Config.accentColor, 0.45)
-                        opacity: workspaceItem.isActive ? 1.0 : 0.0
-                    }
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: root.toRoman(workspaceItem.displayId)
-                        font.family: Config.font
-                        font.pixelSize: Config.fontSizeSmall
-                        font.bold: workspaceItem.isActive
-                        color: workspaceItem.isActive ? Qt.lighter(Config.accentColor, 1.25) : Qt.alpha(Config.textColor, 0.62)
-                    }
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: Config.animDurationShort
+                        Text {
+                            anchors.centerIn: parent
+                            visible: workspaceItem.isActive
+                            text: root.toRoman(workspaceItem.displayId)
+                            font.family: Config.font
+                            font.pixelSize: Config.fontSizeNormal
+                            font.bold: true
+                            color: Qt.alpha(Config.accentColor, 0.45)
+                            opacity: workspaceItem.isActive ? 1.0 : 0.0
                         }
-                    }
-                    Behavior on height {
-                        NumberAnimation {
-                            duration: Config.animDurationShort
-                        }
-                    }
-                    Behavior on opacity {
-                        NumberAnimation {
-                            duration: Config.animDurationShort
-                        }
-                    }
 
-                    TapHandler {
-                        onTapped: {
-                            if (!workspaceItem.isActive)
-                                Hyprland.dispatch("workspace " + workspaceItem.workspaceId);
+                        Text {
+                            anchors.centerIn: parent
+                            text: root.toRoman(workspaceItem.displayId)
+                            font.family: Config.font
+                            font.pixelSize: Config.fontSizeSmall
+                            font.bold: workspaceItem.isActive
+                            color: workspaceItem.isActive ? Qt.lighter(Config.accentColor, 1.25) : Qt.alpha(Config.textColor, 0.62)
                         }
-                    }
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: Config.animDurationShort
+                            }
+                        }
+                        Behavior on height {
+                            NumberAnimation {
+                                duration: Config.animDurationShort
+                            }
+                        }
+                        Behavior on opacity {
+                            NumberAnimation {
+                                duration: Config.animDurationShort
+                            }
+                        }
 
-                    HoverHandler {
-                        id: workspaceHover
-                        cursorShape: {
-                            if (!workspaceItem.isActive)
-                                return Qt.PointingHandCursor;
+                        TapHandler {
+                            onTapped: {
+                                if (!workspaceItem.isActive)
+                                    Hyprland.dispatch("workspace " + workspaceItem.workspaceId);
+                            }
+                        }
+
+                        HoverHandler {
+                            id: workspaceHover
+                            cursorShape: {
+                                if (!workspaceItem.isActive)
+                                    return Qt.PointingHandCursor;
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        // =========================================================================
+        // SPECIAL WORKSPACE BADGE
+        // =========================================================================
+        Rectangle {
+            id: specialIndicator
+            visible: opacity > 0
+            anchors.verticalCenter: parent.verticalCenter
+
+            opacity: root.isSpecialWorkspace ? (specialHover.hovered ? 0.92 : 1.0) : 0
+            scale: root.isSpecialWorkspace ? 1.0 : 0.92
+            width: root.isSpecialWorkspace ? (specialContent.implicitWidth + 12) : 0
+            height: root.activeHeight
+            radius: Config.radius
+
+            color: specialHover.hovered ? Qt.alpha(root.cachedColor, 0.16) : Qt.alpha(root.cachedColor, 0.10)
+            border.width: root.isSpecialWorkspace ? 1 : 0
+            border.color: specialHover.hovered ? Qt.alpha(root.cachedColor, 0.62) : Qt.alpha(root.cachedColor, 0.38)
+
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: Config.animDurationShort
+                }
+            }
+            Behavior on scale {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: Easing.OutCubic
+                }
+            }
+            Behavior on width {
+                NumberAnimation {
+                    duration: Config.animDuration
+                    easing.type: Easing.OutCubic
+                }
+            }
+            Behavior on color {
+                ColorAnimation {
+                    duration: Config.animDuration
+                }
+            }
+            Behavior on border.color {
+                ColorAnimation {
+                    duration: Config.animDuration
+                }
+            }
+
+            Row {
+                id: specialContent
+                anchors.centerIn: parent
+                spacing: 5
+
+                Text {
+                    text: "◆"
+                    font.family: Config.font
+                    font.pixelSize: 8
+                    color: root.cachedColor
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: root.cachedIcon
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeSmall
+                    color: Config.textColor
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                Text {
+                    text: root.cachedName
+                    font.family: Config.font
+                    font.bold: true
+                    font.pixelSize: Config.fontSizeSmall
+                    color: Config.textColor
+                    width: Math.min(88, implicitWidth)
+                    elide: Text.ElideRight
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+            }
+
+            TapHandler {
+                onTapped: {
+                    if (root.specialWorkspaceName)
+                        Hyprland.dispatch("togglespecialworkspace " + root.specialWorkspaceName);
+                }
+            }
+            HoverHandler {
+                id: specialHover
+                cursorShape: Qt.PointingHandCursor
             }
         }
     }

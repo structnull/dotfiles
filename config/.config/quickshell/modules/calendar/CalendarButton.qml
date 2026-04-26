@@ -7,9 +7,24 @@ import "../../components/"
 BarButton {
     id: root
 
-    active: calendarWindow.visible
+    property bool popupLoaded: false
+    readonly property var popupWindow: calendarLoader.item
+
+    function togglePopup() {
+        if (popupWindow) {
+            if (popupWindow.visible)
+                popupWindow.closeWindow();
+            else
+                popupWindow.visible = true;
+            return;
+        }
+
+        popupLoaded = true;
+    }
+
+    active: popupWindow?.visible ?? false
     contentItem: clockText
-    onClicked: calendarWindow.visible = !calendarWindow.visible
+    onClicked: togglePopup()
 
     Text {
         id: clockText
@@ -25,9 +40,24 @@ BarButton {
         }
     }
 
-    CalendarWindow {
-        id: calendarWindow
-        visible: false
-        anchorItem: root
+    Loader {
+        id: calendarLoader
+        active: root.popupLoaded
+        asynchronous: true
+        source: "./CalendarWindow.qml"
+
+        onLoaded: {
+            item.anchorItem = root;
+            item.visible = true;
+        }
+    }
+
+    Connections {
+        target: root.popupWindow
+
+        function onVisibleChanged() {
+            if (root.popupWindow && !root.popupWindow.visible)
+                root.popupLoaded = false;
+        }
     }
 }

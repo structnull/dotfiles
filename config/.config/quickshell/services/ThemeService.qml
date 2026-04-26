@@ -13,8 +13,8 @@ Singleton {
     // =========================================================================
 
     // Current scheme mode: "dark" or "light"
-    readonly property string mode: "dark"
-    readonly property bool isDarkMode: true
+    property string mode: "dark"
+    readonly property bool isDarkMode: mode === "dark"
 
     // Resolved color palette for the active mode
     readonly property var colors: {

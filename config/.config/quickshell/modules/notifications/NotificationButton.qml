@@ -7,9 +7,24 @@ import "../../components/"
 BarButton {
     id: root
 
-    active: notifWindow.visible
+    property bool popupLoaded: false
+    readonly property var popupWindow: notificationLoader.item
+
+    function togglePopup() {
+        if (popupWindow) {
+            if (popupWindow.visible)
+                popupWindow.closeWindow();
+            else
+                popupWindow.visible = true;
+            return;
+        }
+
+        popupLoaded = true;
+    }
+
+    active: popupWindow?.visible ?? false
     contentItem: icon
-    onClicked: notifWindow.visible = !notifWindow.visible
+    onClicked: togglePopup()
     onRightClicked: NotificationService.toggleDnd()
 
     Text {
@@ -58,9 +73,24 @@ BarButton {
         }
     }
 
-    NotificationWindow {
-        id: notifWindow
-        visible: false
-        anchorItem: root
+    Loader {
+        id: notificationLoader
+        active: root.popupLoaded
+        asynchronous: true
+        source: "./NotificationWindow.qml"
+
+        onLoaded: {
+            item.anchorItem = root;
+            item.visible = true;
+        }
+    }
+
+    Connections {
+        target: root.popupWindow
+
+        function onVisibleChanged() {
+            if (root.popupWindow && !root.popupWindow.visible)
+                root.popupLoaded = false;
+        }
     }
 }

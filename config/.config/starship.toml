@@ -1,62 +1,99 @@
-## ░█▀▀░▀█▀░█▀█░█▀▄░█▀▀░█░█░▀█▀░█▀█
-## ░▀▀█░░█░░█▀█░█▀▄░▀▀█░█▀█░░█░░█▀▀
-## ░▀▀▀░░▀░░▀░▀░▀░▀░▀▀▀░▀░▀░▀▀▀░▀░░
-
-format = "$directory$all"
-right_format = """$git_branch$git_status$cmd_duration"""
-
-# Disable the blank line at the start of the prompt
 add_newline = false
+palette     = "mist"
 
-[line_break]
-disabled = true
+format       = "$username$hostname$directory$git_branch$git_status$nodejs$python$rust$golang$bun $character"
+right_format = "$cmd_duration$time"
 
+[palettes.mist]
+ash  = "#c5cdd9"
+fog  = "#9ecbff"
+sage = "#8ee6a2"
+dust = "#f2c38f"
+rose = "#ff9aa2"
+iris = "#c6a0ff"
+sand = "#e6db74"
+
+# ── Prompt character ────────────────────────────────────────────
 [character]
-success_symbol = "[➜ ](bold green)"
-error_symbol = " [✖](#df5b61)"
-vicmd_symbol = "[](#78b892)"
+success_symbol = "[->](bold sage)"
+error_symbol   = "[->](bold rose)"
+vicmd_symbol   = "[vi](bold iris)"
+
+# ── User & host (SSH only) ───────────────────────────────────────
+[username]
+show_always = false
+style_user  = "iris"
+format      = "[$user]($style)"
 
 [hostname]
 ssh_only = true
-format = "[$hostname](bold blue) "
-disabled = false
+style    = "ash"
+format   = "[@$hostname]($style) "
 
-[cmd_duration]
-min_time = 1
-format = "[](fg:#1c252c bg:none)[$duration]($style)[](fg:#1c252c bg:#1c252c)[](fg:#bc83e3 bg:#1c252c)[ ](fg:#1c252c bg:#bc83e3)[](fg:#bc83e3 bg:none) "
-disabled = false
-style = "fg:#d9d7d6 bg:#1c252c"
+# ── Directory ───────────────────────────────────────────────────
+[directory]
+style             = "bold fog"
+read_only         = " ro"
+read_only_style   = "bold rose"
+home_symbol       = "~"
+truncation_length = 3
+truncate_to_repo  = true
+truncation_symbol = "../"
+format            = "[$path]($style)[$read_only]($read_only_style)"
 
+# ── Git ─────────────────────────────────────────────────────────
 [git_branch]
-format = "[](fg:#1c252c bg:none)[$branch]($style)[](fg:#1c252c bg:#1c252c)[](fg:#78b892 bg:#1c252c)[](fg:#282c34 bg:#78b892)[](fg:#78b892 bg:none) "
-style = "fg:#d9d7d6 bg:#1c252c"
+symbol = ""
+style  = "ash"
+format = " [$branch]($style)"
 
 [git_status]
-format="[](fg:#1c252c bg:none)[$all_status$ahead_behind]($style)[](fg:#1c252c bg:#1c252c)[](fg:#67afc1 bg:#1c252c)[ ](fg:#1c252c bg:#67afc1)[](fg:#67afc1 bg:none) "
-style = "fg:#d9d7d6 bg:#1c252c"
-conflicted = "="
-ahead =	"⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-up_to_date = ""
-untracked = "?${count}"
-stashed = ""
-modified = "!${count}"
-staged = "+${count}"
-renamed = "»${count}"
-deleted = "${count}"
+style      = "bold sand"
+format     = " ([$all_status$ahead_behind]($style))"
+ahead      = "↑$count"
+behind     = "↓$count"
+diverged   = "↕$ahead_count↓$behind_count"
+modified   = "~$count"
+staged     = "+$count"
+untracked  = "?$count"
+deleted    = "-$count"
+conflicted = "!$count"
 
-[git_commit]
-format = "[\\($hash\\)]($style) [\\($tag\\)]($style)"
-style = "green"
+# ── Languages ───────────────────────────────────────────────────
+[nodejs]
+symbol = ""
+style  = "sage"
+format = "[node $version]($style) "
 
-[git_state]
-rebase = "REBASING"
-merge =	"MERGING"
-revert = "REVERTING"
-cherry_pick = "CHERRY-PICKING"
-bisect = "BISECTING"
-am = "AM"
-am_or_rebase = "AM/REBASE"
-style =	"yellow"
-format = '\([$state( $progress_current/$progress_total)]($style)\) '
+[python]
+symbol        = ""
+style         = "fog"
+format        = "[py $version]($style) "
+python_binary = ["python3", "python"]
+
+[rust]
+symbol = ""
+style  = "dust"
+format = "[rs $version]($style) "
+
+[golang]
+symbol = ""
+style  = "fog"
+format = "[go $version]($style) "
+
+[bun]
+symbol = ""
+style  = "sage"
+format = "[bun $version]($style) "
+
+# ── Right prompt ─────────────────────────────────────────────────
+[cmd_duration]
+min_time = 2000
+style    = "dust"
+format   = "[$duration]($style) "
+
+[time]
+disabled    = false
+time_format = "%I:%M %p"
+style       = "ash"
+format      = "[$time]($style)"

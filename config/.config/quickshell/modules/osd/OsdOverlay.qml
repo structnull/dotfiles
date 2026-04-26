@@ -11,6 +11,8 @@ import "../../components/"
 Scope {
     id: root
 
+    property bool osdLoaded: false
+
     readonly property var icons: ({
             "volume_off": "󰖁",
             "volume_low": "󰕿",
@@ -80,8 +82,31 @@ Scope {
         OsdService.showVolume(Math.max(0, Math.min(1.5, AudioService.volume)), nextMuted);
     }
 
+    Connections {
+        target: OsdService
+
+        function onVisibleChanged() {
+            if (OsdService.visible) {
+                unloadTimer.stop();
+                root.osdLoaded = true;
+            } else {
+                unloadTimer.restart();
+            }
+        }
+    }
+
+    Timer {
+        id: unloadTimer
+        interval: 350
+        repeat: false
+        onTriggered: {
+            if (!OsdService.visible)
+                root.osdLoaded = false;
+        }
+    }
+
     LazyLoader {
-        active: true
+        active: root.osdLoaded
 
         PanelWindow {
             id: osdWindow

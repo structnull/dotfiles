@@ -11,7 +11,8 @@ QsPopupWindow {
     popupWidth: 400
     popupMaxHeight: 700
     anchorSide: "right"
-    contentImplicitHeight: pageStack.children[pageStack.currentIndex]?.implicitHeight ?? popupMaxHeight - 32
+    contentImplicitHeight: pageStack.children[pageStack.currentIndex]?.item?.implicitHeight ?? 0
+    property string pendingWifiSsid: ""
 
     onClosing: pageStack.currentIndex = 0
     onVisibleChanged: OsdService.suppressed = visible
@@ -24,45 +25,80 @@ QsPopupWindow {
         // ==========================
         // PAGE 0: DASHBOARD
         // ==========================
-        DashboardPage {
-            onCloseWindow: root.closeWindow()
+        Loader {
+            Layout.fillWidth: true
+            active: pageStack.currentIndex === 0
+
+            sourceComponent: Component {
+                DashboardPage {
+                    onCloseWindow: root.closeWindow()
+                }
+            }
         }
 
         // ==========================
         // PAGE 1: WI-FI
         // ==========================
-        WifiPage {
-            onBackRequested: pageStack.currentIndex = 0
-            onPasswordRequested: ssid => {
-                wifiPasswordPage.targetSsid = ssid;
-                pageStack.currentIndex = 2;
+        Loader {
+            Layout.fillWidth: true
+            active: pageStack.currentIndex === 1
+
+            sourceComponent: Component {
+                WifiPage {
+                    onBackRequested: pageStack.currentIndex = 0
+                    onPasswordRequested: ssid => {
+                        root.pendingWifiSsid = ssid;
+                        pageStack.currentIndex = 2;
+                    }
+                }
             }
         }
 
         // ==========================
         // PAGE 2: WI-FI PASSWORD
         // ==========================
-        WifiPasswordPage {
-            id: wifiPasswordPage
-            onCancelled: pageStack.currentIndex = 1
-            onConnectClicked: password => {
-                NetworkService.connect(targetSsid, password);
-                pageStack.currentIndex = 1;
+        Loader {
+            Layout.fillWidth: true
+            active: pageStack.currentIndex === 2
+
+            sourceComponent: Component {
+                WifiPasswordPage {
+                    targetSsid: root.pendingWifiSsid
+                    onCancelled: pageStack.currentIndex = 1
+                    onConnectClicked: password => {
+                        NetworkService.connect(targetSsid, password);
+                        pageStack.currentIndex = 1;
+                    }
+                }
             }
         }
 
         // ==========================
         // PAGE 3: BLUETOOTH
         // ==========================
-        BluetoothPage {
-            onBackRequested: pageStack.currentIndex = 0
+        Loader {
+            Layout.fillWidth: true
+            active: pageStack.currentIndex === 3
+
+            sourceComponent: Component {
+                BluetoothPage {
+                    onBackRequested: pageStack.currentIndex = 0
+                }
+            }
         }
 
         // ==========================
         // PAGE 4: AUDIO
         // ==========================
-        AudioPage {
-            onBackRequested: pageStack.currentIndex = 0
+        Loader {
+            Layout.fillWidth: true
+            active: pageStack.currentIndex === 4
+
+            sourceComponent: Component {
+                AudioPage {
+                    onBackRequested: pageStack.currentIndex = 0
+                }
+            }
         }
 
     }

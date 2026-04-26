@@ -10,14 +10,48 @@ RowLayout {
 
     // Drawer state
     property bool isOpen: false
-    // We create the TrayMenu object here, but it starts invisible.
-    TrayMenu {
-        id: sharedMenu
-        visible: false
+    property bool menuLoaded: false
+    property var pendingMenuHandle: null
+    property int pendingAnchorX: 0
+    property int pendingAnchorY: 0
+    readonly property var sharedMenu: menuLoader.item
 
-        onVisibleChanged: {
-            if (visible)
-                TrayService.registerActiveMenu(sharedMenu);
+    function openMenu(menuHandle, anchorX, anchorY) {
+        pendingMenuHandle = menuHandle;
+        pendingAnchorX = anchorX;
+        pendingAnchorY = anchorY;
+
+        if (sharedMenu) {
+            sharedMenu.rootMenuHandle = pendingMenuHandle;
+            sharedMenu.anchorX = pendingAnchorX;
+            sharedMenu.anchorY = pendingAnchorY;
+            sharedMenu.open();
+            return;
+        }
+
+        menuLoaded = true;
+    }
+
+    Loader {
+        id: menuLoader
+        active: root.menuLoaded
+        source: "./TrayMenu.qml"
+
+        onLoaded: root.openMenu(root.pendingMenuHandle, root.pendingAnchorX, root.pendingAnchorY)
+    }
+
+    Connections {
+        target: root.sharedMenu
+
+        function onVisibleChanged() {
+            if (!root.sharedMenu)
+                return;
+            if (root.sharedMenu.visible)
+                TrayService.registerActiveMenu(root.sharedMenu);
+            else {
+                TrayService.unregisterActiveMenu(root.sharedMenu);
+                root.menuLoaded = false;
+            }
         }
     }
 
@@ -188,19 +222,15 @@ RowLayout {
                                 return;
                             if (mouse.button === Qt.LeftButton) {
                                 trayDelegate.trayItem.activate();
-                                sharedMenu.close();
+                                if (root.sharedMenu)
+                                    root.sharedMenu.close();
                             } else if (mouse.button === Qt.RightButton) {
                                 if (trayDelegate.trayItem.hasMenu) {
                                     // 1. Gets the absolute position of the icon on screen
                                     var globalPos = trayDelegate.mapToGlobal(0, trayDelegate.height);
 
-                                    // 2. Configures the shared menu
-                                    sharedMenu.rootMenuHandle = trayDelegate.trayItem.menu;
-                                    sharedMenu.anchorX = globalPos.x;
-                                    sharedMenu.anchorY = globalPos.y + 5;
-
-                                    // 3. Opens the menu
-                                    sharedMenu.open();
+                                    // 2. Opens the shared menu near the icon
+                                    root.openMenu(trayDelegate.trayItem.menu, globalPos.x, globalPos.y + 5);
                                 }
                             }
                         }

@@ -84,8 +84,6 @@ Singleton {
         return Math.max(0, len);
     }
 
-    readonly property real maxTimeRaw: Math.max(rawLength, rawPosition)
-    readonly property real timeDivisor: maxTimeRaw > 10000000 ? 1000000 : (maxTimeRaw > 10000 ? 1000 : 1)
     readonly property real extrapolatedRawPosition: {
         // Touch this tick so the binding reevaluates at timer cadence while playing.
         playbackTick;
@@ -95,7 +93,7 @@ Singleton {
         let next = sampledRawPosition;
         if (isPlaying && sampledWallClockMs > 0) {
             const elapsedMs = Math.max(0, Date.now() - sampledWallClockMs);
-            next += elapsedMs * (timeDivisor / 1000.0);
+            next += elapsedMs / 1000.0;
         }
 
         if (rawLength > 0)
@@ -103,8 +101,8 @@ Singleton {
         return Math.max(0, next);
     }
 
-    readonly property real position: extrapolatedRawPosition / timeDivisor
-    readonly property real length: rawLength / timeDivisor
+    readonly property real position: extrapolatedRawPosition
+    readonly property real length: rawLength
     readonly property bool hasProgress: (activePlayer?.lengthSupported ?? false) && rawLength > 0
     readonly property bool canSeek: (activePlayer?.canSeek ?? false) && hasProgress
     readonly property real progress: {
@@ -131,7 +129,6 @@ Singleton {
     onRawPositionChanged: syncPositionSample(rawPosition)
     onTrackKeyChanged: syncPositionSample(rawPosition)
     onIsPlayingChanged: syncPositionSample(rawPosition)
-    onTimeDivisorChanged: syncPositionSample(rawPosition)
     onHasProgressChanged: syncPositionSample(rawPosition)
 
     Timer {

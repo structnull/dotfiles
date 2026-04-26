@@ -28,9 +28,24 @@ BarButton {
         OsdService.anchorY = bottomCenter.y;
     }
 
-    active: quickSettingsWindow.visible
+    property bool popupLoaded: false
+    readonly property var popupWindow: quickSettingsLoader.item
+
+    function togglePopup() {
+        if (popupWindow) {
+            if (popupWindow.visible)
+                popupWindow.closeWindow();
+            else
+                popupWindow.visible = true;
+            return;
+        }
+
+        popupLoaded = true;
+    }
+
+    active: popupWindow?.visible ?? false
     contentItem: iconsLayout
-    onClicked: quickSettingsWindow.visible = !quickSettingsWindow.visible
+    onClicked: togglePopup()
     Component.onCompleted: Qt.callLater(syncOsdAnchor)
     onXChanged: Qt.callLater(syncOsdAnchor)
     onYChanged: Qt.callLater(syncOsdAnchor)
@@ -138,9 +153,24 @@ BarButton {
         }
     }
 
-    QuickSettingsWindow {
-        id: quickSettingsWindow
-        visible: false
-        anchorItem: root
+    Loader {
+        id: quickSettingsLoader
+        active: root.popupLoaded
+        asynchronous: true
+        source: "./QuickSettingsWindow.qml"
+
+        onLoaded: {
+            item.anchorItem = root;
+            item.visible = true;
+        }
+    }
+
+    Connections {
+        target: root.popupWindow
+
+        function onVisibleChanged() {
+            if (root.popupWindow && !root.popupWindow.visible)
+                root.popupLoaded = false;
+        }
     }
 }

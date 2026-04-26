@@ -19,6 +19,7 @@ PanelWindow {
 
     // --- WINDOW CONFIGURATION ---
     color: "transparent"
+    visible: false
 
     // Size
     implicitWidth: Math.max(220, mainColumn.implicitWidth)

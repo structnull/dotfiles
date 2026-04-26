@@ -15,6 +15,7 @@ Singleton {
 
     readonly property int cpuUsage: internal.cpuUsage
     readonly property int cpuTemp: internal.cpuTemp
+    property bool active: false
 
     // ========================================================================
     // GPU PROPERTIES
@@ -118,6 +119,7 @@ Singleton {
         property string networkUp: "0 B/s"
         property real prevRx: 0
         property real prevTx: 0
+        property double prevNetworkSampleMs: 0
 
         // Uptime
         property string uptime: "0m"
@@ -127,14 +129,18 @@ Singleton {
     // INITIALIZATION
     // ========================================================================
 
-    Component.onCompleted: {
+    Component.onCompleted: detectGpu.running = true
+
+    onActiveChanged: {
+        if (active)
+            triggerFullUpdate();
+    }
+
+    function triggerFullUpdate() {
         detectGpu.running = true;
-        updateCpuUsage.running = true;
+        updateCoreStats.running = true;
         updateCpuTemp.running = true;
-        updateRam.running = true;
         updateDisk.running = true;
-        updateNetwork.running = true;
-        updateUptime.running = true;
     }
 
     // ========================================================================
@@ -143,14 +149,11 @@ Singleton {
 
     Timer {
         interval: 4000
-        running: true
+        running: root.active
         repeat: true
         onTriggered: {
-            updateCpuUsage.running = true;
+            updateCoreStats.running = true;
             updateCpuTemp.running = true;
-            updateRam.running = true;
-            updateNetwork.running = true;
-            updateUptime.running = true;
 
             if (root.gpuMonitorEnabled) {
                 root._triggerGpuUpdate();
@@ -161,7 +164,7 @@ Singleton {
     // Disk updates less frequently
     Timer {
         interval: 60000
-        running: true
+        running: root.active
         repeat: true
         onTriggered: updateDisk.running = true
     }
@@ -214,45 +217,147 @@ Singleton {
         }
     }
 
+    function _applyCpuSnapshot(parts) {
+        const offset = parts[1] === "cpu" ? 2 : 1;
+        if (parts.length < offset + 8)
+            return;
+
+        const user = parseFloat(parts[offset]) || 0;
+        const nice = parseFloat(parts[offset + 1]) || 0;
+        const system = parseFloat(parts[offset + 2]) || 0;
+        const idle = parseFloat(parts[offset + 3]) || 0;
+        const iowait = parseFloat(parts[offset + 4]) || 0;
+        const irq = parseFloat(parts[offset + 5]) || 0;
+        const softirq = parseFloat(parts[offset + 6]) || 0;
+        const steal = parseFloat(parts[offset + 7]) || 0;
+
+        const total = user + nice + system + idle + iowait + irq + softirq + steal;
+        const idleTime = idle + iowait;
+
+        if (internal.prevTotal > 0) {
+            const totalDiff = total - internal.prevTotal;
+            const idleDiff = idleTime - internal.prevIdle;
+
+            if (totalDiff > 0) {
+                const usage = Math.round(((totalDiff - idleDiff) / totalDiff) * 100);
+                internal.cpuUsage = Math.max(0, Math.min(100, usage));
+            }
+        }
+
+        internal.prevTotal = total;
+        internal.prevIdle = idleTime;
+    }
+
+    function _applyRamSnapshot(parts) {
+        if (parts.length < 3)
+            return;
+
+        const total = parseFloat(parts[1]);
+        const used = parseFloat(parts[2]);
+        if (total > 0) {
+            internal.ramUsage = Math.round((used / total) * 100);
+            internal.ramUsed = root._formatGiB(used);
+            internal.ramTotal = root._formatGiB(total);
+        }
+    }
+
+    function _applyNetworkSnapshot(parts) {
+        if (parts.length < 3)
+            return;
+
+        const rx = parseFloat(parts[1]);
+        const tx = parseFloat(parts[2]);
+        const nowMs = Date.now();
+
+        if (internal.prevRx > 0 && internal.prevNetworkSampleMs > 0) {
+            const elapsedSeconds = Math.max(0.001, (nowMs - internal.prevNetworkSampleMs) / 1000.0);
+            const rxDelta = (rx - internal.prevRx) / elapsedSeconds;
+            const txDelta = (tx - internal.prevTx) / elapsedSeconds;
+            internal.networkDown = root._formatBytes(Math.max(0, rxDelta));
+            internal.networkUp = root._formatBytes(Math.max(0, txDelta));
+        }
+
+        internal.prevRx = rx;
+        internal.prevTx = tx;
+        internal.prevNetworkSampleMs = nowMs;
+    }
+
+    function _applyUptimeSnapshot(parts) {
+        if (parts.length < 2)
+            return;
+
+        const totalSeconds = parseInt(parts[1]);
+        if (isNaN(totalSeconds))
+            return;
+
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+
+        if (days > 0) {
+            internal.uptime = days + "d " + hours + "h";
+        } else if (hours > 0) {
+            internal.uptime = hours + "h " + minutes + "m";
+        } else {
+            internal.uptime = minutes + "m";
+        }
+    }
+
     // ========================================================================
-    // CPU MONITORING
+    // CORE MONITORING
     // ========================================================================
 
     Process {
-        id: updateCpuUsage
-        command: ["bash", "-c", "head -1 /proc/stat"]
+        id: updateCoreStats
+        command: ["bash", "-c", `
+            cpu_line=$(head -1 /proc/stat)
+            set -- $(awk '/MemTotal:/ {total=$2} /MemAvailable:/ {available=$2} END {print total, available}' /proc/meminfo)
+            mem_total_kib=$1
+            mem_available_kib=$2
+            mem_used=$(( (mem_total_kib - mem_available_kib) * 1024 ))
+            mem_total=$(( mem_total_kib * 1024 ))
+
+            rx=0
+            tx=0
+            for iface in /sys/class/net/*/; do
+                name=$(basename "$iface")
+                [ "$name" = "lo" ] && continue
+                [ -f "$iface/statistics/rx_bytes" ] || continue
+                rx=$((rx + $(cat "$iface/statistics/rx_bytes")))
+                tx=$((tx + $(cat "$iface/statistics/tx_bytes")))
+            done
+
+            uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
+
+            printf 'cpu %s\\n' "$cpu_line"
+            printf 'ram %s %s\\n' "$mem_total" "$mem_used"
+            printf 'net %s %s\\n' "$rx" "$tx"
+            printf 'uptime %s\\n' "$uptime_seconds"
+        `]
         stdout: SplitParser {
             onRead: data => {
-                const parts = data.trim().split(/\s+/);
-                if (parts.length >= 5) {
-                    const user = parseFloat(parts[1]) || 0;
-                    const nice = parseFloat(parts[2]) || 0;
-                    const system = parseFloat(parts[3]) || 0;
-                    const idle = parseFloat(parts[4]) || 0;
-                    const iowait = parseFloat(parts[5]) || 0;
-                    const irq = parseFloat(parts[6]) || 0;
-                    const softirq = parseFloat(parts[7]) || 0;
-                    const steal = parseFloat(parts[8]) || 0;
+                const lines = data.trim().split("\n");
+                for (const line of lines) {
+                    const parts = line.trim().split(/\s+/);
+                    if (parts.length === 0)
+                        continue;
 
-                    const total = user + nice + system + idle + iowait + irq + softirq + steal;
-                    const idleTime = idle + iowait;
-
-                    if (internal.prevTotal > 0) {
-                        const totalDiff = total - internal.prevTotal;
-                        const idleDiff = idleTime - internal.prevIdle;
-
-                        if (totalDiff > 0) {
-                            const usage = Math.round(((totalDiff - idleDiff) / totalDiff) * 100);
-                            internal.cpuUsage = Math.max(0, Math.min(100, usage));
-                        }
-                    }
-
-                    internal.prevTotal = total;
-                    internal.prevIdle = idleTime;
+                    if (parts[0] === "cpu")
+                        root._applyCpuSnapshot(parts);
+                    else if (parts[0] === "ram")
+                        root._applyRamSnapshot(parts);
+                    else if (parts[0] === "net")
+                        root._applyNetworkSnapshot(parts);
+                    else if (parts[0] === "uptime")
+                        root._applyUptimeSnapshot(parts);
                 }
             }
         }
     }
+
+    // ========================================================================
+    // CPU TEMPERATURE MONITORING
+    // ========================================================================
 
     Process {
         id: updateCpuTemp
@@ -280,29 +385,6 @@ Singleton {
     }
 
     // ========================================================================
-    // RAM MONITORING
-    // ========================================================================
-
-    Process {
-        id: updateRam
-        command: ["bash", "-c", "free -b | awk '/Mem:/{print $2,$3}'"]
-        stdout: SplitParser {
-            onRead: data => {
-                const parts = data.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    const total = parseFloat(parts[0]);
-                    const used = parseFloat(parts[1]);
-                    if (total > 0) {
-                        internal.ramUsage = Math.round((used / total) * 100);
-                        internal.ramUsed = root._formatGiB(used);
-                        internal.ramTotal = root._formatGiB(total);
-                    }
-                }
-            }
-        }
-    }
-
-    // ========================================================================
     // DISK MONITORING
     // ========================================================================
 
@@ -320,71 +402,6 @@ Singleton {
                         internal.diskUsed = root._formatGiB(used);
                         internal.diskTotal = root._formatGiB(total);
                     }
-                }
-            }
-        }
-    }
-
-    // ========================================================================
-    // NETWORK MONITORING
-    // ========================================================================
-
-    Process {
-        id: updateNetwork
-        command: ["bash", "-c", `
-            rx=0; tx=0
-            for iface in /sys/class/net/*/; do
-                name=$(basename "$iface")
-                [ "$name" = "lo" ] && continue
-                [ -f "$iface/statistics/rx_bytes" ] || continue
-                rx=$((rx + $(cat "$iface/statistics/rx_bytes")))
-                tx=$((tx + $(cat "$iface/statistics/tx_bytes")))
-            done
-            echo "$rx $tx"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const parts = data.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    const rx = parseFloat(parts[0]);
-                    const tx = parseFloat(parts[1]);
-
-                    if (internal.prevRx > 0) {
-                        const rxDelta = (rx - internal.prevRx) / 2; // per second (2s interval)
-                        const txDelta = (tx - internal.prevTx) / 2;
-                        internal.networkDown = root._formatBytes(Math.max(0, rxDelta));
-                        internal.networkUp = root._formatBytes(Math.max(0, txDelta));
-                    }
-
-                    internal.prevRx = rx;
-                    internal.prevTx = tx;
-                }
-            }
-        }
-    }
-
-    // ========================================================================
-    // UPTIME
-    // ========================================================================
-
-    Process {
-        id: updateUptime
-        command: ["bash", "-c", "awk '{print int($1)}' /proc/uptime"]
-        stdout: SplitParser {
-            onRead: data => {
-                const totalSeconds = parseInt(data.trim());
-                if (isNaN(totalSeconds)) return;
-
-                const days = Math.floor(totalSeconds / 86400);
-                const hours = Math.floor((totalSeconds % 86400) / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-
-                if (days > 0) {
-                    internal.uptime = days + "d " + hours + "h";
-                } else if (hours > 0) {
-                    internal.uptime = hours + "h " + minutes + "m";
-                } else {
-                    internal.uptime = minutes + "m";
                 }
             }
         }

@@ -39,4 +39,9 @@ QtObject {
         activeMenu = menuInstance;
     }
 
+    function unregisterActiveMenu(menuInstance) {
+        if (activeMenu === menuInstance)
+            activeMenu = null;
+    }
+
 }

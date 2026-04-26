@@ -19,7 +19,6 @@ Singleton {
         for (let i = 0; i < notifications.length; i++) {
             if (notifications[i] && notifications[i].popup) {
                 notifications[i].popup = false;
-                notifications[i].tickTimer.stop();
             }
         }
     }
@@ -69,6 +68,29 @@ Singleton {
 
     property int hoveredNotificationId: -1
 
+    Timer {
+        id: lifecycleTimer
+        interval: 50
+        repeat: true
+        running: root.activePopupCount > 0
+
+        onTriggered: {
+            for (let i = 0; i < root.notifications.length; i++) {
+                const wrapper = root.notifications[i];
+                if (!wrapper || !wrapper.popup || wrapper.isPaused)
+                    continue;
+
+                wrapper.remainingTime = Math.max(0, wrapper.remainingTime - interval);
+                wrapper.progress = 1.0 - (wrapper.remainingTime / wrapper.totalTime);
+
+                if (wrapper.remainingTime <= 0) {
+                    wrapper.progress = 1.0;
+                    wrapper.popup = false;
+                }
+            }
+        }
+    }
+
     // ========================================================================
     // NOTIFICATION SERVER
     // ========================================================================
@@ -115,54 +137,24 @@ Singleton {
 
         property bool popup: false
 
-        // ====== TICK TIMER SYSTEM (for real pause) ======
+        // Countdown state, advanced by the shared lifecycle timer above.
         property int totalTime: Config.notifTimeout
         property int remainingTime: Config.notifTimeout
 
         // Progress from 0.0 to 1.0 (for the progress bar in the Card)
         property real progress: 0.0
 
-        // Timer that decrements every 50ms
-        readonly property Timer tickTimer: Timer {
-            interval: 50
-            repeat: true
-            running: false
-
-            onTriggered: {
-                if (wrapper.remainingTime > 0) {
-                    wrapper.remainingTime -= interval;
-                    wrapper.progress = 1.0 - (wrapper.remainingTime / wrapper.totalTime);
-
-                    if (wrapper.remainingTime <= 0) {
-                        wrapper.remainingTime = 0;
-                        wrapper.progress = 1.0;
-                        stop();
-                        wrapper.popup = false;
-                    }
-                }
-            }
-        }
-
         function startLifecycle() {
             remainingTime = totalTime;
             progress = 0.0;
-            tickTimer.start();
         }
 
         // Pause the timer on hover
         property bool isPaused: root.hoveredNotificationId === (notification ? notification.id : -1)
 
         onIsPausedChanged: {
-            if (isPaused) {
-                if (tickTimer.running)
-                    tickTimer.stop();
-            } else {
-                if (popup && remainingTime > 0 && !tickTimer.running) {
-                    tickTimer.start();
-                } else if (popup && remainingTime <= 0) {
-                    popup = false;
-                }
-            }
+            if (!isPaused && popup && remainingTime <= 0)
+                popup = false;
         }
 
         // Timestamp
@@ -201,12 +193,10 @@ Singleton {
             target: wrapper.notification ? wrapper.notification.Retainable : null
 
             function onDropped(): void {
-                wrapper.tickTimer.stop();
                 root.notifications = root.notifications.filter(w => w !== wrapper);
             }
 
             function onAboutToDestroy(): void {
-                wrapper.tickTimer.stop();
                 wrapper.destroy();
             }
         }
@@ -233,7 +223,6 @@ Singleton {
         for (let i = 0; i < notifications.length; i++) {
             if (notifications[i].notifId === notifId) {
                 notifications[i].popup = false;
-                notifications[i].tickTimer.stop();
                 break;
             }
         }
@@ -244,7 +233,6 @@ Singleton {
             if (notifications[i].notifId === notifId) {
                 const wrapper = notifications[i];
                 wrapper.popup = false;
-                wrapper.tickTimer.stop();
                 if (wrapper.notification) {
                     wrapper.notification.dismiss();
                 }
@@ -257,7 +245,6 @@ Singleton {
         const toRemove = notifications.slice();
         for (const wrapper of toRemove) {
             if (wrapper) {
-                wrapper.tickTimer.stop();
                 if (wrapper.notification) {
                     wrapper.notification.dismiss();
                 }

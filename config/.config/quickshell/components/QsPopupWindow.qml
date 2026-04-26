@@ -63,6 +63,7 @@ PanelWindow {
 
     implicitWidth: popupWidth + (screenMargin * 2)
     implicitHeight: popupMaxHeight
+    visible: false
     color: "transparent"
 
     property bool isClosing: false
@@ -177,6 +178,7 @@ PanelWindow {
             opacity: root.openProgress
 
             Behavior on height {
+                enabled: root.openProgress >= 1.0
                 NumberAnimation {
                     duration: Config.animDuration
                     easing.type: Easing.OutQuad

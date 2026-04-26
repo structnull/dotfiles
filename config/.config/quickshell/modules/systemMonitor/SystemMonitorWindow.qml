@@ -13,6 +13,7 @@ QsPopupWindow {
     popupMaxHeight: 720
     anchorSide: "left"
     contentImplicitHeight: content.implicitHeight
+    onVisibleChanged: SystemMonitorService.active = visible
 
     readonly property bool hasGpu: SystemMonitorService.gpuType !== "unknown"
     readonly property color accentBlue: Config.accentColor

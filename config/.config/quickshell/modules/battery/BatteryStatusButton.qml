@@ -12,10 +12,25 @@ BarButton {
     readonly property color lowColor: "#ff5f57"
     readonly property color pluggedColor: "#8ab4ff"
 
-    active: detailsWindow.visible
+    property bool popupLoaded: false
+    readonly property var popupWindow: detailsLoader.item
+
+    function togglePopup() {
+        if (popupWindow) {
+            if (popupWindow.visible)
+                popupWindow.closeWindow();
+            else
+                popupWindow.visible = true;
+            return;
+        }
+
+        popupLoaded = true;
+    }
+
+    active: popupWindow?.visible ?? false
     visible: BatteryService.hasBattery || BatteryService.isPlugged
     contentItem: content
-    onClicked: detailsWindow.visible = !detailsWindow.visible
+    onClicked: togglePopup()
 
     RowLayout {
         id: content
@@ -48,9 +63,24 @@ BarButton {
         }
     }
 
-    BatteryStatusWindow {
-        id: detailsWindow
-        visible: false
-        anchorItem: root
+    Loader {
+        id: detailsLoader
+        active: root.popupLoaded
+        asynchronous: true
+        source: "./BatteryStatusWindow.qml"
+
+        onLoaded: {
+            item.anchorItem = root;
+            item.visible = true;
+        }
+    }
+
+    Connections {
+        target: root.popupWindow
+
+        function onVisibleChanged() {
+            if (root.popupWindow && !root.popupWindow.visible)
+                root.popupLoaded = false;
+        }
     }
 }
