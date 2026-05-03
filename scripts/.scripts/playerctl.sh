@@ -8,4 +8,4 @@ if [ -z "$cmd" ]; then
 fi
 
 # Highest to lowest priority
-playerctl --player=spotify,ncspot,mpv,cmus,vlc,firefox "$cmd"
+playerctl --player=spotify,ncspot,mpv,cmus,vlc,firefox,chromium,brave "$cmd"

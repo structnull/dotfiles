@@ -26,12 +26,6 @@ mkdir -p "$XDG_CACHE_HOME/zsh" >/dev/null 2>&1
 autoload -Uz colors compinit edit-command-line
 colors
 
-if command_exists starship; then
-  [[ -t 1 ]] && eval "$(starship init zsh)"
-else
-  PROMPT='%F{yellow}%n%f%F{magenta}@%f%F{blue}%m%f %~ %F{green}❯%f '
-fi
-
 
 # History
 HISTSIZE=50000
@@ -256,6 +250,12 @@ export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --
 # Extra completions
 safe_source /home/adharsh/.dart-cli-completion/zsh-config.zsh
 
+
+if command_exists starship; then
+  [[ -t 1 ]] && eval "$(starship init zsh)"
+else
+  PROMPT='%F{yellow}%n%f%F{magenta}@%f%F{blue}%m%f %~ %F{green}❯%f '
+fi
 
 # Load last
 safe_source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

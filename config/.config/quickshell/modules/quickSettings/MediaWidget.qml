@@ -161,29 +161,6 @@ Rectangle {
                     color: Qt.alpha(Config.subtextColor, 0.5)
                 }
 
-                // Play state badge
-                Rectangle {
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-                    anchors.rightMargin: 5
-                    anchors.bottomMargin: 5
-                    width: 22
-                    height: 16
-                    radius: 8
-                    color: "transparent"
-                    border.width: 1
-                    border.color: Qt.alpha(Config.textColor, 0.25)
-
-                    Text {
-                        anchors.centerIn: parent
-                        text: MprisService.isPlaying ? "" : ""
-                        font.family: Config.font
-                        font.pixelSize: 8
-                        color: Config.subtextColor
-                        anchors.horizontalCenterOffset: MprisService.isPlaying ? 0 : 0.5
-                    }
-                }
-
                 // Dotted frame around cover
                 Canvas {
                     anchors.fill: parent
