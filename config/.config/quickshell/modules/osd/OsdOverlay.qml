@@ -185,6 +185,7 @@ Scope {
                     spacing: 10
 
                     QsSlider {
+                        id: osdSlider
                         Layout.fillWidth: true
                         value: root.sliderValue
                         from: 0
@@ -203,9 +204,9 @@ Scope {
                         text: {
                             var pct;
                             if (OsdService.type === "volume")
-                                pct = Math.round(root.sliderValue * 100);
+                                pct = Math.round(osdSlider.visualValue * 100);
                             else
-                                pct = Math.round(((root.sliderValue - 0) / (root.sliderTo - 0)) * 100);
+                                pct = Math.round(((osdSlider.visualValue - 0) / (root.sliderTo - 0)) * 100);
                             return "[" + pct + "%]";
                         }
                         font.family: Config.font

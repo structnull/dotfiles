@@ -19,6 +19,14 @@ Item {
     property real visualValue: 0
     readonly property real clampedValue: clampValue(value)
 
+    Behavior on visualValue {
+        enabled: !sliderMouse.pressed
+        NumberAnimation {
+            duration: Config.animDuration
+            easing.type: Easing.OutCubic
+        }
+    }
+
     signal moved(real newValue)
     signal iconClicked
     signal openDetails
@@ -121,13 +129,6 @@ Item {
                 radius: 1
                 width: track.width * sliderContainer.percent
                 color: root.fillColor
-
-                Behavior on width {
-                    NumberAnimation {
-                        duration: Config.animDuration
-                        easing.type: Easing.OutCubic
-                    }
-                }
             }
 
             // Tick dots at 0%, 25%, 50%, 75%, 100%

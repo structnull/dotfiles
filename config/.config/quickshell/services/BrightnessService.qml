@@ -17,8 +17,10 @@ Singleton {
     property int maxValue: 0
     property bool hasBacklight: false
     property real pendingBrightness: NaN
+    property real targetBrightness: NaN
     readonly property bool available: hasBacklight && maxValue > 0
     readonly property bool hasPendingBrightness: !isNaN(pendingBrightness)
+    readonly property bool hasTargetBrightness: !isNaN(targetBrightness)
 
     readonly property string icon: {
         if (brightness <= 0.1)
@@ -85,12 +87,28 @@ Singleton {
 
     function setBrightness(value) {
         const newValue = clampBrightness(value);
-        const percent = Math.round(newValue * 100);
 
         root.pendingBrightness = newValue;
+        root.targetBrightness = newValue;
         root.brightness = newValue;
         brightnessSettleTimer.restart();
-        setBrightnessProcess.command = ["/bin/sh", "-c", "brightnessctl set " + percent + "% >/dev/null 2>&1 && cat " + backlightPath];
+        scheduleBrightnessApply();
+    }
+
+    function scheduleBrightnessApply() {
+        if (!setBrightnessProcess.running)
+            applyBrightnessTimer.restart();
+    }
+
+    function applyTargetBrightness() {
+        if (!hasTargetBrightness || setBrightnessProcess.running)
+            return;
+
+        const rawValue = root.maxValue > 0
+            ? Math.round(clampBrightness(targetBrightness) * root.maxValue)
+            : Math.round(clampBrightness(targetBrightness) * 100) + "%";
+        root.targetBrightness = NaN;
+        setBrightnessProcess.command = ["brightnessctl", "set", rawValue.toString()];
         setBrightnessProcess.running = true;
     }
 
@@ -204,10 +222,15 @@ Singleton {
 
     Process {
         id: setBrightnessProcess
-        stdout: SplitParser {
-            onRead: data => {
-                const value = parseInt(data.trim());
-                root.applyBrightnessReading(value);
+        stdout: StdioCollector {
+        }
+        stderr: StdioCollector {
+        }
+        onExited: {
+            if (root.hasTargetBrightness) {
+                root.applyTargetBrightness();
+            } else {
+                brightnessSettleTimer.restart();
             }
         }
     }
@@ -225,10 +248,18 @@ Singleton {
 
     Timer {
         id: updateTimer
-        interval: 2000
+        interval: watchBrightnessEvents.running ? 2000 : 100
         repeat: true
         triggeredOnStart: true
-        onTriggered: root.readBrightness()
+        onTriggered: {
+            // Adjust interval dynamically if inotifywait is not available
+            if (!watchBrightnessEvents.running && interval !== 100) {
+                interval = 100;
+            } else if (watchBrightnessEvents.running && interval !== 2000) {
+                interval = 2000;
+            }
+            root.readBrightness();
+        }
     }
 
     Timer {
@@ -238,6 +269,12 @@ Singleton {
             root.pendingBrightness = NaN;
             root.readBrightness();
         }
+    }
+
+    Timer {
+        id: applyBrightnessTimer
+        interval: 16
+        onTriggered: root.applyTargetBrightness()
     }
 
     Process {
