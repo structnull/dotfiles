@@ -354,7 +354,7 @@ QsPopupWindow {
                         readonly property bool isToday: model.today
                         readonly property bool isCurrentMonth: model.month === grid.month
                         readonly property bool isWeekend: {
-                            const dow = model.date.getUTCDay();
+                            const dow = model.date.getDay();
                             return dow === 0 || dow === 6;
                         }
 

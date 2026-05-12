@@ -3,15 +3,11 @@
 local M = "ALT"
 local MS = M .. " + SHIFT"
 local MC = M .. " + CONTROL"
-local SUPER = "SUPER"
-local SS = SUPER .. " + SHIFT"
-local SC = SUPER .. " + CONTROL"
-local SCS = SUPER .. " + CONTROL + SHIFT"
+local S = "SUPER"
+local SS = S .. " + SHIFT"
+local SC = S .. " + CONTROL"
+local SCS = S .. " + CONTROL + SHIFT"
 local CS = "CONTROL + SHIFT"
-
-local function legacy_dispatch(dispatch)
-    return hl.dsp.exec_cmd("hyprctl dispatch " .. dispatch)
-end
 
 local function set_zoom_factor(value)
     hl.config({
@@ -31,13 +27,13 @@ local function change_zoom_factor(multiplier)
 end
 
 -- Application launchers
-hl.bind("SUPER + Return", hl.dsp.exec_cmd("kitty"))
-hl.bind("SUPER + F", hl.dsp.exec_cmd("helium-browser"))
-hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"))
+hl.bind(S .. " + Return", hl.dsp.exec_cmd("kitty"))
+hl.bind(S .. " + F", hl.dsp.exec_cmd("helium-browser"))
+hl.bind(S .. " + E", hl.dsp.exec_cmd("dolphin"))
 hl.bind("XF86Calculator", hl.dsp.exec_cmd("kcalc"))
-hl.bind("SUPER + C", hl.dsp.exec_cmd("vicinae vicinae://launch/clipboard/history"))
-hl.bind("SUPER + period", hl.dsp.exec_cmd("vicinae vicinae://launch/core/search-emojis"))
-hl.bind("SUPER + space", hl.dsp.exec_cmd("vicinae toggle"))
+hl.bind(S .. " + C", hl.dsp.exec_cmd("vicinae vicinae://launch/clipboard/history"))
+hl.bind(S .. " + period", hl.dsp.exec_cmd("vicinae vicinae://launch/core/search-emojis"))
+hl.bind(S .. " + space", hl.dsp.exec_cmd("vicinae toggle"))
 hl.bind(SC .. " + W", hl.dsp.exec_cmd("rwallsel"))
 hl.bind(CS .. " + Escape", hl.dsp.exec_cmd("plasma-systemmonitor"))
 
@@ -50,7 +46,7 @@ hl.bind("XF86ScreenSaver", function()
 end)
 hl.bind(SS .. " + L", hl.dsp.exec_cmd("qs ipc call power toggleOverlay"))
 hl.bind(SCS .. " + Q", hl.dsp.exit())
-hl.bind("SUPER + F11", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
+hl.bind(S .. " + F11", hl.dsp.window.fullscreen({ mode = "fullscreen" }))
 hl.bind(MS .. " + R", hl.dsp.force_renderer_reload())
 
 -- Screenshots and recording
@@ -77,16 +73,16 @@ hl.bind(MS .. " + KP_SUBTRACT", function() set_zoom_factor(1) end)
 hl.bind(MS .. " + 0", function() set_zoom_factor(1) end)
 
 -- VM passthrough submap
-hl.bind("SUPER + Escape", hl.dsp.submap("passthru"))
+hl.bind(S .. " + Escape", hl.dsp.submap("passthru"))
 hl.define_submap("passthru", function()
-    hl.bind("SUPER + Escape", hl.dsp.submap("reset"))
+    hl.bind(S .. " + Escape", hl.dsp.submap("reset"))
 end)
 
 -- Mouse bindings
 hl.bind(M .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(M .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
-hl.bind("SUPER + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind("SUPER + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(S .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(S .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
 -- Audio, mic, and brightness
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1%+"), { repeating = true })
@@ -122,10 +118,27 @@ hl.bind(M .. " + D", hl.dsp.workspace.toggle_special(""))
 hl.bind(MS .. " + D", hl.dsp.window.move({ workspace = "special" }))
 
 -- Window and tiling control
+hl.bind(S .. " + P", function()
+    hl.config({
+        general = {
+            layout =
+                hl.get_config("general:layout") == "scrolling"
+                and "dwindle"
+                or "scrolling"
+        }
+    })
+end)
+
 hl.bind(M .. " + S", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(M .. " + T", hl.dsp.layout("togglesplit"))
+
+-- Scrolling layout controls
+hl.bind(M .. " + I", hl.dsp.layout("fit active"))
+hl.bind(M .. " + O", hl.dsp.layout("fit all"))
+hl.bind(S .. " + apostrophe", hl.dsp.layout("consume_or_expel prev"))
+hl.bind(S .. " + semicolon", hl.dsp.layout("consume_or_expel next"))
 hl.bind(M .. " + Q", hl.dsp.window.close())
-hl.bind("SUPER + tab", hl.dsp.group.toggle())
+hl.bind(S .. " + tab", hl.dsp.group.toggle())
 hl.bind(M .. " + tab", hl.dsp.group.next())
 
 hl.bind(M .. " + left", hl.dsp.focus({ direction = "l" }))
@@ -137,12 +150,6 @@ hl.bind(M .. " + l", hl.dsp.focus({ direction = "r" }))
 hl.bind(M .. " + k", hl.dsp.focus({ direction = "u" }))
 hl.bind(M .. " + j", hl.dsp.focus({ direction = "d" }))
 
--- Hyprland 0.55 docs mention move({ window_or_group }), but this build rejects it.
--- Keep the original movewindoworgroup behavior through hyprctl until Lua exposes it.
-hl.bind(MS .. " + left", legacy_dispatch("movewindoworgroup l"))
-hl.bind(MS .. " + right", legacy_dispatch("movewindoworgroup r"))
-hl.bind(MS .. " + up", legacy_dispatch("movewindoworgroup u"))
-hl.bind(MS .. " + down", legacy_dispatch("movewindoworgroup d"))
 hl.bind(MS .. " + H", hl.dsp.window.move({ direction = "l" }))
 hl.bind(MS .. " + L", hl.dsp.window.move({ direction = "r" }))
 hl.bind(MS .. " + K", hl.dsp.window.move({ direction = "u" }))
