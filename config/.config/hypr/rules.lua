@@ -1,5 +1,3 @@
--- Window and layer rules migrated from rules.conf.
-
 -- Gaming and fullscreen behavior
 hl.window_rule({
     name = "fullscreen",
@@ -267,6 +265,15 @@ hl.window_rule({
 })
 
 -- Layer rules
+hl.layer_rule({
+    name = "qs-wallpaper",
+    match = { namespace = [[^(qs_wallpaper)$]] },
+    blur = false,
+    ignore_alpha = 0.0,
+    animation = "fade",
+    order = 11,
+})
+
 hl.layer_rule({
     name = "interactive",
     match = { namespace = [[^(rofi|vicinae)$]] },

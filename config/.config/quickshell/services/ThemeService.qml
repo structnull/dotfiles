@@ -32,7 +32,7 @@ Singleton {
     readonly property bool loaded: _loaded
 
     function generateFromImage(imagePath: string) {
-        _genProc.command = ["matugen", "image", imagePath];
+        _genProc.command = ["matugen", "image", "--mode", mode, "--source-color-index", "0", imagePath];
         _genProc.running = true;
     }
 

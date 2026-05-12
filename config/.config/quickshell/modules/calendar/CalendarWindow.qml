@@ -361,34 +361,28 @@ QsPopupWindow {
                         implicitWidth: implicitHeight
                         implicitHeight: dayText.implicitHeight + 16
 
-                        // Wireframe abstract highlight for today
-                        Canvas {
-                            anchors.fill: parent
+                        // Active date plate
+                        Rectangle {
+                            id: todayPlate
+                            anchors.centerIn: parent
+                            width: Math.min(parent.width - 2, dayText.implicitWidth + 18)
+                            height: parent.height - 4
                             visible: dayCell.isToday
-                            onPaint: {
-                                var ctx = getContext("2d");
-                                ctx.reset();
-                                var w = width; var h = height;
-                                var cx = w/2; var cy = h/2;
-                                var r = Math.min(w, h)/2 - 1;
-                                
-                                ctx.strokeStyle = Config.accentColor.toString();
-                                ctx.lineWidth = 1.5;
-                                
-                                // Dashed ring
-                                ctx.setLineDash([3, 3]);
-                                ctx.beginPath();
-                                ctx.arc(cx, cy, r, 0, 2*Math.PI);
-                                ctx.stroke();
-                                
-                                // Crosshair markers
-                                ctx.setLineDash([]);
-                                ctx.beginPath();
-                                ctx.moveTo(cx, cy - r - 3); ctx.lineTo(cx, cy - r + 1);
-                                ctx.moveTo(cx, cy + r - 1); ctx.lineTo(cx, cy + r + 3);
-                                ctx.moveTo(cx - r - 3, cy); ctx.lineTo(cx - r + 1, cy);
-                                ctx.moveTo(cx + r - 1, cy); ctx.lineTo(cx + r + 3, cy);
-                                ctx.stroke();
+                            radius: 4
+                            color: Qt.alpha(Config.accentColor, 0.14)
+                            border.width: 1
+                            border.color: Qt.alpha(Config.accentColor, 0.65)
+
+                            Rectangle {
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                anchors.leftMargin: 5
+                                anchors.rightMargin: 5
+                                anchors.bottomMargin: 3
+                                height: 2
+                                radius: 1
+                                color: Config.accentColor
                             }
                         }
 

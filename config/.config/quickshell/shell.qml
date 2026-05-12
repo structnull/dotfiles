@@ -150,8 +150,22 @@ ShellRoot {
         function generateFromColor(hex: string) {
             ThemeService.generateFromColor(hex);
         }
+    }
 
+    IpcHandler {
+        target: "wallpaper"
 
+        function show() {
+            WallpaperService.show();
+        }
+
+        function hide() {
+            WallpaperService.hide();
+        }
+
+        function toggle() {
+            WallpaperService.toggle();
+        }
     }
 
     // =========================================================================
@@ -176,5 +190,11 @@ ShellRoot {
     Loader {
         active: true
         source: "./modules/osd/OsdOverlay.qml"
+    }
+    // Wallpaper Selector
+    Loader {
+        active: WallpaperService.selectorVisible
+        asynchronous: true
+        source: "./modules/wallpaper/WallpaperSelector.qml"
     }
 }

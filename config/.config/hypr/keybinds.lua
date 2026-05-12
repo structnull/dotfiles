@@ -1,5 +1,3 @@
--- Keybinds migrated from keybinds.conf.
-
 local M = "ALT"
 local MS = M .. " + SHIFT"
 local MC = M .. " + CONTROL"
@@ -34,7 +32,7 @@ hl.bind("XF86Calculator", hl.dsp.exec_cmd("kcalc"))
 hl.bind(S .. " + C", hl.dsp.exec_cmd("vicinae vicinae://launch/clipboard/history"))
 hl.bind(S .. " + period", hl.dsp.exec_cmd("vicinae vicinae://launch/core/search-emojis"))
 hl.bind(S .. " + space", hl.dsp.exec_cmd("vicinae toggle"))
-hl.bind(SC .. " + W", hl.dsp.exec_cmd("rwallsel"))
+hl.bind(SC .. " + W", hl.dsp.exec_cmd("qs ipc call wallpaper toggle"))
 hl.bind(CS .. " + Escape", hl.dsp.exec_cmd("plasma-systemmonitor"))
 
 -- System and session control
@@ -119,13 +117,12 @@ hl.bind(MS .. " + D", hl.dsp.window.move({ workspace = "special" }))
 
 -- Window and tiling control
 hl.bind(S .. " + P", function()
-    hl.config({
-        general = {
-            layout =
-                hl.get_config("general:layout") == "scrolling"
-                and "dwindle"
-                or "scrolling"
-        }
+    local l = hl.get_config("general:layout") == "scrolling"
+        and "dwindle" or "scrolling"
+    hl.config({ general = { layout = l } })
+    hl.notification.create({
+        text = "Switched to " .. l .. " layout",
+        duration = 1000,
     })
 end)
 
@@ -138,6 +135,7 @@ hl.bind(M .. " + O", hl.dsp.layout("fit all"))
 hl.bind(S .. " + apostrophe", hl.dsp.layout("consume_or_expel prev"))
 hl.bind(S .. " + semicolon", hl.dsp.layout("consume_or_expel next"))
 hl.bind(M .. " + Q", hl.dsp.window.close())
+
 hl.bind(S .. " + tab", hl.dsp.group.toggle())
 hl.bind(M .. " + tab", hl.dsp.group.next())
 
@@ -170,3 +168,4 @@ hl.bind(MC .. " + j", hl.dsp.window.resize({ x = 0, y = 20, relative = true }), 
 -- Group navigation
 hl.bind(M .. " + up", hl.dsp.group.next())
 hl.bind(M .. " + down", hl.dsp.group.prev())
+

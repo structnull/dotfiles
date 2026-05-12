@@ -14,3 +14,4 @@ singleton StateService StateService.qml
 singleton SystemMonitorService SystemMonitorService.qml
 singleton OsdService OsdService.qml
 singleton ThemeService ThemeService.qml
+singleton WallpaperService WallpaperService.qml
