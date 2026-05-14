@@ -22,7 +22,9 @@ PanelWindow {
   exclusionMode: ExclusionMode.Ignore
 
   property string imageDirs: Quickshell.env("HOME") + "/Pictures/wallpapers"
+  property var allImages: []
   property int selectedIndex: 0
+  property bool _modelUpdating: false
   property bool imagesLoaded: false
   property bool showLabels: true
   property bool filterable: true
@@ -51,7 +53,7 @@ PanelWindow {
   }
 
   function currentPath() {
-    if (imageModel.count === 0 || !itemMatches(selectedIndex)) return ""
+    if (imageModel.count === 0 || selectedIndex < 0 || selectedIndex >= imageModel.count) return ""
     return imageModel.get(selectedIndex).filePath
   }
 
@@ -74,32 +76,6 @@ PanelWindow {
     return labelForPath(path)
   }
 
-  function itemMatches(index) {
-    if (index < 0 || index >= imageModel.count) return false
-    if (!filterText) return true
-
-    var path = imageModel.get(index).filePath
-    var needle = filterText.toLowerCase()
-    return relativePath(path).toLowerCase().indexOf(needle) !== -1 || labelForPath(path).toLowerCase().indexOf(needle) !== -1
-  }
-
-  function matchingCount() {
-    if (!filterText) return imageModel.count
-
-    var count = 0
-    for (var i = 0; i < imageModel.count; i++) {
-      if (itemMatches(i)) count++
-    }
-    return count
-  }
-
-  function firstMatchingIndex() {
-    for (var i = 0; i < imageModel.count; i++) {
-      if (itemMatches(i)) return i
-    }
-    return -1
-  }
-
   function indexForPath(path) {
     if (!path) return -1
 
@@ -109,53 +85,43 @@ PanelWindow {
     return -1
   }
 
-  function filteredPosition(index) {
-    if (!filterText) return index
-
-    var position = 0
-    for (var i = 0; i < index; i++) {
-      if (itemMatches(i)) position++
-    }
-    return position
-  }
-
-  function selectedFilteredPosition() {
-    if (!filterText) return selectedIndex
-    return itemMatches(selectedIndex) ? filteredPosition(selectedIndex) : 0
-  }
-
   function select(index, immediate) {
     if (imageModel.count === 0) return
     if (index < 0) index = 0
     else if (index >= imageModel.count) index = imageModel.count - 1
-    if (!itemMatches(index)) return
     if (index === selectedIndex && immediate !== true) return
 
     selectedIndex = index
   }
 
   function selectAdjacent(direction) {
-    if (!filterText) {
-      select(selectedIndex + direction)
-      return
-    }
-
-    var index = selectedIndex + direction
-    while (index >= 0 && index < imageModel.count) {
-      if (itemMatches(index)) {
-        select(index)
-        return
-      }
-      index += direction
-    }
+    select(selectedIndex + direction)
   }
 
-  function updateFilter(nextFilterText) {
+  function updateFilter(nextFilterText, force) {
+    if (filterText === nextFilterText && !force) return
+    var oldSelectedPath = currentPath()
+    
     filterText = nextFilterText
-
-    if (!itemMatches(selectedIndex)) {
-      var first = firstMatchingIndex()
-      if (first >= 0) selectedIndex = first
+    var needle = filterText.toLowerCase()
+    
+    root._modelUpdating = true
+    imageModel.clear()
+    for (var i = 0; i < allImages.length; i++) {
+      var item = allImages[i]
+      if (!needle || relativePath(item.filePath).toLowerCase().indexOf(needle) !== -1 || labelForPath(item.filePath).toLowerCase().indexOf(needle) !== -1) {
+        imageModel.append(item)
+      }
+    }
+    root._modelUpdating = false
+    
+    if (!force) {
+        var newIdx = indexForPath(oldSelectedPath)
+        if (newIdx >= 0) {
+          selectedIndex = newIdx
+        } else {
+          selectedIndex = 0
+        }
     }
   }
 
@@ -177,34 +143,36 @@ PanelWindow {
 
   function loadRows(rows) {
     var paths = rows.split("\n")
-    imageModel.clear()
+    var newImages = []
+    var seen = {}
+    
     for (var i = 0; i < paths.length; i++) {
       var row = paths[i]
       if (!row) continue
 
       var columns = row.split("\t")
-      addImage(columns[0], columns[1])
+      var path = columns[0]
+      if (!path || seen[path]) continue
+      seen[path] = true
+      
+      var fileName = path.split("/").pop()
+      newImages.push({ filePath: path, fileName: fileName, thumbnailPath: columns[1] || path })
     }
+
+    root._modelUpdating = true
+    root.allImages = newImages
+    root._modelUpdating = false
+    
+    updateFilter(filterText, true)
 
     var currentIndex = indexForPath(WallpaperService.current)
     select(currentIndex >= 0 ? currentIndex : 0, true)
+    
     imagesLoaded = true
     keyHandler.forceActiveFocus()
   }
 
   ListModel { id: imageModel }
-
-  function addImage(path, thumbnailPath) {
-    if (!path) return
-    var fileName = path.split("/").pop()
-
-    for (var i = imageModel.count - 1; i >= 0; i--) {
-      if (imageModel.get(i).filePath === path)
-        imageModel.remove(i)
-    }
-
-    imageModel.append({ filePath: path, fileName: fileName, thumbnailPath: thumbnailPath || path })
-  }
 
   Process {
     id: loadImagesProc
@@ -226,8 +194,20 @@ PanelWindow {
         loadImagesProc.output = ""
         loadImagesProc.running = true
       } else {
+        updateFilter("", filterText !== "")
+        var currentIndex = indexForPath(WallpaperService.current)
+        select(currentIndex >= 0 ? currentIndex : 0, true)
+        if (typeof carouselList !== "undefined" && carouselList.currentIndex !== selectedIndex) {
+            carouselList.currentIndex = selectedIndex
+        }
         keyHandler.forceActiveFocus()
       }
+    }
+  }
+
+  onSelectedIndexChanged: {
+    if (imagesLoaded && typeof carouselList !== "undefined" && carouselList.currentIndex !== selectedIndex) {
+      carouselList.currentIndex = selectedIndex;
     }
   }
 
@@ -259,10 +239,22 @@ PanelWindow {
       width: root.expandedWidth + 13 * (root.sliceWidth + root.sliceSpacing)
       clip: false
 
-      readonly property real itemStep: root.sliceWidth + root.sliceSpacing
-      readonly property real previewX: (width - root.expandedWidth) / 2
+      ListView {
+        id: carouselList
+        anchors.fill: parent
+        orientation: ListView.Horizontal
+        spacing: root.sliceSpacing
+        preferredHighlightBegin: (width - root.expandedWidth) / 2
+        preferredHighlightEnd: (width - root.expandedWidth) / 2
+        highlightRangeMode: ListView.StrictlyEnforceRange
+        highlightMoveDuration: 180
+        
+        onCurrentIndexChanged: {
+            if (!root._modelUpdating && currentIndex !== -1 && root.selectedIndex !== currentIndex) {
+                root.selectedIndex = currentIndex
+            }
+        }
 
-      Repeater {
         model: imageModel
 
         delegate: Item {
@@ -272,18 +264,12 @@ PanelWindow {
           required property string fileName
           required property string thumbnailPath
 
-          readonly property bool matched: root.itemMatches(index)
-          readonly property int relativeIndex: root.filteredPosition(index) - root.selectedFilteredPosition()
-          readonly property bool selected: matched && index === root.selectedIndex
-          readonly property bool nearby: matched && Math.abs(relativeIndex) <= root.preloadRadius
-
-          visible: nearby
-          x: selected ? carousel.previewX : (relativeIndex < 0 ? carousel.previewX + relativeIndex * carousel.itemStep : carousel.previewX + root.expandedWidth + root.sliceSpacing + (relativeIndex - 1) * carousel.itemStep)
+          readonly property bool selected: index === root.selectedIndex
+          
           width: selected ? root.expandedWidth : root.sliceWidth
           height: carousel.height
-          z: selected ? 100 : 50 - Math.min(Math.abs(relativeIndex), 40)
+          z: selected ? 100 : 50 - Math.min(Math.abs(index - root.selectedIndex), 40)
 
-          Behavior on x { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
           Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
           readonly property real skAbs: Math.abs(root.skewOffset)
@@ -347,7 +333,7 @@ PanelWindow {
             Image {
               id: image
               anchors.fill: parent
-              source: item.nearby ? root.fileUrl(item.thumbnailPath) : ""
+              source: root.fileUrl(item.thumbnailPath)
               sourceSize.width: item.selected ? root.expandedWidth : root.sliceWidth + Math.abs(root.skewOffset)
               sourceSize.height: root.sliceHeight
               fillMode: Image.PreserveAspectCrop
@@ -411,7 +397,7 @@ PanelWindow {
       anchors.topMargin: 8
       anchors.horizontalCenter: carousel.horizontalCenter
       width: root.expandedWidth
-      text: root.filterText ? ("Filter: " + root.filterText + " (" + root.matchingCount() + ")") : "Type to filter"
+      text: root.filterText ? ("Filter: " + root.filterText + " (" + imageModel.count + ")") : "Type to filter"
       color: root.foreground
       opacity: root.filterText ? 0.85 : 0.55
       style: Text.Outline
