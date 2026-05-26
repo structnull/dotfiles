@@ -1,6 +1,6 @@
 {
   "wallpaper": {
-    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-776.jpg"
+    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-742.jpg"
   },
   "theme": {
     "scheme": "dark",
@@ -21,6 +21,6 @@
     "dnd": false
   },
   "gpuMonitor": {
-    "enabled": true
+    "enabled": false
   }
 }

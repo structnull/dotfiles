@@ -60,8 +60,6 @@ local binds = {
     { M .. " + O", hl.dsp.layout("fit all") },
     { M .. " + Q", hl.dsp.window.close() },
     { S .. " + P", toggle_layout },
-    { S .. " + apostrophe", hl.dsp.layout("consume_or_expel prev") },
-    { S .. " + semicolon", hl.dsp.layout("consume_or_expel next") },
 
     -- Groups
     { S .. " + tab", hl.dsp.group.toggle() },

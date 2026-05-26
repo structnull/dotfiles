@@ -12,7 +12,7 @@ local config = {
         { name = "group-deny", group = "deny", match = { class = [[^(.*rnote.*|scrcpy)$]] } },
 
         -- General Floating & Dialogs 
-        { name = "float-classes", float = true, match = { class = [[^(io\.github\.celluloid_player\.Celluloid|org\.kde\.kcalc|.*dialog.*|[Xx]dg-desktop-portal-(gtk|kde)|org\.freedesktop\.impl\.portal\.desktop\.kde)$]] } },
+        { name = "float-classes", float = true, match = { class = [[^(io\.github\.celluloid_player\.Celluloid|org\.kde\.kcalc|.*dialog.*|blobdrop|[Xx]dg-desktop-portal-(gtk|kde)|org\.freedesktop\.impl\.portal\.desktop\.kde)$]] } },
         { name = "float-titles", float = true, match = { title = [[^(Open|Authentication Required|Add Folder to Workspace|Choose Files|Save As|Confirm to replace files|File Operation Progress|File Upload.*|Choose wallpaper.*|Library.*|Media viewer.*|.*dialog.*|Progress Dialog — Dolphin|Copying — Dolphin|About Mozilla Firefox)$]] } },
         { name = "float-utility", float = true, center = true, match = { title = [[^(Preferences|Settings|Options|About)$]] } },
         { name = "float-modal", float = true, center = true, dim_around = true, match = { modal = true } },

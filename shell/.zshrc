@@ -22,8 +22,19 @@ add_path_back() {
 mkdir -p "$XDG_CACHE_HOME/zsh" >/dev/null 2>&1
 
 
+# Zinit
+export ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
+
+if [[ ! -r "$ZINIT_HOME/zinit.zsh" ]] && command_exists git; then
+  mkdir -p "${ZINIT_HOME:h}" >/dev/null 2>&1
+  git clone --depth=1 https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+safe_source "$ZINIT_HOME/zinit.zsh"
+
+
 # Prompt
-autoload -Uz colors compinit edit-command-line
+autoload -Uz colors compinit edit-command-line add-zsh-hook
 colors
 
 
@@ -47,9 +58,37 @@ setopt rcexpandparam
 
 
 # Plugins
-safe_source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-safe_source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-safe_source /usr/share/zsh/plugins/zsh-system-clipboard/zsh-system-clipboard.zsh
+bind_history_search_keys() {
+  if (( $+widgets[history-search-multi-word] )); then
+    bindkey '^G' history-search-multi-word
+  fi
+
+  [[ -n ${terminfo[kcuu1]-} ]] && bindkey "${terminfo[kcuu1]}" history-beginning-search-backward
+  [[ -n ${terminfo[kcud1]-} ]] && bindkey "${terminfo[kcud1]}" history-beginning-search-forward
+  bindkey '^[[A' history-beginning-search-backward
+  bindkey '^[[B' history-beginning-search-forward
+}
+
+bind_clipboard_keys() {
+  if (( $+widgets[zsh-system-clipboard-vicmd-vi-yank-eol] )); then
+    bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
+  fi
+}
+
+if (( $+functions[zinit] )); then
+  zstyle ":plugin:history-search-multi-word" clear-on-cancel "no"
+  zinit ice wait lucid light-mode trackbinds bindmap'^R -> ^G' atload'bind_history_search_keys'
+  zinit light zdharma-continuum/history-search-multi-word
+
+  zinit ice wait lucid light-mode atload'bind_clipboard_keys'
+  zinit light kutsan/zsh-system-clipboard
+
+  zinit ice wait lucid light-mode atload'_zsh_autosuggest_start'
+  zinit light zsh-users/zsh-autosuggestions
+
+  zinit ice wait lucid light-mode
+  zinit light zdharma-continuum/fast-syntax-highlighting
+fi
 
 
 # Completion
@@ -74,20 +113,13 @@ bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
+zle -N edit-command-line
 bindkey '^?' backward-delete-char
 bindkey '^e' edit-command-line
 bindkey -s '^f' 'yy\n'
 
-if (( $+widgets[history-substring-search-up] && $+widgets[history-substring-search-down] )); then
-  [[ -n ${terminfo[kcuu1]-} ]] && bindkey "${terminfo[kcuu1]}" history-substring-search-up
-  [[ -n ${terminfo[kcud1]-} ]] && bindkey "${terminfo[kcud1]}" history-substring-search-down
-  bindkey '^[[A' history-substring-search-up
-  bindkey '^[[B' history-substring-search-down
-fi
-
-if (( $+widgets[zsh-system-clipboard-vicmd-vi-yank-eol] )); then
-  bindkey -M vicmd Y zsh-system-clipboard-vicmd-vi-yank-eol
-fi
+bind_history_search_keys
+bind_clipboard_keys
 
 zle-keymap-select() {
   if [[ $KEYMAP == vicmd || $1 == block ]]; then
@@ -104,13 +136,12 @@ zle-line-init() {
 }
 zle -N zle-line-init
 
-precmd() {
+set_beam_cursor() {
   [[ -t 1 ]] && printf '\e[5 q'
 }
 
-preexec() {
-  [[ -t 1 ]] && printf '\e[5 q'
-}
+add-zsh-hook precmd set_beam_cursor
+add-zsh-hook preexec set_beam_cursor
 
 [[ -t 1 ]] && printf '\e[5 q'
 
@@ -257,5 +288,3 @@ else
   PROMPT='%F{yellow}%n%f%F{magenta}@%f%F{blue}%m%f %~ %F{green}❯%f '
 fi
 
-# Load last
-safe_source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
