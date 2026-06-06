@@ -1,6 +1,6 @@
 {
   "wallpaper": {
-    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-742.jpg"
+    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-1160.jpg"
   },
   "theme": {
     "scheme": "dark",
@@ -15,7 +15,7 @@
     "background": 0.48
   },
   "caffeine": {
-    "enabled": false
+    "enabled": true
   },
   "notifications": {
     "dnd": false

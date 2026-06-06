@@ -240,17 +240,6 @@ Item {
 
                         Text {
                             anchors.centerIn: parent
-                            visible: workspaceItem.isActive
-                            text: root.toRoman(workspaceItem.displayId)
-                            font.family: Config.font
-                            font.pixelSize: Config.fontSizeNormal
-                            font.bold: true
-                            color: Qt.alpha(Config.accentColor, 0.45)
-                            opacity: workspaceItem.isActive ? 1.0 : 0.0
-                        }
-
-                        Text {
-                            anchors.centerIn: parent
                             text: root.toRoman(workspaceItem.displayId)
                             font.family: Config.font
                             font.pixelSize: Config.fontSizeSmall

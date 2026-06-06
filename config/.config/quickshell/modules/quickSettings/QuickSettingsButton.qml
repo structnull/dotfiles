@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Hyprland
+import Quickshell.Wayland
 import QtQuick
 import QtQuick.Layouts
 import qs.config
@@ -29,7 +30,14 @@ BarButton {
     }
 
     property bool popupLoaded: false
+    property bool volumePopupVisible: false
+    property bool volumeWheelSuppressingOsd: false
+    property real volumePopupX: 0
+    property real volumePopupY: 0
     readonly property var popupWindow: quickSettingsLoader.item
+
+    readonly property real barVolumeValue: AudioService.volumeKnown ? AudioService.volume : 0
+    readonly property int barVolumePercent: Math.round(Math.max(0, Math.min(1.5, barVolumeValue)) * 100)
 
     function togglePopup() {
         if (popupWindow) {
@@ -41,6 +49,32 @@ BarButton {
         }
 
         popupLoaded = true;
+    }
+
+    function showVolumePopup() {
+        const pos = outputIconCell.mapToGlobal(outputIconCell.width / 2, outputIconCell.height);
+        volumePopupX = pos.x;
+        volumePopupY = pos.y;
+        volumePopupVisible = true;
+        volumePopupTimer.restart();
+    }
+
+    function suppressVolumeOsdForWheel() {
+        if (!OsdService.suppressed) {
+            volumeWheelSuppressingOsd = true;
+            OsdService.suppressed = true;
+        }
+
+        volumeOsdSuppressTimer.restart();
+    }
+
+    function changeVolumeFromWheel(deltaY) {
+        const direction = deltaY > 0 ? 1 : -1;
+        const current = AudioService.volumeKnown ? AudioService.volume : 0;
+        const next = Math.max(0, Math.min(1.5, current + (direction * 0.05)));
+        suppressVolumeOsdForWheel();
+        AudioService.setVolume(next);
+        showVolumePopup();
     }
 
     active: popupWindow?.visible ?? false
@@ -97,15 +131,27 @@ BarButton {
             Layout.alignment: Qt.AlignVCenter
 
             Text {
+                id: outputIconCell
                 text: iconsLayout.outputIcon()
                 font.family: Config.font
                 font.pixelSize: Config.fontSizeNormal + 1
                 font.bold: true
                 color: iconsLayout.outputSilent ? Config.mutedColor : iconsLayout.iconColor
+                Layout.alignment: Qt.AlignVCenter
+                z: 20
 
                 Behavior on color {
                     ColorAnimation {
                         duration: Config.animDuration
+                    }
+                }
+
+                WheelHandler {
+                    acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                    onWheel: event => {
+                        const delta = event.angleDelta.y !== 0 ? event.angleDelta.y : event.pixelDelta.y;
+                        root.changeVolumeFromWheel(delta);
+                        event.accepted = true;
                     }
                 }
             }
@@ -171,6 +217,92 @@ BarButton {
         function onVisibleChanged() {
             if (root.popupWindow && !root.popupWindow.visible)
                 root.popupLoaded = false;
+        }
+    }
+
+    Timer {
+        id: volumePopupTimer
+        interval: 900
+        repeat: false
+        onTriggered: root.volumePopupVisible = false
+    }
+
+    Timer {
+        id: volumeOsdSuppressTimer
+        interval: 180
+        repeat: false
+        onTriggered: {
+            if (!root.volumeWheelSuppressingOsd)
+                return;
+
+            root.volumeWheelSuppressingOsd = false;
+            if (!(root.popupWindow?.visible ?? false))
+                OsdService.suppressed = false;
+        }
+    }
+
+    PanelWindow {
+        id: volumeHoverPopup
+        visible: root.volumePopupVisible || popupContent.popupProgress > 0.01
+        implicitWidth: popupContent.width
+        implicitHeight: popupContent.height
+        color: "transparent"
+        screen: root.hostScreen
+
+        anchors {
+            top: true
+            left: true
+        }
+
+        margins.left: {
+            const screenWidth = screen ? screen.width : 1920;
+            const screenOffsetX = screen ? screen.x : 0;
+            const localX = root.volumePopupX - screenOffsetX;
+            return Math.max(8, Math.min(screenWidth - popupContent.width - 8, localX - (popupContent.width / 2)));
+        }
+        margins.top: {
+            const screenOffsetY = screen ? screen.y : 0;
+            return (root.volumePopupY - screenOffsetY) + 8;
+        }
+
+        exclusionMode: ExclusionMode.Ignore
+        exclusiveZone: 0
+
+        WlrLayershell.layer: WlrLayer.Overlay
+        WlrLayershell.namespace: "qs_modules"
+
+        Rectangle {
+            id: popupContent
+            property real popupProgress: root.volumePopupVisible ? 1.0 : 0.0
+
+            width: percentText.implicitWidth + 22
+            height: 28
+            radius: height / 2
+            color: Config.backgroundTransparentColor
+            border.width: 1
+            border.color: Qt.alpha(Config.textColor, 0.15)
+            opacity: popupProgress
+            y: -4 + (4 * popupProgress)
+            scale: 0.94 + (0.06 * popupProgress)
+            transformOrigin: Item.Top
+
+            Behavior on popupProgress {
+                NumberAnimation {
+                    duration: root.volumePopupVisible ? 90 : 130
+                    easing.type: root.volumePopupVisible ? Easing.OutCubic : Easing.InCubic
+                }
+            }
+
+            Text {
+                id: percentText
+                anchors.centerIn: parent
+                text: "[" + root.barVolumePercent + "%]"
+                font.family: Config.font
+                font.pixelSize: 12
+                font.bold: true
+                color: AudioService.muted ? Config.mutedColor : Config.accentColor
+                opacity: popupContent.popupProgress
+            }
         }
     }
 }

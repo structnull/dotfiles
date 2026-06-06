@@ -32,12 +32,12 @@ Singleton {
     readonly property bool loaded: _loaded
 
     function generateFromImage(imagePath: string) {
-        _genProc.command = ["matugen", "image", "--mode", mode, "--source-color-index", "0", imagePath];
+        _genProc.command = ["matugen", "image", "--mode", mode, "--type", "scheme-vibrant", "--prefer", "saturation", imagePath];
         _genProc.running = true;
     }
 
     function generateFromColor(hex: string) {
-        _genProc.command = ["matugen", "color", "hex", hex];
+        _genProc.command = ["matugen", "color", "hex", "--mode", mode, "--type", "scheme-vibrant", hex];
         _genProc.running = true;
     }
 

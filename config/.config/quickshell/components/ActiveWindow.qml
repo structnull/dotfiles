@@ -9,6 +9,8 @@ Item {
     id: root
 
     property int maxWidth: 400
+    readonly property int horizontalPadding: Config.padding
+    readonly property int iconBoxWidth: 14
 
     // Internal state to force clearing
     property bool windowExists: Hyprland.activeToplevel !== null
@@ -36,7 +38,7 @@ Item {
         }
     }
 
-    implicitWidth: windowExists ? content.implicitWidth : 0
+    implicitWidth: windowExists ? Math.min(content.implicitWidth + (horizontalPadding * 2), maxWidth) : 0
     implicitHeight: content.implicitHeight
 
     visible: opacity > 0
@@ -56,12 +58,30 @@ Item {
 
     RowLayout {
         id: content
-        spacing: 6
-        anchors.fill: parent
+        spacing: 5
+        anchors {
+            fill: parent
+            leftMargin: root.horizontalPadding
+            rightMargin: root.horizontalPadding
+        }
+
+        Text {
+            text: root.windowTitle !== "" ? "" : ""
+            color: Config.textColor
+            style: Text.Outline
+            styleColor: Qt.alpha(Config.backgroundColor, 0.85)
+            font.family: Config.font
+            font.pixelSize: Config.fontSizeSmall
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+
+            Layout.preferredWidth: root.iconBoxWidth
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Text {
             id: titleText
-            text: root.windowTitle !== "" ? "  " + root.windowTitle : ""
+            text: root.windowTitle
             color: Config.textColor
             style: Text.Outline
             styleColor: Qt.alpha(Config.backgroundColor, 0.85)
@@ -70,7 +90,8 @@ Item {
             elide: Text.ElideRight
 
             Layout.fillWidth: true
-            Layout.maximumWidth: root.maxWidth
+            Layout.maximumWidth: Math.max(0, root.maxWidth - (root.horizontalPadding * 2) - root.iconBoxWidth - content.spacing)
+            Layout.alignment: Qt.AlignVCenter
         }
     }
 }

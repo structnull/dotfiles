@@ -4,32 +4,50 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Networking
 
 Singleton {
     id: root
 
     property var accessPoints: []
     property var savedSsids: []
-    property bool wifiEnabled: true
+    property bool nmcliWifiEnabled: true
     property string wifiInterface: ""
-    property bool ethernetConnected: false
-    property string ethernetInterface: ""
+    property bool nmcliEthernetConnected: false
+    property string nmcliEthernetInterface: ""
     property string connectingSsid: ""
+    readonly property bool hasLiveNetworking: Networking.backend === NetworkBackendType.NetworkManager
+    readonly property var liveDevices: hasLiveNetworking ? Array.from(Networking.devices.values) : []
+    readonly property var liveWifiDevice: liveDevices.find(device => device.type === DeviceType.Wifi) ?? null
+    readonly property var liveEthernetDevice: liveDevices.find(device => device.type === DeviceType.Wired && ((device.connected ?? false) || device.state === ConnectionState.Connected || (device.network?.connected ?? false))) ?? (liveDevices.find(device => device.type === DeviceType.Wired) ?? null)
+    readonly property var liveWifiNetworks: liveWifiDevice && liveWifiDevice.networks ? Array.from(liveWifiDevice.networks.values) : []
+    readonly property var liveActiveNetwork: liveWifiNetworks.find(network => network.connected) ?? null
+    readonly property var nmcliActiveNetwork: accessPoints.find(ap => ap.active === true) ?? null
+    readonly property bool wifiEnabled: hasLiveNetworking ? Networking.wifiEnabled : nmcliWifiEnabled
+    readonly property bool wifiConnected: hasLiveNetworking ? ((liveWifiDevice?.connected ?? false) || liveWifiDevice?.state === ConnectionState.Connected || liveActiveNetwork !== null || nmcliActiveNetwork !== null) : nmcliActiveNetwork !== null
+    readonly property bool liveEthernetConnected: liveDevices.some(device => device.type === DeviceType.Wired && ((device.connected ?? false) || device.state === ConnectionState.Connected || (device.network?.connected ?? false)))
+    readonly property bool ethernetConnected: (hasLiveNetworking && liveEthernetConnected) || nmcliEthernetConnected
+    readonly property string ethernetInterface: hasLiveNetworking ? (liveEthernetDevice?.name ?? "") : nmcliEthernetInterface
+    readonly property var activeNetwork: hasLiveNetworking ? (liveActiveNetwork ?? nmcliActiveNetwork) : nmcliActiveNetwork
     readonly property bool scanning: rescanProc.running
     readonly property string systemIcon: {
         if (ethernetConnected)
             return "󰈀";
         if (!wifiEnabled)
             return "󰤮";
-        const activeNetwork = accessPoints.find(ap => ap.active === true);
         if (activeNetwork)
-            return getWifiIcon(activeNetwork.signal);
+            return getWifiIcon(activeNetwork.signalStrength ?? activeNetwork.signal ?? 0);
+        if (wifiConnected)
+            return "󰤨";
         return "󰤫";
     }
 
     // --- FUNCTIONS ---
 
     function getWifiIcon(signal) {
+        if (signal > 0 && signal <= 1)
+            signal *= 100;
+
         if (signal > 80)
             return "󰤨";
         if (signal > 60)
@@ -48,17 +66,23 @@ Singleton {
         if (!wifiEnabled)
             return "Off";
 
-        const activeNetwork = accessPoints.find(ap => ap.active === true);
-
         // If there is an active network, return the SSID
         if (activeNetwork)
-            return activeNetwork.ssid || "Hidden Network";
+            return activeNetwork.name || activeNetwork.ssid || "Hidden Network";
+
+        if (wifiConnected)
+            return "Connected";
 
         // If enabled but not connected
         return "On";
     }
 
     function toggleWifi() {
+        if (hasLiveNetworking) {
+            Networking.wifiEnabled = !Networking.wifiEnabled;
+            return;
+        }
+
         const cmd = wifiEnabled ? "off" : "on";
         toggleWifiProc.command = ["nmcli", "radio", "wifi", cmd];
         toggleWifiProc.running = true;
@@ -153,7 +177,7 @@ Singleton {
         running: true
         stdout: SplitParser {
             onRead: data => {
-                root.wifiEnabled = (data.trim() === "enabled");
+                root.nmcliWifiEnabled = (data.trim() === "enabled");
                 getEthernetProc.running = true;
                 if (root.wifiEnabled)
                     getSavedProc.running = true;
@@ -230,8 +254,8 @@ Singleton {
                     }
                 }
 
-                root.ethernetConnected = connected;
-                root.ethernetInterface = iface;
+                root.nmcliEthernetConnected = connected;
+                root.nmcliEthernetInterface = iface;
             }
         }
     }
