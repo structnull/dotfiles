@@ -5,7 +5,7 @@ Personal Linux dotfiles managed with `GNU Stow`.
 ## Packages
 
 - `config` -> `~/.config/*`
-- `shell` -> `~/.zshrc`, `~/.bashrc`
+- `shell` -> `~/.bashrc`
 - `git` -> `~/.gitconfig`
 - `scripts` -> `~/.scripts/*`
 

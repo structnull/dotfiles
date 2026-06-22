@@ -3,3 +3,7 @@
 	name = structnull
 [color]
 	ui = auto
+[diff]
+	tool = nvimdiff
+[difftool]
+	prompt = false
