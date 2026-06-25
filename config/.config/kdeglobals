@@ -1,0 +1,13 @@
+[General]
+TerminalApplication=kitty
+TerminalService=kitty.desktop
+
+[Icons]
+Theme=mactahoe-icon-theme-2025-10-15-dark
+
+[UiSettings]
+ColorScheme=LayanDark
+
+[KDE]
+widgetStyle=qt6ct-style
+
