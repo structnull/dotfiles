@@ -98,22 +98,6 @@ ShellRoot {
     }
 
     // =========================================================================
-    // BLUETOOTH AGENT
-    // =========================================================================
-
-    readonly property string bluetoothAgentScriptPath: Qt.resolvedUrl("./scripts/bluetooth-agent.py").toString().replace("file://", "")
-
-    Process {
-        id: bluetoothAgent
-        command: ["python3", root.bluetoothAgentScriptPath]
-        running: true
-
-        stderr: SplitParser {
-            onRead: data => console.error("[BluetoothAgent]: " + data)
-        }
-    }
-
-    // =========================================================================
     // IPC TARGETS
     // =========================================================================
 
@@ -196,5 +180,10 @@ ShellRoot {
         active: WallpaperService.selectorVisible
         asynchronous: true
         source: "./modules/wallpaper/WallpaperSelector.qml"
+    }
+    // Polkit Authentication
+    Loader {
+        active: PolkitService.isActive
+        source: "./modules/polkit/PolkitOverlay.qml"
     }
 }

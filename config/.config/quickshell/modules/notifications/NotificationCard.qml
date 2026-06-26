@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
-import Qt5Compat.GraphicalEffects
+
 import qs.config
 import qs.services
 
@@ -114,25 +114,14 @@ Item {
     // ========================================================================
 
     // Container with clipping
-    Item {
+    Rectangle {
         id: clippedContainer
         width: parent.width
         height: root.visualHeight
         visible: root.wrapper !== null
-
-        // Mask for rounded border
-        Rectangle {
-            id: maskRect
-            anchors.fill: parent
-            radius: Config.radiusLarge
-            visible: false
-        }
-
-        layer.enabled: true
-        layer.samples: 4
-        layer.effect: OpacityMask {
-            maskSource: maskRect
-        }
+        radius: Config.radiusLarge
+        clip: true
+        color: "transparent"
 
         // Background
         Rectangle {
@@ -171,6 +160,7 @@ Item {
                     Layout.preferredHeight: 42
                     Layout.alignment: Qt.AlignTop
                     radius: width / 2
+                    clip: true
                     color: root.isUrgent ? Qt.alpha(Config.errorColor, 0.2) : Config.surface1Color
 
                     Image {
@@ -192,16 +182,7 @@ Item {
                             }
                         }
 
-                        // Circular mask for the image
-                        layer.enabled: root.image !== ""
-                        layer.effect: OpacityMask {
-                            maskSource: Rectangle {
-                                width: notifImage.width
-                                height: notifImage.height
-                                radius: width / 2
-                                visible: false
-                            }
-                        }
+
                     }
 
                     // Fallback icon if there is no image

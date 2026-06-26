@@ -158,81 +158,12 @@ Singleton {
         interval: internal.sampleIntervalMs
         running: true
         repeat: true
-        triggeredOnStart: true
         onTriggered: {
-            if (!sysfsRatePoll.running)
-                sysfsRatePoll.running = true;
-        }
-    }
-
-    Process {
-        id: sysfsRatePoll
-        command: ["/bin/sh", "-c", `
-            battery_path=""
-            adapter_rate=""
-            for dev in /sys/class/power_supply/*; do
-                [ -r "$dev/type" ] || continue
-                type=$(cat "$dev/type" 2>/dev/null)
-                if [ "$type" = "Battery" ] && [ -z "$battery_path" ]; then
-                    battery_path="$dev"
-                fi
-                if [ -r "$dev/online" ] && [ "$(cat "$dev/online" 2>/dev/null)" = "1" ] && [ -r "$dev/current_now" ] && [ -r "$dev/voltage_now" ]; then
-                    current=$(cat "$dev/current_now" 2>/dev/null)
-                    voltage=$(cat "$dev/voltage_now" 2>/dev/null)
-                    if [ -n "$current" ] && [ -n "$voltage" ]; then
-                        adapter_rate=$(awk "BEGIN { printf \\"%.4f\\", ($current * $voltage) / 1000000000000 }")
-                        break
-                    fi
-                fi
-            done
-
-            battery_rate="0"
-            if [ -n "$battery_path" ] && [ -r "$battery_path/current_now" ] && [ -r "$battery_path/voltage_now" ]; then
-                current=$(cat "$battery_path/current_now" 2>/dev/null)
-                voltage=$(cat "$battery_path/voltage_now" 2>/dev/null)
-                if [ -n "$current" ] && [ -n "$voltage" ]; then
-                    battery_rate=$(awk "BEGIN { printf \\"%.4f\\", ($current * $voltage) / 1000000000000 }")
-                fi
-            fi
-
-            if [ -z "$adapter_rate" ]; then
-                adapter_rate="0"
-            fi
-
-            printf "batteryRate=%s\\nadapterRate=%s\\n" "$battery_rate" "$adapter_rate"
-        `]
-
-        property string buffer: ""
-
-        stdout: SplitParser {
-            onRead: data => sysfsRatePoll.buffer += data
-        }
-
-        onExited: {
-            let nextBatteryRate = 0;
-            let nextAdapterRate = 0;
-            const lines = sysfsRatePoll.buffer.trim().split("\n");
-
-            for (const line of lines) {
-                const parts = line.split("=");
-                if (parts.length !== 2)
-                    continue;
-
-                const key = parts[0].trim();
-                const value = parseFloat(parts[1].trim()) || 0;
-
-                if (key === "batteryRate")
-                    nextBatteryRate = value;
-                else if (key === "adapterRate")
-                    nextAdapterRate = value;
-            }
-
-            internal.sysfsBatteryRateW = nextBatteryRate;
-            internal.adapterRateW = nextAdapterRate;
-            sysfsRatePoll.buffer = "";
             root.captureHistorySample();
         }
     }
+
+
 
     signal historyChanged
 }

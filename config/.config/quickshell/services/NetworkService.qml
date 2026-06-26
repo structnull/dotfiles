@@ -3,43 +3,57 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import Quickshell.Networking
 
 Singleton {
     id: root
 
+    // --- PUBLIC PROPERTIES (preserved interface) ---
+
     property var accessPoints: []
-    property var savedSsids: []
-    property bool nmcliWifiEnabled: true
-    property string wifiInterface: ""
-    property bool nmcliEthernetConnected: false
-    property string nmcliEthernetInterface: ""
     property string connectingSsid: ""
-    readonly property bool hasLiveNetworking: Networking.backend === NetworkBackendType.NetworkManager
-    readonly property var liveDevices: hasLiveNetworking ? Array.from(Networking.devices.values) : []
+
+    readonly property var liveDevices: Array.from(Networking.devices.values)
     readonly property var liveWifiDevice: liveDevices.find(device => device.type === DeviceType.Wifi) ?? null
-    readonly property var liveEthernetDevice: liveDevices.find(device => device.type === DeviceType.Wired && ((device.connected ?? false) || device.state === ConnectionState.Connected || (device.network?.connected ?? false))) ?? (liveDevices.find(device => device.type === DeviceType.Wired) ?? null)
+    readonly property var liveEthernetDevice: liveDevices.find(device => device.type === DeviceType.Wired && (device.connected || (device.network?.connected ?? false))) ?? (liveDevices.find(device => device.type === DeviceType.Wired) ?? null)
     readonly property var liveWifiNetworks: liveWifiDevice && liveWifiDevice.networks ? Array.from(liveWifiDevice.networks.values) : []
     readonly property var liveActiveNetwork: liveWifiNetworks.find(network => network.connected) ?? null
-    readonly property var nmcliActiveNetwork: accessPoints.find(ap => ap.active === true) ?? null
-    readonly property bool wifiEnabled: hasLiveNetworking ? Networking.wifiEnabled : nmcliWifiEnabled
-    readonly property bool wifiConnected: hasLiveNetworking ? ((liveWifiDevice?.connected ?? false) || liveWifiDevice?.state === ConnectionState.Connected || liveActiveNetwork !== null || nmcliActiveNetwork !== null) : nmcliActiveNetwork !== null
-    readonly property bool liveEthernetConnected: liveDevices.some(device => device.type === DeviceType.Wired && ((device.connected ?? false) || device.state === ConnectionState.Connected || (device.network?.connected ?? false)))
-    readonly property bool ethernetConnected: (hasLiveNetworking && liveEthernetConnected) || nmcliEthernetConnected
-    readonly property string ethernetInterface: hasLiveNetworking ? (liveEthernetDevice?.name ?? "") : nmcliEthernetInterface
-    readonly property var activeNetwork: hasLiveNetworking ? (liveActiveNetwork ?? nmcliActiveNetwork) : nmcliActiveNetwork
-    readonly property bool scanning: rescanProc.running
+
+    readonly property bool wifiEnabled: Networking.wifiEnabled
+    readonly property bool wifiConnected: (liveWifiDevice?.connected ?? false) || liveActiveNetwork !== null
+    readonly property bool ethernetConnected: liveDevices.some(device => device.type === DeviceType.Wired && (device.connected || (device.network?.connected ?? false)))
+    readonly property string ethernetInterface: liveEthernetDevice?.name ?? ""
+    readonly property var activeNetwork: liveActiveNetwork
+    readonly property bool scanning: liveWifiDevice?.scannerEnabled ?? false
+
     readonly property string systemIcon: {
         if (ethernetConnected)
             return "󰈀";
         if (!wifiEnabled)
             return "󰤮";
         if (activeNetwork)
-            return getWifiIcon(activeNetwork.signalStrength ?? activeNetwork.signal ?? 0);
+            return getWifiIcon(activeNetwork.signalStrength ?? 0);
         if (wifiConnected)
             return "󰤨";
         return "󰤫";
+    }
+
+    // Status text
+    readonly property string statusText: {
+        if (ethernetConnected)
+            return "Ethernet";
+        if (!wifiEnabled)
+            return "Off";
+
+        // If there is an active network, return the name
+        if (activeNetwork)
+            return activeNetwork.name || "Hidden Network";
+
+        if (wifiConnected)
+            return "Connected";
+
+        // If enabled but not connected
+        return "On";
     }
 
     // --- FUNCTIONS ---
@@ -59,305 +73,120 @@ Singleton {
         return "󰤫";
     }
 
-    // Status text
-    readonly property string statusText: {
-        if (ethernetConnected)
-            return "Ethernet";
-        if (!wifiEnabled)
-            return "Off";
-
-        // If there is an active network, return the SSID
-        if (activeNetwork)
-            return activeNetwork.name || activeNetwork.ssid || "Hidden Network";
-
-        if (wifiConnected)
-            return "Connected";
-
-        // If enabled but not connected
-        return "On";
-    }
-
     function toggleWifi() {
-        if (hasLiveNetworking) {
-            Networking.wifiEnabled = !Networking.wifiEnabled;
-            return;
-        }
-
-        const cmd = wifiEnabled ? "off" : "on";
-        toggleWifiProc.command = ["nmcli", "radio", "wifi", cmd];
-        toggleWifiProc.running = true;
+        Networking.wifiEnabled = !Networking.wifiEnabled;
     }
 
     function scan() {
-        if (!scanning)
-            rescanProc.running = true;
+        if (liveWifiDevice) {
+            liveWifiDevice.scannerEnabled = true;
+        }
     }
 
     function disconnect() {
-        if (wifiInterface !== "") {
-            disconnectProc.command = ["nmcli", "dev", "disconnect", wifiInterface];
-            disconnectProc.running = true;
+        if (liveActiveNetwork) {
+            liveActiveNetwork.disconnect();
+        } else if (liveWifiDevice) {
+            liveWifiDevice.disconnect();
         }
     }
 
     function connect(ssid, password) {
-        root.connectingSsid = ssid; // Mark which one we are trying
+        const network = liveWifiNetworks.find(n => n.name === ssid);
+        if (!network) {
+            console.warn("[NetworkService] Network not found: " + ssid);
+            return;
+        }
+
+        root.connectingSsid = ssid;
 
         if (password && password.length > 0) {
-            connectProc.command = ["nmcli", "dev", "wifi", "connect", ssid, "password", password];
+            network.connectWithPsk(password);
         } else {
-            // Try connecting using saved profile
-            connectProc.command = ["nmcli", "dev", "wifi", "connect", ssid];
+            network.connect();
         }
-        connectProc.running = true;
     }
 
     function forget(ssid) {
-        forgetProc.command = ["nmcli", "connection", "delete", "id", ssid];
-        forgetProc.running = true;
+        const network = liveWifiNetworks.find(n => n.name === ssid);
+        if (!network) {
+            console.warn("[NetworkService] Cannot forget unknown network: " + ssid);
+            return;
+        }
+        network.forget();
     }
 
-    // Internal function to clean up failed connections
-    function cleanUpBadConnection(ssid) {
-        console.warn("Connection failed. Removing invalid profile for: " + ssid);
-        // Uses forgetProc to delete, since it is the same logic
-        forget(ssid);
-    }
+    // --- INTERNAL: Build accessPoints from native API ---
 
-    // --- PROCESSES ---
+    function _rebuildAccessPoints() {
+        const networks = liveWifiNetworks;
+        var tempParams = [];
+        const seen = new Set();
 
-    // Connection Process
-    Process {
-        id: connectProc
+        for (let i = 0; i < networks.length; i++) {
+            const net = networks[i];
+            const ssid = net.name;
 
-        stderr: SplitParser {
-            onRead: data => console.error("[Wifi Error] " + data)
+            if (!ssid)
+                continue;
+            if (seen.has(ssid))
+                continue;
+            seen.add(ssid);
+
+            tempParams.push({
+                ssid: ssid,
+                signal: Math.round((net.signalStrength ?? 0) * 100),
+                active: net.connected,
+                secure: net.security !== WifiSecurityType.Open,
+                securityType: WifiSecurityType.toString(net.security),
+                saved: net.known,
+            });
         }
 
-        onExited: code => {
-            // If exit code is 0, success. Otherwise, there was an error (wrong password, timeout, etc).
-            if (code !== 0) {
-                console.error("Failed to connect. Exit code: " + code);
+        // Sort: Connected > Saved > Signal
+        tempParams.sort((a, b) => {
+            if (a.active)
+                return -1;
+            if (b.active)
+                return 1;
+            if (a.saved && !b.saved)
+                return -1;
+            if (!a.saved && b.saved)
+                return 1;
+            return b.signal - a.signal;
+        });
 
-                // IF FAILED: Delete the created profile so it doesn't remain incorrectly marked as "Saved"
-                if (root.connectingSsid !== "") {
-                    root.cleanUpBadConnection(root.connectingSsid);
-                }
-            }
-
-            // Reset state and update lists
-            root.connectingSsid = "";
-            getSavedProc.running = true;
-            getNetworksProc.running = true;
-        }
+        root.accessPoints = tempParams;
     }
 
-    // Detect Wifi Interface
-    Process {
-        id: findInterfaceProc
-        command: ["nmcli", "-g", "DEVICE,TYPE", "device"]
-        running: true
-        stdout: SplitParser {
-            onRead: data => {
-                const lines = data.trim().split("\n");
-                lines.forEach(line => {
-                    const parts = line.split(":");
-                    if (parts.length >= 2 && parts[1] === "wifi") {
-                        root.wifiInterface = parts[0];
-                    }
-                });
-            }
-        }
-    }
+    // Rebuild whenever the wifi networks list changes
+    onLiveWifiNetworksChanged: _rebuildAccessPoints()
 
-    // Status Monitor (Enabled/Disabled)
-    Process {
-        id: statusProc
-        command: ["nmcli", "radio", "wifi"]
-        running: true
-        stdout: SplitParser {
-            onRead: data => {
-                root.nmcliWifiEnabled = (data.trim() === "enabled");
-                getEthernetProc.running = true;
-                if (root.wifiEnabled)
-                    getSavedProc.running = true;
-                getNetworksProc.running = true;
-            }
-        }
-    }
+    // --- INTERNAL: Listen for connectionFailed on all wifi networks ---
 
-    // Toggle On/Off
-    Process {
-        id: toggleWifiProc
-        onExited: {
-            statusProc.running = true;
-            getEthernetProc.running = true;
-        }
-    }
+    // Use Instantiator to attach connectionFailed handlers to each WifiNetwork
+    Instantiator {
+        model: liveWifiDevice?.networks ?? null
+        delegate: QtObject {
+            required property var modelData
 
-    // Rescan (Refresh)
-    Process {
-        id: rescanProc
-        command: ["nmcli", "dev", "wifi", "list", "--rescan", "yes"]
-        onExited: {
-            getNetworksProc.running = true;
-            getEthernetProc.running = true;
-        }
-    }
-
-    // Disconnect
-    Process {
-        id: disconnectProc
-        onExited: {
-            getNetworksProc.running = true;
-            getEthernetProc.running = true;
-        }
-    }
-
-    // Forget Network
-    Process {
-        id: forgetProc
-        // The command is defined dynamically before running
-        onExited: {
-            getSavedProc.running = true;
-            getNetworksProc.running = true;
-            getEthernetProc.running = true;
-        }
-    }
-
-    Process {
-        id: getEthernetProc
-        command: ["nmcli", "-t", "-f", "DEVICE,TYPE,STATE", "device", "status"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const lines = text.trim().split("\n");
-                let connected = false;
-                let iface = "";
-
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (line === "")
-                        continue;
-
-                    const parts = line.split(":");
-                    if (parts.length < 3)
-                        continue;
-
-                    const device = parts[0];
-                    const type = parts[1];
-                    const state = parts[2];
-
-                    if (type === "ethernet" && state === "connected") {
-                        connected = true;
-                        iface = device;
-                        break;
-                    }
-                }
-
-                root.nmcliEthernetConnected = connected;
-                root.nmcliEthernetInterface = iface;
-            }
-        }
-    }
-
-    // Automatic Update Timer
-    Timer {
-        interval: 20000
-        running: root.wifiEnabled
-        repeat: true
-        onTriggered: {
-            getSavedProc.running = true;
-            getNetworksProc.running = true;
-        }
-    }
-
-    Timer {
-        interval: 12000
-        running: true
-        repeat: true
-        onTriggered: getEthernetProc.running = true
-    }
-
-    // List Saved Networks
-    Process {
-        id: getSavedProc
-        command: ["nmcli", "-g", "NAME,TYPE", "connection", "show"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const lines = text.trim().split("\n");
-                var savedList = [];
-                lines.forEach(line => {
-                    const parts = line.split(":");
-                    if (parts.length >= 2 && parts[1] === "802-11-wireless") {
-                        savedList.push(parts[0]);
-                    }
-                });
-                root.savedSsids = savedList;
-            }
-        }
-    }
-
-    // List Available Networks (Scan)
-    Process {
-        id: getNetworksProc
-        command: ["nmcli", "-g", "IN-USE,SIGNAL,SSID,SECURITY,BSSID,CHAN,RATE", "dev", "wifi", "list"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const lines = text.trim().split("\n");
-                var tempParams = [];
-                const seen = new Set();
-
-                lines.forEach(line => {
-                    if (line.length < 5)
-                        return;
-                    const parts = line.split(":");
-                    if (parts.length < 7)
-                        return;
-
-                    const inUse = parts[0] === "*";
-                    const signal = parseInt(parts[1]) || 0;
-                    const ssid = parts[2];
-                    const security = parts[3];
-                    const bssid = parts[4];
-                    const channel = parts[5];
-                    const rate = parts[6];
-
-                    if (!ssid)
-                        return;
-                    if (seen.has(ssid))
-                        return; // Avoid visual duplicates
-                    seen.add(ssid);
-
-                    const isSaved = root.savedSsids.includes(ssid);
-
-                    tempParams.push({
-                        ssid: ssid,
-                        signal: signal,
-                        active: inUse,
-                        secure: security.length > 0,
-                        securityType: security || "Open",
-                        saved: isSaved,
-                        bssid: bssid,
-                        channel: channel,
-                        rate: rate
+            Component.onCompleted: {
+                if (modelData.connectionFailed) {
+                    modelData.connectionFailed.connect(reason => {
+                        console.warn("[NetworkService] Connection failed for " + modelData.name + ": " + reason);
+                        if (root.connectingSsid === modelData.name) {
+                            root.connectingSsid = "";
+                        }
                     });
-                });
-
-                // Sort: Connected > Saved > Signal
-                tempParams.sort((a, b) => {
-                    if (a.active)
-                        return -1;
-                    if (b.active)
-                        return 1;
-                    if (a.saved && !b.saved)
-                        return -1;
-                    if (!a.saved && b.saved)
-                        return 1;
-                    return b.signal - a.signal;
-                });
-
-                root.accessPoints = tempParams;
+                }
             }
+        }
+    }
+
+    // Clear connectingSsid when the target network successfully connects
+    onLiveActiveNetworkChanged: {
+        if (liveActiveNetwork && liveActiveNetwork.name === connectingSsid) {
+            root.connectingSsid = "";
         }
     }
 }
