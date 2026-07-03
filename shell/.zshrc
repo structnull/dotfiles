@@ -271,6 +271,9 @@ source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow -g "!.git"'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_DEFAULT_OPTS='--height 50% --layout=reverse --border --info=inline --preview "[ -f {} ] && (bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || sed -n '\''1,500p'\'' {})"'
+export FZF_HISTORY_OPTS='--no-preview'
+bindkey -M viins '\ec' fzf-cd-widget
+bindkey -M vicmd '\ec' fzf-cd-widget
 
 
 # Extra completions
