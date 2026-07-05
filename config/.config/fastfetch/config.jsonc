@@ -1,8 +1,5 @@
 {
   "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
-  "logo": {
-    "type": "small"
-  },
   "modules": [
     "title",
     "separator",
