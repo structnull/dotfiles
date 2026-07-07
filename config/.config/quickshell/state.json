@@ -1,26 +1,5 @@
 {
-  "wallpaper": {
-    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-843.jpg"
-  },
-  "theme": {
-    "scheme": "dark",
-    "name": "monochrome",
-    "mode": "dark"
-  },
   "nightLight": {
-    "enabled": true,
-    "intensity": 0.5675733612804879
-  },
-  "opacity": {
-    "background": 0.48
-  },
-  "caffeine": {
     "enabled": false
-  },
-  "notifications": {
-    "dnd": false
-  },
-  "gpuMonitor": {
-    "enabled": true
   }
 }
