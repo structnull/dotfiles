@@ -1,5 +1,11 @@
 {
   "nightLight": {
     "enabled": false
+  },
+  "caffeine": {
+    "enabled": false
+  },
+  "notifications": {
+    "dnd": true
   }
 }
