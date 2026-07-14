@@ -44,6 +44,7 @@ local config = {
 
     layers = {
         { name = "qs-wallpaper", blur = false, ignore_alpha = 0.0, animation = "fade", order = 11, match = { namespace = [[^(qs_wallpaper)$]] } },
+        { name = "qs-polkit", blur = false, ignore_alpha = 0.25, animation = "fade", order = 12, match = { namespace = [[^(qs_polkit)$]] } },
         { name = "interactive", blur = true, blur_popups = true, animation = "popin", ignore_alpha = 0.0, dim_around = true, order = 10, match = { namespace = [[^(rofi|vicinae)$]] } },
         { name = "ui-persistent", blur = true, ignore_alpha = 0.25, animation = "none", match = { namespace = [[^(qs_modules|waybar|swaync-control-center|logout_dialog)$]] } },
         { name = "notifications", blur = true, ignore_alpha = 0.35, animation = "slide", match = { namespace = [[^(swaync-notification-window)$]] } },

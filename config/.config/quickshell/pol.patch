@@ -1,0 +1,223 @@
+--- a/modules/polkit/PolkitOverlay.qml
++++ b/modules/polkit/PolkitOverlay.qml
+@@
+     Component {
+         id: terminalCursor
+
+         Rectangle {
+             width: 8
+             height: 18
+             color: root.showSuccess ? Config.successColor : Config.accentColor
+
+             SequentialAnimation on opacity {
+                 loops: Animation.Infinite
+
+-                NumberAnimation {
+-                    to: 0
+-                    duration: 400
+-                    easing.type: Easing.Discrete
+-                }
+-
+-                NumberAnimation {
+-                    to: 1
+-                    duration: 400
+-                    easing.type: Easing.Discrete
+-                }
++                PropertyAction { value: 0 }
++                PauseAnimation { duration: 450 }
++
++                PropertyAction { value: 1 }
++                PauseAnimation { duration: 450 }
+             }
+         }
+     }
+
+@@
+     Rectangle {
+         anchors.fill: parent
+-        color: Qt.alpha(Config.backgroundColor, 0.75)
++        color: Qt.alpha(Config.backgroundColor, 0.82)
+
+         opacity: root.visible ? 1.0 : 0.0
+
+         Behavior on opacity {
+             NumberAnimation {
+-                duration: 150
++                duration: 180
+                 easing.type: Easing.OutQuad
+             }
+         }
+@@
+     Rectangle {
+
+         id: terminalWindow
+
+         anchors.centerIn: parent
+         anchors.horizontalCenterOffset: root.shakeOffset
+
+-        width: 500
++        width: Math.min(Screen.width * 0.42, 600)
++        implicitWidth: 460
+
+         height: mainLayout.implicitHeight + 32
+
+         radius: 0
+
+         color: Config.surface0Color
+
+         border.width: 1
+
+         border.color: root.showSuccess
+                 ? Config.successColor
+                 : (root.flow && root.flow.failed
+                    ? Config.errorColor
+                    : Config.surface2Color)
+
+         opacity: root.visible ? 1 : 0
+-        scale: root.visible ? 1 : 0.98
++        scale: root.visible ? 1 : 0.96
++        y: root.visible ? 0 : -14
+
+         Behavior on opacity {
+             NumberAnimation {
+-                duration: 150
++                duration: 180
+                 easing.type: Easing.OutCubic
+             }
+         }
+
+         Behavior on scale {
+             NumberAnimation {
+-                duration: 150
++                duration: 180
+                 easing.type: Easing.OutCubic
+             }
+         }
+
++        Behavior on y {
++            NumberAnimation {
++                duration: 180
++                easing.type: Easing.OutCubic
++            }
++        }
++
+         Behavior on border.color {
+             ColorAnimation {
+-                duration: 100
++                duration: 160
+             }
+         }
+
+@@
+-                Text {
+-                    text: root.showSuccess ? "● success" : "● auth-request"
++                Text {
++                    text: root.showSuccess
++                          ? "󰄬 Authentication Successful"
++                          : "󰌾 Authentication Required"
+
+                     font.family: Config.font
+                     font.pixelSize: Config.fontSizeSmall
+                     font.bold: true
+
+                     color: root.showSuccess
+                         ? Config.successColor
+                         : Config.accentColor
+                 }
+
+@@
+-                Text {
+-                    text: "polkit-qs-v0.3"
++                Text {
++                    text: "PolicyKit"
+                     font.family: Config.font
+                     font.pixelSize: Config.fontSizeSmall
+                     color: Config.mutedColor
+                 }
+
+@@
+                     Rectangle {
+
+                         Layout.fillWidth: true
+
+                         height: 28
+
+-                        color: "transparent"
++                        color: Config.surface1Color
++                        border.width: 1
++                        border.color:
++                            passwordInput.activeFocus
++                            ? Config.accentColor
++                            : Config.surface2Color
+
+                         TextInput {
+
+                             id: passwordInput
+
+@@
+                             color: Config.accentColor
+
+                             selectionColor: Config.surface3Color
+
+                             selectedTextColor: Config.textColor
+
+                             clip: true
+
+                             cursorDelegate: terminalCursor
+                         }
+
+-                        Rectangle {
+-                            anchors.bottom: parent.bottom
+-                            width: parent.width
+-                            height: 1
+-                            color: passwordInput.activeFocus
+-                                   ? Config.accentColor
+-                                   : Config.surface2Color
+-                        }
+                     }
+
+@@
+                 Rectangle {
+
+                     Layout.preferredWidth: 100
+
+-                    Layout.preferredHeight: 28
++                    Layout.preferredHeight: 34
+
+                     radius: 0
+
+@@
+                 Rectangle {
+
+                     Layout.preferredWidth: 130
+
+-                    Layout.preferredHeight: 28
++                    Layout.preferredHeight: 34
+
+                     radius: 0
+
+@@
+                     Text {
+
+                         anchors.centerIn: parent
+
+-                        text: "[ Authenticate ]"
++                        text: "Authenticate"
+
+@@
+                     Text {
+
+                         anchors.centerIn: parent
+
+-                        text: "[ Cancel ]"
++                        text: "Cancel"
+
+@@
+-                    text: "ESC: abort  │  ENTER: submit"
++                    text: "ESC Cancel   •   ENTER Authenticate"
+
+                     font.family: Config.font
+
+                     font.pixelSize: 10
+
+                     color: Config.mutedColor

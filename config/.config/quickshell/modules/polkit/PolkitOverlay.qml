@@ -21,6 +21,7 @@ PanelWindow {
 
     WlrLayershell.namespace: "qs_polkit"
     WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.exclusionMode: ExclusionMode.Ignore
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
 
     color: "transparent"
