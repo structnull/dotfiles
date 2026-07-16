@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Define default options
 HIGHLIGHT_COLOR='\e[32m' # Green

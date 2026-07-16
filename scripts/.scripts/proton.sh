@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 sourceRoot="$(echo ~/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Proton\ -\ Experimental)";
 runnerDir="$(echo ~/.var/app/com.usebottles.bottles/data/bottles/runners)";

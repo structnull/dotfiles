@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash
 # Dependencies: tesseract-ocr imagemagick scrot xsel/x11 wl-clipboard/wayland
 
 SCR_IMG=$(mktemp)

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 wallpaper_directory=$1
 duration=$2
 

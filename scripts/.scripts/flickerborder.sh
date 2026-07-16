@@ -1,5 +1,5 @@
 
-#! /bin/bash
+#!/usr/bin/env bash
 #Active window border flickers periodically
 
 while pgrep Hyprland; do

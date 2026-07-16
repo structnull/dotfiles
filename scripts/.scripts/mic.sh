@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # script used to toggle between two conditions
 
 TOGGLE=/tmp/.toggle_Mic

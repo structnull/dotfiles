@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 swayidle -w \
                 timeout 120 'temp=$(brightnessctl g); brightnessctl set $((temp / 4))' \
                     resume 'temp=$(brightnessctl g); brightnessctl set $((temp * 4))' \

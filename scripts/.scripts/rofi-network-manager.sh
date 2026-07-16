@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Default Values
 LOCATION=0
 QRCODE_LOCATION=$LOCATION

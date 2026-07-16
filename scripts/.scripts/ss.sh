@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/usr/bin/env bash
 
 SCR_IMG=$(mktemp)
 trap 'rm -f "$SCR_IMG"*' EXIT

@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 GAMEMODE_STATE=$(hyprctl -j getoption animations:enabled | jq '.bool')
 

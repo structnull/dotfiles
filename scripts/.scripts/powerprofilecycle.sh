@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Script to cycle through power-profiles-daemon profiles. Handy for integration
 # with waybar, i3blocks and others. When run it will cycle to next profile and

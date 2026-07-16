@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Cache file to save Reddit API response.
 JSONCACHE="/tmp/reddit-wallpaper-cache.json"
@@ -9,7 +9,7 @@ WPATH=${WALLPAPER_PATH:-"$HOME/Pictures/reddit-wallpapers"}
 # We need to change our user agent so Reddit allows us to get the JSON without errors.
 USERAGENT="Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0"
 
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Cache file to save Reddit API response.
 JSONCACHE="/tmp/reddit-wallpaper-cache.json"
