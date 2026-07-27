@@ -2,44 +2,56 @@ require "nvchad.mappings"
 
 local map = vim.keymap.set
 
-map("n", "<C-h>", ":TmuxNavigateLeft<CR><ESC>", { desc = "tmux_navigator Window left" })
-map("n", "<C-l>", ":TmuxNavigateRight<CR><ESC>", { desc = "tmux_navigator Window right" })
-map("n", "<C-j>", ":TmuxNavigateDown<CR><ESC>", { desc = "tmux_navigator Window down" })
-map("n", "<C-k>", ":TmuxNavigateUp<CR><ESC>", { desc = "tmux_navigator Window left" })
+-- Window navigation (tmux-navigator)
+map("n", "<C-h>", function()
+  vim.cmd.TmuxNavigateLeft()
+end, { desc = "tmux_navigator Window left" })
 
+map("n", "<C-l>", function()
+  vim.cmd.TmuxNavigateRight()
+end, { desc = "tmux_navigator Window right" })
+
+map("n", "<C-j>", function()
+  vim.cmd.TmuxNavigateDown()
+end, { desc = "tmux_navigator Window down" })
+
+map("n", "<C-k>", function()
+  vim.cmd.TmuxNavigateUp()
+end, { desc = "tmux_navigator Window up" })
+
+-- Editor toggles
 map("n", "<leader>tw", function()
   vim.wo.wrap = not vim.wo.wrap
-end, {
-  desc = "Toggle wrap",
-})
+end, { desc = "Toggle wrap" })
 
-map(
-  "n",
-  "<leader>tt",
-  ":lua require('base46').toggle_transparency()<CR>",
-  { noremap = true, silent = true, desc = "Toggle Background Transparency" }
-)
-map("n", "<leader>ca", "<Cmd>lua vim.lsp.buf.code_action()<CR>", { desc = "code action" })
+map("n", "<leader>tt", function()
+  require("base46").toggle_transparency()
+end, { noremap = true, silent = true, desc = "Toggle Background Transparency" })
 
+map("n", "<leader>ca", function()
+  vim.lsp.buf.code_action()
+end, { desc = "code action" })
+
+-- Code runner / Flutter commands
 map("n", "<leader>cc", function()
   local file = vim.fn.expand "%:t"
   local fp = vim.fn.expand "%:p:h"
   local ft = vim.bo.filetype
   local supported_ft = { "python", "cpp", "c" }
 
-  -- Check if it's a Dart file or part of a Flutter project
   local is_flutter_project = vim.fn.filereadable "pubspec.yaml" == 1
     and vim.fn.match(vim.fn.readfile "pubspec.yaml", "flutter") >= 0
 
   if is_flutter_project then
-    vim.cmd "Telescope flutter commands"
+    require("telescope").extensions.flutter.commands()
     return
   end
 
   if not vim.tbl_contains(supported_ft, ft) then
-    print "Error: Unsupported file type"
+    vim.notify("Unsupported file type: " .. ft, vim.log.levels.ERROR)
     return
   end
+
   require("nvchad.term").runner {
     id = "run",
     pos = "sp",
@@ -54,36 +66,34 @@ map("n", "<leader>cc", function()
   }
 end, { desc = "Code Runner or Flutter Commands" })
 
--- mouse users + nvimtree users!
+-- Mouse / nvimtree context menu
 map("n", "<RightMouse>", function()
   vim.cmd.exec '"normal! \\<RightMouse>"'
-
   local options = vim.bo.ft == "NvimTree" and "nvimtree" or "default"
   require("menu").open(options, { mouse = true })
 end, {})
 
-for i = 1, 9, 1 do
-  map("n", string.format("<A-%s>", i), function()
-    vim.api.nvim_set_current_buf(vim.t.bufs[i])
-  end)
+-- Buffer switching (Alt/Cmd + number)
+for i = 1, 9 do
+  local goto_buf = function()
+    local buf = vim.t.bufs[i]
+    if buf then
+      vim.api.nvim_set_current_buf(buf)
+    end
+  end
+  map("n", string.format("<A-%s>", i), goto_buf, { desc = "Go to buffer " .. i })
+  map("n", string.format("<D-%s>", i), goto_buf, { desc = "Go to buffer " .. i })
 end
 
-for i = 1, 9, 1 do
-  map("n", string.format("<D-%s>", i), function()
-    vim.api.nvim_set_current_buf(vim.t.bufs[i])
-  end)
-end
+-- Fun / misc
+map("n", "<leader>mk", function()
+  vim.cmd.CellularAutomaton "make_it_rain"
+end, { desc = "make it rain" })
 
--- Call "CellularAutomaton make_it_rain" command
-map("n", "<leader>mk", "<cmd>CellularAutomaton make_it_rain<CR>", {
-  desc = "make it rain",
-})
-
--- Global variable to track inline diagnostic virtual text state (off by default)
+-- Diagnostics toggle
 _G.diagnostics_virtual_text = false
 
--- Toggle function for inline diagnostics (virtual_text)
-local function toggle_diagnostics()
+map("n", "<leader>s", function()
   _G.diagnostics_virtual_text = not _G.diagnostics_virtual_text
   vim.diagnostic.config {
     virtual_text = _G.diagnostics_virtual_text,
@@ -91,24 +101,14 @@ local function toggle_diagnostics()
     underline = true,
     update_in_insert = false,
   }
-  vim.notify(
-    _G.diagnostics_virtual_text and "Inline diagnostics enabled" or "Inline diagnostics disabled",
-    vim.log.levels.INFO,
-    { title = "Diagnostics" }
-  )
-end
+end, { desc = "Toggle inline diagnostics", silent = true })
 
-map(
-  { "n" },
-  "<leader>fa",
-  "<cmd>Telescope find_files no_ignore=false hidden=true<CR>",
-  { desc = "telescope find all files" }
-)
+-- Telescope
+map("n", "<leader>fa", function()
+  require("telescope.builtin").find_files { no_ignore = false, hidden = true }
+end, { desc = "telescope find all files" })
 
--- manually overriding the mapping passing in the border style
-map({ "n" }, "K", function()
+-- LSP
+map("n", "K", function()
   vim.lsp.buf.hover { border = "rounded" }
 end, { desc = "LSP show details", silent = true })
-
--- Map <leader>s to toggle inline diagnostics
-map("n", "<leader>s", toggle_diagnostics, { desc = "Toggle inline diagnostics", silent = true })

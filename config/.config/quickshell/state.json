@@ -3,7 +3,7 @@
     "enabled": false
   },
   "caffeine": {
-    "enabled": false
+    "enabled": true
   },
   "notifications": {
     "dnd": true

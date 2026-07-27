@@ -269,6 +269,7 @@ alias wttr='curl wttr.in'
 alias bkup='/media/windows/stuff/dotfiles'
 alias cava='TERM=st-256color cava'
 alias code='codium'
+alias tod='nvim $(date +%Y-%m-%d).md'
 alias deck='STEAM_MULTIPLE_XWAYLANDS=1 gamescope -W 1920 -H 1080 -f --xwayland-count 2 -r 60 -e --prefer-vk-device 8086:9a60 --adaptive-sync -- steam -gamepadui -steamdeck --pipewire-dmabuf'
 
 source <(fzf --zsh)

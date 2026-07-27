@@ -70,6 +70,9 @@ return {
         "toml",
         "c",
         "markdown",
+        "markdown_inline",
+        "latex",
+        "yaml",
         "python",
         "cpp",
         "rust",
@@ -137,6 +140,7 @@ return {
       },
     },
   },
+
   {
     "christoomey/vim-tmux-navigator",
     lazy = false,
@@ -148,4 +152,33 @@ return {
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   { "nvzone/volt", lazy = true },
   { "nvzone/menu", lazy = true },
+  {
+    "obsidian-nvim/obsidian.nvim",
+    version = "*", -- use latest release, remove to use latest commit
+    ft = "markdown",
+    ---@module 'obsidian'
+    ---@type obsidian.config
+    opts = {
+      workspaces = {
+        {
+          name = "notes",
+          path = "~/dot/vaults/",
+        },
+      },
+
+      daily_notes = {
+        folder = "Daily",
+      },
+
+      templates = {
+        folder = "Templates",
+      },
+
+      attachments = {
+        img_folder = "Attachments",
+      },
+
+      notes_subdir = "Inbox",
+    },
+  },
 }
