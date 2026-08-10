@@ -60,6 +60,8 @@ local binds = {
     { M .. " + O", hl.dsp.layout("fit all") },
     { M .. " + Q", hl.dsp.window.close() },
     { S .. " + P", toggle_layout },
+    { S .. " + apostrophe", hl.dsp.layout("consume_or_expel prev") },
+    { S .. " + semicolon", hl.dsp.layout("consume_or_expel next") },
 
     -- Groups
     { S .. " + tab", hl.dsp.group.toggle() },
@@ -96,8 +98,8 @@ local binds = {
     { M .. " + X", cmd("~/.scripts/mic.sh") },
 
     -- Zoom adjustments
-    { MC .. " + mouse_down", function() change_zoom(2.0) end },
-    { MC .. " + mouse_up", function() change_zoom(0.5) end },
+    { MC .. " + mouse_up", function() change_zoom(2.0) end },
+    { MC .. " + mouse_down", function() change_zoom(0.5) end },
     { M .. " + equal", function() change_zoom(1.1) end, { repeating = true } },
     { M .. " + minus", function() change_zoom(0.9) end, { repeating = true } },
     { M .. " + KP_ADD", function() change_zoom(1.1) end, { repeating = true } },
