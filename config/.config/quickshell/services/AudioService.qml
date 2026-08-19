@@ -125,7 +125,7 @@ Singleton {
     function inferOutputType(descriptor: string): string {
         const text = descriptor.toLowerCase().trim();
         if (!text)
-            return outputDeviceType;
+            return "speaker";
 
         const hasBluetooth = text.includes("bluez") || text.includes("bluetooth") || text.includes("a2dp");
         const hasHeadphones = text.includes("headphone") || text.includes("headset") || text.includes("earbud") || text.includes("earphone") || text.includes("audio-head") || text.includes("analog-output-headphones");
@@ -139,14 +139,16 @@ Singleton {
         if (hasStrongSpeaker)
             return "speaker";
         if (hasSpeakerWord)
-            return outputDeviceType === "speaker" ? "speaker" : outputDeviceType;
+            return "speaker";
 
-        // For generic analog descriptors, preserve the previous non-speaker type.
+        // A new generic analog/ALSA sink is the normal fallback after an audio
+        // device disconnects. Do not retain the old type here: doing so leaves a
+        // Bluetooth icon visible after its BlueZ sink has gone away.
         if (text.includes("analog") || text.includes("alsa_output"))
-            return outputDeviceType;
+            return "speaker";
 
-        // Keep previous type for unknown/unstable descriptors to avoid icon flicker.
-        return outputDeviceType;
+        // Unknown sink metadata should never inherit a disconnected device's icon.
+        return "speaker";
     }
 
     function hasBluetoothTransport(descriptor: string): bool {
@@ -440,11 +442,17 @@ Singleton {
     }
 
     function refreshOutputType() {
+        if (!sinkReady) {
+            outputPortHint = "";
+            outputDeviceType = "speaker";
+            return;
+        }
+
         const fullDescriptor = outputDescriptor + " " + sinkPropsDescriptor + " " + defaultOutputName;
         const descriptorType = inferOutputType(fullDescriptor);
 
         // Use outputPortHint from native property inspection when available.
-        if (outputPortHint === "bluetooth" || (outputPortHint === "speaker" && descriptorType === "bluetooth")) {
+        if (outputPortHint === "bluetooth") {
             outputDeviceType = "bluetooth";
             return;
         }
@@ -462,8 +470,11 @@ Singleton {
 
     // Refresh the output port hint from native PwNode properties instead of shelling out.
     function refreshPortHintFromProperties() {
-        if (!sinkReady)
+        if (!sinkReady) {
+            outputPortHint = "";
+            outputDeviceType = "speaker";
             return;
+        }
 
         // Gather all hints from node properties and descriptor.
         const props = sink.properties ?? ({});
@@ -610,6 +621,10 @@ Singleton {
         refreshOutputType();
         refreshPortHintFromProperties();
         Qt.callLater(rebuildDeviceLists);
+    }
+    onSinkReadyChanged: {
+        refreshOutputType();
+        refreshPortHintFromProperties();
     }
     onLiveVolumeChanged: {
         if (!isNaN(liveVolume))

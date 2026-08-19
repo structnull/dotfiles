@@ -412,11 +412,11 @@ Rectangle {
                     }
                 }
 
-                // ====== SINE WAVE PROGRESS ======
-                Canvas {
+                // ====== PLAYBACK PROGRESS ======
+                Item {
                     id: progressWave
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 32
+                    Layout.preferredHeight: 18
 
                     property real visualProgress: MprisService.progress
 
@@ -432,7 +432,7 @@ Rectangle {
                     Behavior on visualProgress {
                         enabled: !seekArea.pressed
                         NumberAnimation {
-                            duration: 140
+                            duration: 180
                             easing.type: Easing.OutCubic
                         }
                     }
@@ -444,65 +444,39 @@ Rectangle {
                         }
                     }
 
-                    onVisualProgressChanged: requestPaint()
-                    onWidthChanged: requestPaint()
-                    onHeightChanged: requestPaint()
+                    Rectangle {
+                        id: progressTrack
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width
+                        height: 4
+                        radius: height / 2
+                        color: Qt.alpha(Config.textColor, 0.16)
 
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        ctx.reset();
-
-                        var w = width;
-                        var h = height;
-                        var cy = h / 2;
-                        var amp = 8;
-                        var freq = 0.18;
-                        var prog = clamped(visualProgress);
-                        var splitX = w * prog;
-
-                        var accent = Config.accentColor.toString();
-                        var muted = Qt.alpha(Config.textColor, 0.2).toString();
-
-                        // Draw played portion
-                        if (splitX > 0) {
-                            ctx.beginPath();
-                            ctx.moveTo(0, cy);
-                            for (var x = 0; x <= splitX; x += 1) {
-                                var y = cy + Math.sin(x * freq) * amp;
-                                ctx.lineTo(x, y);
-                            }
-                            ctx.strokeStyle = accent;
-                            ctx.lineWidth = 2;
-                            ctx.stroke();
+                        Rectangle {
+                            width: parent.width * progressWave.clamped(progressWave.visualProgress)
+                            height: parent.height
+                            radius: height / 2
+                            color: Config.accentColor
                         }
+                    }
 
-                        // Draw remaining portion
-                        if (splitX < w) {
-                            ctx.beginPath();
-                            ctx.moveTo(splitX, cy + Math.sin(splitX * freq) * amp);
-                            for (var x2 = splitX; x2 <= w; x2 += 1) {
-                                var y2 = cy + Math.sin(x2 * freq) * amp;
-                                ctx.lineTo(x2, y2);
+                    Rectangle {
+                        id: progressThumb
+                        readonly property real progressX: progressWave.width * progressWave.clamped(progressWave.visualProgress)
+
+                        anchors.verticalCenter: progressTrack.verticalCenter
+                        x: Math.max(0, Math.min(progressWave.width - width, progressX - (width / 2)))
+                        width: 8
+                        height: width
+                        radius: width / 2
+                        color: Config.accentColor
+                        scale: seekArea.containsMouse || seekArea.pressed ? 1 : 0.7
+
+                        Behavior on scale {
+                            NumberAnimation {
+                                duration: Config.animDurationShort
+                                easing.type: Easing.OutCubic
                             }
-                            ctx.strokeStyle = muted;
-                            ctx.lineWidth = 1;
-                            ctx.stroke();
-                        }
-
-                        // Current position marker
-                        if (prog > 0 && prog < 1) {
-                            var markerY = cy + Math.sin(splitX * freq) * amp;
-                            // Outer ring
-                            ctx.beginPath();
-                            ctx.arc(splitX, markerY, 6, 0, 2 * Math.PI);
-                            ctx.strokeStyle = accent;
-                            ctx.lineWidth = 1.5;
-                            ctx.stroke();
-                            // Center dot
-                            ctx.beginPath();
-                            ctx.arc(splitX, markerY, 2, 0, 2 * Math.PI);
-                            ctx.fillStyle = accent;
-                            ctx.fill();
                         }
                     }
 

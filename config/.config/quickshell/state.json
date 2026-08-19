@@ -6,10 +6,10 @@
     "enabled": false
   },
   "notifications": {
-    "dnd": true
+    "dnd": false
   },
   "wallpaper": {
-    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-774.jpg"
+    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-954.jpg"
   },
   "gpuMonitor": {
     "enabled": true
