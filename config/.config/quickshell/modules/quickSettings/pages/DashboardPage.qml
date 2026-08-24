@@ -138,11 +138,9 @@ Item {
                 opacity: 0.4
             }
 
-            GridLayout {
-                columns: 2
-                columnSpacing: 10
-                rowSpacing: 10
+            RowLayout {
                 Layout.fillWidth: true
+                spacing: 8
 
                 // WI-FI
                 QuickSettingsTile {
@@ -179,13 +177,22 @@ Item {
 
                 // DND
                 QuickSettingsTile {
-                    Layout.columnSpan: BluetoothService.adapter === null ? 2 : 1
                     icon: NotificationService.dndEnabled ? "󰂛" : "󰂚"
-                    label: "Do not disturb"
+                    label: "DND"
                     subLabel: NotificationService.dndEnabled ? "Enabled" : "Disabled"
                     active: NotificationService.dndEnabled
                     hasDetails: false
                     onToggled: NotificationService.toggleDnd()
+                }
+
+                // GRAYSCALE
+                QuickSettingsTile {
+                    icon: "󰹊"
+                    label: "Grayscale"
+                    subLabel: GrayscaleService.enabled ? "Filter active" : "Filter off"
+                    active: GrayscaleService.enabled
+                    hasDetails: false
+                    onToggled: GrayscaleService.toggle()
                 }
             }
         }

@@ -16,3 +16,4 @@ singleton OsdService OsdService.qml
 singleton ThemeService ThemeService.qml
 singleton WallpaperService WallpaperService.qml
 singleton PolkitService PolkitService.qml
+singleton GrayscaleService GrayscaleService.qml

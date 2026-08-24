@@ -194,6 +194,22 @@ BarButton {
             }
         }
 
+        Text {
+            visible: GrayscaleService.enabled
+            text: "󰹊"
+            font.family: Config.font
+            font.pixelSize: Config.fontSizeNormal
+            font.bold: true
+            color: Qt.alpha(iconsLayout.iconColor, 0.92)
+            Layout.alignment: Qt.AlignVCenter
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: Config.animDuration
+                }
+            }
+        }
+
         WifiIcon {
             color: iconsLayout.iconColor
         }
