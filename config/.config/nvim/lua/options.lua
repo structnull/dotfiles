@@ -16,7 +16,7 @@ vim.cmd [[
   set diffopt+=context:99999,foldcolumn:0
 ]]
 
-vim.g["prettier#autoformat_options"] = "--tab-width 4 --use-tabs"
+vim.g["prettier#autoformat_options"] = "--tab-width 4 --use-tabs false"
 
 -- disable swap file
 -- opt.swapfile = false
@@ -45,8 +45,8 @@ opt.completeopt = "menu,menuone,noselect"
 -- Tab set to four
 opt.tabstop = 4
 opt.shiftwidth = 4
--- opt.softtabstop = 4
-opt.expandtab = false
+opt.softtabstop = 4
+opt.expandtab = true
 opt.smarttab = true
 -- linebreak on 200 characters
 opt.lbr = true

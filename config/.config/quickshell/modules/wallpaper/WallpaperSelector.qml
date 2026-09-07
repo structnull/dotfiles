@@ -177,7 +177,9 @@ PanelWindow {
   Process {
     id: loadImagesProc
     property string output: ""
-    command: ["bash", "-lc", "cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/quickshell/image-selector; manifest=\"$cache_dir/wallpapers.tsv\"; mkdir -p \"$cache_dir\"; rebuild=0; [[ -s $manifest ]] || rebuild=1; if [[ $rebuild -eq 0 ]]; then while IFS= read -r dir; do [[ -n $dir && -d $dir ]] || continue; if find -L \"$dir\" \\( -type d -newer \"$manifest\" -o \\( -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \\) -newer \"$manifest\" \\) \\) -print -quit | grep -q .; then rebuild=1; break; fi; done <<< " + shellQuote(root.imageDirs) + "; fi; if [[ $rebuild -eq 1 ]]; then tmp=\"$manifest.$$\"; while IFS= read -r dir; do [[ -n $dir && -d $dir ]] && find -L \"$dir\" -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \\) -printf '%p\\t%p\\n'; done <<< " + shellQuote(root.imageDirs) + " | sort > \"$tmp\"; mv \"$tmp\" \"$manifest\"; fi; cat \"$manifest\""]
+    // Always rescan when the picker opens. A manifest based on mtimes can miss
+    // files copied from another location with an older preserved timestamp.
+    command: ["bash", "-lc", "while IFS= read -r dir; do [[ -n $dir && -d $dir ]] && find -L \"$dir\" -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \\) -printf '%p\\t%p\\n'; done <<< " + shellQuote(root.imageDirs) + " | sort"]
     stdout: SplitParser {
       onRead: function(data) {
         loadImagesProc.output += data + "\n"
@@ -190,18 +192,8 @@ PanelWindow {
 
   onVisibleChanged: {
     if (visible) {
-      if (!imagesLoaded) {
-        loadImagesProc.output = ""
-        loadImagesProc.running = true
-      } else {
-        updateFilter("", filterText !== "")
-        var currentIndex = indexForPath(WallpaperService.current)
-        select(currentIndex >= 0 ? currentIndex : 0, true)
-        if (typeof carouselList !== "undefined" && carouselList.currentIndex !== selectedIndex) {
-            carouselList.currentIndex = selectedIndex
-        }
-        keyHandler.forceActiveFocus()
-      }
+      loadImagesProc.output = ""
+      loadImagesProc.running = true
     }
   }
 
