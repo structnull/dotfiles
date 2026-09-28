@@ -14,8 +14,28 @@ Item {
 
     // Internal state to force clearing
     property bool windowExists: Hyprland.activeToplevel !== null
+    property bool specialWorkspaceActive: false
+    property string specialWorkspaceMonitor: ""
+    property string pendingWorkspaceName: ""
+    readonly property bool specialWorkspaceFocused: {
+        const workspace = Hyprland.activeToplevel?.workspace;
+        const workspaceName = workspace?.name ?? "";
+        const activeFromWindow = workspaceName.startsWith("special:") || (workspace?.id ?? 0) < 0;
+        const activeFromEvent = specialWorkspaceActive && (specialWorkspaceMonitor === "" || specialWorkspaceMonitor === Hyprland.focusedMonitor?.name);
+        return activeFromWindow || activeFromEvent;
+    }
 
-    readonly property string windowTitle: Hyprland.activeToplevel?.title ?? ""
+    readonly property string windowTitle: specialWorkspaceFocused ? "" : (Hyprland.activeToplevel?.title ?? "")
+
+    Timer {
+        id: workspaceFocusRefresh
+        interval: 75
+        repeat: false
+        onTriggered: {
+            const activeWindow = Hyprland.activeToplevel;
+            root.windowExists = activeWindow !== null && activeWindow.workspace?.name === root.pendingWorkspaceName;
+        }
+    }
 
     // Logic to verify focus changes
     Connections {
@@ -27,22 +47,28 @@ Item {
                 root.windowExists = event.data !== "," && event.data !== "";
             }
 
-            // Clear title when changing workspaces to an empty one
+            if (event.name === "activespecial") {
+                const parts = (event.data ?? "").split(",");
+                root.specialWorkspaceActive = (parts[0] ?? "") !== "";
+                root.specialWorkspaceMonitor = parts[1] ?? "";
+            }
+
+            // Clear immediately when changing workspaces. Hyprland can briefly
+            // keep reporting the previous active toplevel until the new focus
+            // event arrives.
             if (event.name === "workspace") {
-                // Small delay to let Hyprland update its internal state
-                Qt.callLater(() => {
-                    if (root)
-                        root.windowExists = Hyprland.activeToplevel !== null;
-                });
+                root.windowExists = false;
+                root.pendingWorkspaceName = event.data ?? "";
+                workspaceFocusRefresh.restart();
             }
         }
     }
 
-    implicitWidth: windowExists ? Math.min(content.implicitWidth + (horizontalPadding * 2), maxWidth) : 0
+    implicitWidth: windowExists && !specialWorkspaceFocused ? Math.min(content.implicitWidth + (horizontalPadding * 2), maxWidth) : 0
     implicitHeight: content.implicitHeight
 
     visible: opacity > 0
-    opacity: windowExists ? 1.0 : 0.0
+    opacity: windowExists && !specialWorkspaceFocused ? 1.0 : 0.0
 
     Behavior on opacity {
         NumberAnimation {

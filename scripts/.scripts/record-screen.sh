@@ -26,8 +26,8 @@ if [ $status != 0 ]; then
 
     # Start recording (fullscreen, 60 FPS, with default output audio)
     gpu-screen-recorder \
-        -w screen \
-        -f 144 \
+        -w portal \
+        -f 60 \
         -a default_output \
         -k auto \
         -bm qp \

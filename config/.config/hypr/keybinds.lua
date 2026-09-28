@@ -29,7 +29,7 @@ end
 local binds = {
     -- Applications
     { S .. " + Return", cmd("kitty") },
-    { S .. " + F", cmd("helium-browser") },
+    { S .. " + F", cmd("helium") },
     { S .. " + E", cmd("dolphin") },
     { S .. " + C", cmd("vicinae vicinae://launch/clipboard/history") },
     { S .. " + period", cmd("vicinae vicinae://launch/core/search-emojis") },

@@ -10,7 +10,59 @@
 
 {
    "$schema": "https://vicinae.com/schemas/config.json",
+   "global_shortcuts": {
+      "toggle": ""
+   },
+   "font": {
+      "rendering": "qt",
+      "normal": {}
+   },
    "launcher_window": {
       "opacity": 0.25
+   },
+   "providers": {
+      "applications": {
+         "preferences": {
+            "defaultAction": "focus",
+            "paths": []
+         }
+      },
+      "calculator": {
+         "preferences": {
+            "backend": "numen"
+         }
+      },
+      "clipboard": {
+         "preferences": {
+            "eraseOnStartup": false,
+            "evictionThreshold": "never",
+            "ignorePasswords": false,
+            "monitoring": true,
+            "preserveTagged": true
+         }
+      },
+      "files": {
+         "preferences": {
+            "autoIndexing": true,
+            "excludedIndexingPaths": [],
+            "indexingPaths": [
+               "/home/adharsh"
+            ]
+         }
+      },
+      "scripts": {
+         "preferences": {
+            "customDirs": []
+         }
+      },
+      "snippets": {
+         "preferences": {
+            "enabled": true,
+            "keyDelay": "2",
+            "layout": "",
+            "prePasteDelay": "0",
+            "undo": true
+         }
+      }
    }
 }

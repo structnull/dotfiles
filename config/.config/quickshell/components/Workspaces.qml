@@ -81,16 +81,6 @@ Item {
     readonly property string monitorName: currentMonitor?.name ?? ""
     property var activeWorkspace: currentMonitor?.activeWorkspace ?? null
 
-    // --- Special Workspace Detection ---
-    property string manualSpecialName: ""
-    readonly property bool isSpecialWorkspace: manualSpecialName !== ""
-
-    readonly property string specialWorkspaceName: {
-        if (!isSpecialWorkspace)
-            return "";
-        return manualSpecialName.startsWith("special:") ? manualSpecialName.substring(8) : manualSpecialName;
-    }
-
     // --- Normal Workspace Math ---
     property int activeId: (activeWorkspace && activeWorkspace.id > 0) ? activeWorkspace.id : 1
     property int monitorOffset: Math.floor((activeId - 1) / 100) * 100
@@ -98,49 +88,6 @@ Item {
 
     implicitWidth: Math.max(activeWidth, indicatorRow.implicitWidth)
     implicitHeight: activeHeight + 4
-
-    // --- Special Workspaces Config ---
-    readonly property var specialWorkspaces: ({
-            "whatsapp": {
-                icon: "󰖣",
-                color: Config.successColor,
-                name: "WhatsApp"
-            },
-            "spotify": {
-                icon: "󰓇",
-                color: Config.accentColor,
-                name: "Music"
-            },
-            "magic": {
-                icon: "󰀘",
-                color: Config.warningColor,
-                name: "Magic"
-            }
-        })
-
-    // --- Cache Logic to prevent flashing ---
-    property string cachedIcon: "󰀘"
-    property string cachedName: ""
-    property color cachedColor: Config.accentColor
-
-    readonly property var currentSpecialConfig: {
-        if (!isSpecialWorkspace)
-            return null;
-        return specialWorkspaces[specialWorkspaceName] ?? {
-            icon: "󰀘",
-            color: Config.accentColor,
-            name: specialWorkspaceName.charAt(0).toUpperCase() + specialWorkspaceName.slice(1)
-        };
-    }
-
-    // Updates the cache only when there is a valid workspace
-    onCurrentSpecialConfigChanged: {
-        if (currentSpecialConfig) {
-            cachedIcon = currentSpecialConfig.icon;
-            cachedName = currentSpecialConfig.name;
-            cachedColor = currentSpecialConfig.color;
-        }
-    }
 
     // --- Dynamic Workspace List ---
     function updateWorkspaceModel() {
@@ -180,14 +127,6 @@ Item {
         function onRawEvent(event) {
             if (!event)
                 return;
-            if (event.name === "activespecial") {
-                let parts = event.data.split(',');
-                let wsName = parts[0] || "";
-                let targetMonitor = parts[1] || "";
-                if (targetMonitor === "" || targetMonitor === root.monitorName) {
-                    root.manualSpecialName = wsName;
-                }
-            }
             if (event.name === "workspace") {
                 workspaceUpdateTimer.restart();
             }
@@ -203,14 +142,7 @@ Item {
     Row {
         id: indicatorRow
         anchors.centerIn: parent
-        spacing: root.isSpecialWorkspace ? 5 : 0
-
-        Behavior on spacing {
-            NumberAnimation {
-                duration: Config.animDurationShort
-                easing.type: Easing.OutCubic
-            }
-        }
+        spacing: 0
 
         // =========================================================================
         // NORMAL WORKSPACES LIST
@@ -281,95 +213,5 @@ Item {
             }
         }
 
-        // =========================================================================
-        // SPECIAL WORKSPACE BADGE
-        // =========================================================================
-        Rectangle {
-            id: specialIndicator
-            visible: opacity > 0
-            anchors.verticalCenter: parent.verticalCenter
-
-            opacity: root.isSpecialWorkspace ? (specialHover.hovered ? 0.92 : 1.0) : 0
-            scale: root.isSpecialWorkspace ? 1.0 : 0.92
-            width: root.isSpecialWorkspace ? (specialContent.implicitWidth + 12) : 0
-            height: root.activeHeight
-            radius: Config.radius
-
-            color: specialHover.hovered ? Qt.alpha(root.cachedColor, 0.16) : Qt.alpha(root.cachedColor, 0.10)
-            border.width: root.isSpecialWorkspace ? 1 : 0
-            border.color: specialHover.hovered ? Qt.alpha(root.cachedColor, 0.62) : Qt.alpha(root.cachedColor, 0.38)
-
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: Config.animDurationShort
-                }
-            }
-            Behavior on scale {
-                NumberAnimation {
-                    duration: Config.animDuration
-                    easing.type: Easing.OutCubic
-                }
-            }
-            Behavior on width {
-                NumberAnimation {
-                    duration: Config.animDuration
-                    easing.type: Easing.OutCubic
-                }
-            }
-            Behavior on color {
-                ColorAnimation {
-                    duration: Config.animDuration
-                }
-            }
-            Behavior on border.color {
-                ColorAnimation {
-                    duration: Config.animDuration
-                }
-            }
-
-            Row {
-                id: specialContent
-                anchors.centerIn: parent
-                spacing: 5
-
-                Text {
-                    text: "◆"
-                    font.family: Config.font
-                    font.pixelSize: 8
-                    color: root.cachedColor
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    text: root.cachedIcon
-                    font.family: Config.font
-                    font.pixelSize: Config.fontSizeSmall
-                    color: Config.textColor
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-
-                Text {
-                    text: root.cachedName
-                    font.family: Config.font
-                    font.bold: true
-                    font.pixelSize: Config.fontSizeSmall
-                    color: Config.textColor
-                    width: Math.min(88, implicitWidth)
-                    elide: Text.ElideRight
-                    anchors.verticalCenter: parent.verticalCenter
-                }
-            }
-
-            TapHandler {
-                onTapped: {
-                    if (root.specialWorkspaceName)
-                        Hyprland.dispatch("togglespecialworkspace " + root.specialWorkspaceName);
-                }
-            }
-            HoverHandler {
-                id: specialHover
-                cursorShape: Qt.PointingHandCursor
-            }
-        }
     }
 }
