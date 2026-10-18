@@ -1,1 +1,22 @@
-/usr/share/themes/adw-gtk3-dark/gtk-4.0/gtk.css
+/* ~/.config/gtk-4.0/gtk.css
+ * (tracked in ~/.dotfiles/config/.config/gtk-4.0/gtk.css, stowed by `config`)
+ *
+ * Backdrop blur for GTK4 windows via the ext_background_effect_manager_v1
+ * Wayland protocol.
+ *
+ * GTK >= 4.21.2 understands the CSS `backdrop-filter` property; GTK >= 4.23.3
+ * forwards it to the compositor. The compositor must advertise the blur
+ * capability (Hyprland >= 0.52.1) and have its own blur enabled
+ * (decoration:blur:enabled = true).
+ *
+ * Opt out at runtime with:
+ *   GDK_WAYLAND_DISABLE=ext_background_effect_manager_v1
+ *
+ * The adw-gtk3-dark theme is loaded via gtk-theme-name, so this file only
+ * needs the blur override.
+ */
+
+window {
+    background-color: rgba(40, 40, 40, 0.8);
+    backdrop-filter: blur(20px);
+}
