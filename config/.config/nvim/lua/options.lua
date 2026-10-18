@@ -1,5 +1,6 @@
 require "nvchad.options"
 local opt = vim.opt
+opt.conceallevel = 2
 
 -- Enable syntax highlight
 vim.cmd "syntax enable"

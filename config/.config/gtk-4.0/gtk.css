@@ -1,3 +1,6 @@
+/* Island theme begin */
+@import url("file:///home/adharsh/dot/saneaspect-quickshellbar/quickshell/themes/gtk/Island-oxocarbon/gtk-4.0/gtk.css");
+/* Island theme end */
 /* ~/.config/gtk-4.0/gtk.css
  * (tracked in ~/.dotfiles/config/.config/gtk-4.0/gtk.css, stowed by `config`)
  *
@@ -20,3 +23,4 @@ window {
     background-color: rgba(40, 40, 40, 0.8);
     backdrop-filter: blur(20px);
 }
+@import 'colors.css';

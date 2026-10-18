@@ -163,7 +163,7 @@ return {
       workspaces = {
         {
           name = "notes",
-          path = "~/dot/vaults/",
+          path = "~/dot/vault/",
         },
       },
 

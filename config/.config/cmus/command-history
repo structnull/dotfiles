@@ -1,5 +1,5 @@
-clear
 add ~/Music/
+clear
 add Music/
 update-cache 
 u

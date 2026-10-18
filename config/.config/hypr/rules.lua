@@ -8,7 +8,7 @@ local config = {
 
         -- Media Players & UI Apps (Opacity & Grouping)
         { name = "opacity-chat", opacity = "0.70 0.60", match = { class = [[^(Spotify|vesktop)$]] } },
-        { name = "opacity-tools", opacity = "0.85 0.80", match = { class = [[^(code-oss|codium|pcmanfm-qt|org.kde.polkit-kde-authentication-agent-1)$]] } },
+        { name = "opacity-tools", opacity = "0.75 0.80", match = { class = [[^(code-oss|md.obsidian.Obsidian|codium|pcmanfm-qt|org.kde.polkit-kde-authentication-agent-1)$]] } },
         { name = "group-deny", group = "deny", match = { class = [[^(.*rnote.*|scrcpy)$]] } },
 
         -- General Floating & Dialogs 

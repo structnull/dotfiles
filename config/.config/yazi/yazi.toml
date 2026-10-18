@@ -27,7 +27,7 @@ edit = [
 	{ run = 'code -w "%*"', block = true,  desc = "code (block)", for = "windows" },
 ]
 open = [
-	{ run = 'xdg-open "$@"',                desc = "Open", for = "linux" },
+	{ run = 'xdg-open %s1',                    orphan = true, desc = "Open", for = "linux" },
 	{ run = 'open "$@"',                    desc = "Open", for = "macos" },
 	{ run = 'start "" "%1"', orphan = true, desc = "Open", for = "windows" },
 ]
