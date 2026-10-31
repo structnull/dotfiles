@@ -152,6 +152,15 @@ ShellRoot {
         }
     }
 
+    IpcHandler {
+        target: "layout"
+
+        function scrolling(): void { LayoutService.show("scrolling"); }
+        function dwindle(): void { LayoutService.show("dwindle"); }
+        function master(): void { LayoutService.show("master"); }
+        function monocle(): void { LayoutService.show("monocle"); }
+    }
+
     // =========================================================================
     // UI COMPONENTS - LAZY LOADING
     // =========================================================================

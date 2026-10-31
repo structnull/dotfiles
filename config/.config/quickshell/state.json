@@ -3,13 +3,13 @@
     "enabled": false
   },
   "caffeine": {
-    "enabled": false
+    "enabled": true
   },
   "notifications": {
     "dnd": true
   },
   "wallpaper": {
-    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-212.jpg"
+    "current": "/home/adharsh/Pictures/wallpapers/wallpapers/b-376.jpg"
   },
   "gpuMonitor": {
     "enabled": true

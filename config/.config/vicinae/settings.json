@@ -18,7 +18,11 @@
       "normal": {}
    },
    "launcher_window": {
-      "opacity": 0.25
+      "rounding": 10,
+      "opacity": 0.25,
+      "compact_mode": {
+         "enabled": true
+      }
    },
    "providers": {
       "applications": {

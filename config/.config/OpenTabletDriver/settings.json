@@ -1,5 +1,5 @@
 {
-  "Revision": "0.6.6.0",
+  "Revision": "0.6.7",
   "Profiles": [
     {
       "Tablet": "Wacom CTL-472",
@@ -8,7 +8,65 @@
         "Settings": [],
         "Enable": true
       },
-      "Filters": [],
+      "Filters": [
+        {
+          "Path": "erase_button.erase_button",
+          "Settings": [],
+          "Enable": true
+        },
+        {
+          "Path": "RadialFollow.RadialFollowSmoothingScreenSpace",
+          "Settings": [
+            {
+              "Property": "OuterRadius",
+              "Value": 5.0
+            },
+            {
+              "Property": "InnerRadius",
+              "Value": 0.0
+            },
+            {
+              "Property": "SmoothingCoefficient",
+              "Value": 0.95
+            },
+            {
+              "Property": "SoftKneeScale",
+              "Value": 1.0
+            },
+            {
+              "Property": "SmoothingLeakCoefficient",
+              "Value": 0.0
+            }
+          ],
+          "Enable": false
+        },
+        {
+          "Path": "RadialFollow.RadialFollowSmoothingTabletSpace",
+          "Settings": [
+            {
+              "Property": "OuterRadius",
+              "Value": 1.0
+            },
+            {
+              "Property": "InnerRadius",
+              "Value": 0.0
+            },
+            {
+              "Property": "SmoothingCoefficient",
+              "Value": 0.95
+            },
+            {
+              "Property": "SoftKneeScale",
+              "Value": 1.0
+            },
+            {
+              "Property": "SmoothingLeakCoefficient",
+              "Value": 0.0
+            }
+          ],
+          "Enable": false
+        }
+      ],
       "AbsoluteModeSettings": {
         "Display": {
           "Width": 960.0,
@@ -48,32 +106,22 @@
         },
         "EraserActivationThreshold": 1.0,
         "EraserButton": {
-          "Path": "OpenTabletDriver.Desktop.Binding.AdaptiveBinding",
-          "Settings": [
-            {
-              "Property": "Binding",
-              "Value": "Eraser"
-            }
-          ],
+          "Path": "erase_button.erase_button",
+          "Settings": [],
           "Enable": true
         },
         "PenButtons": [
           {
-            "Path": "OpenTabletDriver.Desktop.Binding.AdaptiveBinding",
-            "Settings": [
-              {
-                "Property": "Binding",
-                "Value": "Button 1"
-              }
-            ],
+            "Path": "erase_button.erase_button",
+            "Settings": [],
             "Enable": true
           },
           {
-            "Path": "OpenTabletDriver.Desktop.Binding.AdaptiveBinding",
+            "Path": "OpenTabletDriver.Desktop.Binding.KeyBinding",
             "Settings": [
               {
-                "Property": "Binding",
-                "Value": "Button 2"
+                "Property": "Key",
+                "Value": "C"
               }
             ],
             "Enable": true
@@ -83,8 +131,10 @@
         "MouseButtons": [],
         "MouseScrollUp": null,
         "MouseScrollDown": null,
+        "WheelBindings": [],
         "DisablePressure": false,
-        "DisableTilt": false
+        "DisableTilt": false,
+        "EnableDragBindings": false
       }
     }
   ],

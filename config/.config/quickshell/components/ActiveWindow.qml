@@ -4,6 +4,7 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell.Hyprland
 import qs.config
+import qs.services
 
 Item {
     id: root
@@ -26,6 +27,8 @@ Item {
     }
 
     readonly property string windowTitle: specialWorkspaceFocused ? "" : (Hyprland.activeToplevel?.title ?? "")
+    readonly property bool showingLayout: LayoutService.visible
+    readonly property bool showingWindowInfo: windowExists && !specialWorkspaceFocused && !showingLayout
 
     Timer {
         id: workspaceFocusRefresh
@@ -64,11 +67,11 @@ Item {
         }
     }
 
-    implicitWidth: windowExists && !specialWorkspaceFocused ? Math.min(content.implicitWidth + (horizontalPadding * 2), maxWidth) : 0
-    implicitHeight: content.implicitHeight
+    implicitWidth: showingLayout || showingWindowInfo ? Math.min(content.implicitWidth + (horizontalPadding * 2), maxWidth) : 0
+    implicitHeight: Math.max(content.implicitHeight, Config.fontSizeNormal + 6)
 
     visible: opacity > 0
-    opacity: windowExists && !specialWorkspaceFocused ? 1.0 : 0.0
+    opacity: showingLayout || showingWindowInfo ? 1.0 : 0.0
 
     Behavior on opacity {
         NumberAnimation {
@@ -93,6 +96,7 @@ Item {
 
         Text {
             text: root.windowTitle !== "" ? "" : ""
+            visible: !root.showingLayout
             color: Config.textColor
             style: Text.Outline
             styleColor: Qt.alpha(Config.backgroundColor, 0.85)
@@ -105,9 +109,17 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
 
+        LayoutIndicator {
+            visible: root.showingLayout
+            Layout.preferredWidth: implicitWidth
+            Layout.preferredHeight: implicitHeight
+            Layout.alignment: Qt.AlignVCenter
+        }
+
         Text {
             id: titleText
             text: root.windowTitle
+            visible: !root.showingLayout
             color: Config.textColor
             style: Text.Outline
             styleColor: Qt.alpha(Config.backgroundColor, 0.85)

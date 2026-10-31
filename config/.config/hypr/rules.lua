@@ -9,14 +9,15 @@ local config = {
         -- Media Players & UI Apps (Opacity & Grouping)
         { name = "opacity-chat", opacity = "0.70 0.60", match = { class = [[^(Spotify|vesktop)$]] } },
         { name = "opacity-tools", opacity = "0.75 0.80", match = { class = [[^(code-oss|md.obsidian.Obsidian|codium|pcmanfm-qt|org.kde.polkit-kde-authentication-agent-1)$]] } },
-        { name = "group-deny", group = "deny", match = { class = [[^(.*rnote.*|scrcpy)$]] } },
+        { name = "group-deny", group = "deny", match = { class = [[^(.*rnote.*|scrcpy|speedynote)$]] } },
 
         -- General Floating & Dialogs 
         { name = "float-classes", float = true, match = { class = [[^(io\.github\.celluloid_player\.Celluloid|org\.kde\.kcalc|.*dialog.*|blobdrop|[Xx]dg-desktop-portal-(gtk|kde)|org\.freedesktop\.impl\.portal\.desktop\.kde)$]] } },
         { name = "float-titles", float = true, match = { title = [[^(Open|Authentication Required|Add Folder to Workspace|Choose Files|Save As|Confirm to replace files|File Operation Progress|File Upload.*|Choose wallpaper.*|Library.*|Media viewer.*|.*dialog.*|Progress Dialog — Dolphin|Copying — Dolphin|About Mozilla Firefox)$]] } },
         { name = "float-utility", float = true, center = true, match = { title = [[^(Preferences|Settings|Options|About)$]] } },
         { name = "float-modal", float = true, center = true, dim_around = true, match = { modal = true } },
-        { name = "pip-windows", float = true, pin = true, match = { title = [[^(Picture-in-Picture)$]] } },
+        { name = "pip-windows", float = true, pin = true, keep_aspect_ratio = true, persistent_size = true, match = { title = [[^(Picture-in-Picture)$]] } },
+        { name = "video-aspect", keep_aspect_ratio = true, match = { class = [[^(io\.github\.celluloid_player\.Celluloid)$]] } },
 
         -- Idle Inhibit
         { name = "idle-media-games", idle_inhibit = "focus", match = { class = [[^(mpv|.+exe|org\.kde\.haruna|looking-glass-client|gamescope|steam_app.*|steam_proton.*)$]] } },
@@ -30,7 +31,7 @@ local config = {
         -- Workspaces
         { name = "discord-workspace", workspace = "5 silent", match = { title = [[^(.*(Disc|WebC)ord.*)$]] } },
         { name = "discord-sa-workspace", workspace = "5 silent", match = { class = [[^(de\.shorsh\.discord-screenaudio)$]] } },
-        { name = "sharing-indicator", workspace = "special silent", match = { title = [[^(Firefox — Sharing Indicator|.*is sharing (your screen|a window)\.)$]] } },
+        { name = "sharing-indicator", workspace = "special silent", no_initial_focus = true, match = { title = [[^(Firefox — Sharing Indicator|.*is sharing (your screen|a window)\.)$]] } },
 
         -- Specific Edge Cases & Fixes
         { name = "winecfg-no-max", no_max_size = true, match = { class = [[^(winecfg\.exe)$]] } },
@@ -40,6 +41,7 @@ local config = {
         { name = "xwayland-drag-fix", no_focus = true, match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false } },
         { name = "wall-picker", fullscreen = true, center = true, no_blur = false, stay_focused = true, animation = "slide", match = { class = [[^(wallpicker)$]] } },
         { name = "pinentry-focus", stay_focused = true, match = { class = [[(pinentry-)(.*)]] } },
+        { name = "float-persistent-size", persistent_size = true, match = { float = true } },
     },
 
     layers = {
@@ -60,3 +62,37 @@ end
 for _, rule in ipairs(config.layers) do
     hl.layer_rule(rule)
 end
+
+local function watch_browser_popups(class_name, initial_title)
+    hl.on("window.open", function(w)
+        if not w or w.class ~= class_name then return end
+        if w.initial_title ~= initial_title then return end
+
+        local browser_windows = hl.get_windows({ class = class_name })
+        if #browser_windows <= 1 then return end
+
+        hl.dispatch(hl.dsp.window.float({ action = "set", window = w }))
+
+        local sub
+        sub = hl.on("window.title", function(tw)
+            if not tw or tw.address ~= w.address then return end
+            if tw.title == ""
+                or tw.title == initial_title
+                or tw.title == "about:blank"
+                or tw.title:match("^about:.*" .. initial_title .. "$") then return end
+
+            sub:remove()
+
+            if tw.title:match("^Extension:") then
+                hl.dispatch(hl.dsp.window.resize({ x = 800, y = 600, window = tw }))
+                hl.dispatch(hl.dsp.window.center({ window = tw }))
+                hl.dispatch(hl.dsp.focus({ window = tw }))
+            else
+                hl.dispatch(hl.dsp.window.float({ action = "unset", window = tw }))
+            end
+        end)
+    end)
+end
+
+watch_browser_popups("firefox", "Mozilla Firefox")
+watch_browser_popups("helium", "New Tab - Helium")

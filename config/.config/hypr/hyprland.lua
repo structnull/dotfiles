@@ -35,6 +35,9 @@ for i = 1, 8 do
 	hl.workspace_rule({ workspace = tostring(i), monitor = i <= 4 and "eDP-1" or "HDMI-A-1" })
 end
 
+-- Inset special workspaces as a workspace-rule replacement for special_scale_factor.
+hl.workspace_rule({ workspace = "s[true]", gaps_out = 40 })
+
 -- Settings
 hl.config({
 	input = {
@@ -42,6 +45,7 @@ hl.config({
 		repeat_delay = 300,
 		numlock_by_default = true,
 		follow_mouse = 2,
+		focus_on_close = 2,
 		sensitivity = 1,
 
 		touchpad = {
@@ -55,7 +59,7 @@ hl.config({
 	},
 
 	gestures = {
-		workspace_swipe_distance = 3000,
+		workspace_swipe_distance = 2000,
 		workspace_swipe_invert = true,
 		workspace_swipe_min_speed_to_force = 30,
 		workspace_swipe_cancel_ratio = 0.5,
@@ -69,13 +73,22 @@ hl.config({
 
 	cursor = {
 		no_hardware_cursors = 0,
+		warp_on_toggle_special = 1,
 	},
 
 	general = {
 		allow_tearing = false,
 		gaps_in = 2,
 		gaps_out = 8,
+		float_gaps = 8,
 		border_size = 2,
+		resize_on_border = true,
+		extend_border_grab_area = 15,
+		hover_icon_on_border = true,
+		snap = {
+			enabled = true,
+			respect_gaps = true,
+		},
 		col = {
 			active_border = {
 				colors = {
@@ -85,7 +98,19 @@ hl.config({
 					"rgba(b4befebb)",
 				},
 			},
-			inactive_border = 0xFF313244,
+            inactive_border = "rgba(313244ff)",
+		},
+	},
+
+	binds = {
+		hide_special_on_workspace_change = true,
+		allow_pin_fullscreen = true,
+		movefocus_cycles_groupfirst = true,
+	},
+
+	group = {
+		groupbar = {
+			disable_when_only = true,
 		},
 	},
 
@@ -112,7 +137,7 @@ hl.config({
 			new_optimizations = true,
 			noise = 0,
 			ignore_opacity = true,
-			size = 8,
+			size = 3,
 			passes = 4,
 		},
 	},
@@ -122,6 +147,10 @@ hl.config({
 		direct_scanout = 0,
 	},
 
+	layers = {
+		layers_hog_keyboard_focus = true,
+	},
+
 	misc = {
 		mouse_move_enables_dpms = true,
 		vrr = 0,
@@ -129,9 +158,9 @@ hl.config({
 		disable_hyprland_logo = true,
 		disable_splash_rendering = true,
 		always_follow_on_dnd = true,
-		animate_mouse_windowdragging = true,
-		animate_manual_resizes = true,
-		layers_hog_keyboard_focus = true,
+		animate_mouse_windowdragging = false,
+		animate_manual_resizes = false,
+
 		focus_on_activate = true,
 		initial_workspace_tracking = 0,
 		close_special_on_empty = true,
@@ -140,7 +169,6 @@ hl.config({
 	dwindle = {
 		preserve_split = true,
 		force_split = 2,
-		special_scale_factor = 0.8,
 	},
 
 	scrolling = {
@@ -151,18 +179,29 @@ hl.config({
 })
 
 -- Curves
+-- Springs use mass = 1. The damping ratio is zeta = damping / (2 * sqrt(stiffness)):
+--   zeta = 1.0  critically damped, settles fast and never overshoots (Apple ".smooth")
+--   zeta < 1.0  slight overshoot / bounce
+-- Springs ignore `speed`. Settle time is roughly 2*pi/sqrt(stiffness) seconds.
+local springs = {
+    window = { stiffness = 320, damping = 35.78 },  -- zeta 1.00, ~350 ms
+    move   = { stiffness = 400, damping = 40.00 },  -- zeta 1.00, ~314 ms
+    space  = { stiffness = 260, damping = 32.25 },  -- zeta 1.00, ~390 ms
+    zoom   = { stiffness = 300, damping = 34.64 },  -- zeta 1.00, ~363 ms
+    -- Workspace crossfade is asymmetric on purpose: the incoming workspace
+    -- resolves first, the outgoing one dissolves underneath it. Equal
+    -- durations wash out to a muddy 50/50 blend mid-transition.
+    wsIn   = { stiffness = 280, damping = 33.47 },  -- zeta 1.00, ~375 ms
+    wsOut  = { stiffness = 200, damping = 28.28 },  -- zeta 1.00, ~444 ms
+}
+
+for name, s in pairs(springs) do
+    hl.curve(name, { type = "spring", mass = 1, stiffness = s.stiffness, damping = s.damping })
+end
+
 local curves = {
-    snap      = { { 0.12, 1.00 }, { 0.22, 1.00 } },
-    glide     = { { 0.25, 1.00 }, { 0.35, 1.00 } },
-    fade      = { { 0.40, 0.00 }, { 0.20, 1.00 } },
-    linear    = { { 0.00, 0.00 }, { 1.00, 1.00 } },
-    overshoot = { { 0.34, 1.40 }, { 0.64, 1.00 } },
-    decel     = { { 0.05, 0.70 }, { 0.10, 1.00 } },
-    wsf       = { { 0.22, 1.00 }, { 0.36, 1.00 } },
-    pop       = { { 0.23, 1.00 }, { 0.32, 1.00 } },
-    softClose = { { 0.22, 1.00 }, { 0.36, 1.00 } },
-    flowIn    = { { 0.16, 1.00 }, { 0.30, 1.00 } },
-    flowOut   = { { 0.38, 0.00 }, { 0.58, 1.00 } }
+    easeOut = { { 0.22, 1.00 }, { 0.36, 1.00 } },  -- easeOutQuint
+    linear  = { { 0.00, 0.00 }, { 1.00, 1.00 } },
 }
 
 for name, points in pairs(curves) do
@@ -170,22 +209,36 @@ for name, points in pairs(curves) do
 end
 
 -- Animations
-hl.animation({ leaf = "global", enabled = true, speed = 8.0, bezier = "default" })
-hl.animation({ leaf = "border", enabled = true, speed = 4.0, bezier = "snap" })
-hl.animation({ leaf = "windows", enabled = true, speed = 3.0, bezier = "snap", style = "slide" })
-hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.5, bezier = "fade" })
-hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.2, bezier = "fade" })
-hl.animation({ leaf = "fade", enabled = true, speed = 2.5, bezier = "fade" })
-hl.animation({ leaf = "layers", enabled = true, speed = 3.0, bezier = "pop", style = "fade" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 3.5, bezier = "flowIn", style = "fade" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 2.0, bezier = "flowOut", style = "fade" })
-hl.animation({ leaf = "fadeLayers", enabled = true, speed = 3.0, bezier = "fade" })
-hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 3.0, bezier = "fade" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.8, bezier = "flowOut" })
-hl.animation({ leaf = "fadeDpms", enabled = true, speed = 8.0, bezier = "fade" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 4.2, bezier = "wsf", style = "fade" })
-hl.animation({ leaf = "zoomFactor", enabled = true, speed = 5.0, bezier = "snap" })
-hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 4.0, bezier = "decel", style = "slidevert" })
+-- `speed` on a spring leaf is ignored by Hyprland; it is kept only as the
+-- intended settle time in deciseconds so the numbers stay meaningful.
+hl.animation({ leaf = "global", enabled = true, speed = 3.0, bezier = "easeOut" })
+
+hl.animation({ leaf = "windows", enabled = true, speed = 3.5, spring = "window" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 3.5, spring = "window", style = "popin 88%" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.5, bezier = "linear", style = "popin 88%" })
+hl.animation({ leaf = "windowsMove", enabled = true, speed = 3.1, spring = "move" })
+
+hl.animation({ leaf = "fade", enabled = true, speed = 2.0, bezier = "linear" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.6, bezier = "linear" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.3, bezier = "linear" })
+hl.animation({ leaf = "fadeDim", enabled = true, speed = 1.8, bezier = "easeOut" })
+hl.animation({ leaf = "fadeDpms", enabled = true, speed = 8.0, bezier = "linear" })
+
+hl.animation({ leaf = "layers", enabled = true, speed = 2.4, bezier = "easeOut", style = "fade" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 2.4, bezier = "easeOut", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
+hl.animation({ leaf = "fadeLayers", enabled = true, speed = 2.0, bezier = "linear" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.8, bezier = "linear" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.4, bezier = "linear" })
+
+hl.animation({ leaf = "workspaces", enabled = true, speed = 2.4, spring = "wsIn", style = "fade" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 2.3, spring = "wsIn", style = "fade" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 2.9, spring = "wsOut", style = "fade" })
+
+hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 3.9, spring = "space", style = "slidevert" })
+
+hl.animation({ leaf = "border", enabled = true, speed = 2.0, bezier = "easeOut" })
+hl.animation({ leaf = "zoomFactor", enabled = true, speed = 3.6, spring = "zoom" })
 
 -- Per-device config
 hl.device({
@@ -196,6 +249,8 @@ hl.device({
 -- Gestures
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 hl.gesture({ fingers = 3, direction = "down", mods = "ALT", action = "close" })
+-- Scrolling layout only: pan the tape with a four-finger swipe.
+hl.gesture({ fingers = 4, direction = "horizontal", action = "scroll_move" })
 
 -- Autostart
 hl.on("hyprland.start", function()

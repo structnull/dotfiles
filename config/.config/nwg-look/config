@@ -4,6 +4,7 @@
  "export-index-theme": true,
  "export-xsettingsd": true,
  "export-gtk4-symlinks": false,
+ "export-nwg-hello-sound-config": true,
  "flatpak-export-gtk-theme-override": true,
  "flatpak-export-icon-theme-override": true,
  "flatpak-install-current-gtk-theme": true

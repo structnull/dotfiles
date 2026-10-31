@@ -2,6 +2,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import Quickshell
+import Quickshell.Io
 import qs.config
 import qs.services
 import "../../components/"
@@ -40,6 +42,15 @@ QsPopupWindow {
         } else {
             displayMonth++;
         }
+    }
+
+    function copyDate(date) {
+        clipboardProc.command = ["wl-copy", Qt.formatDate(date, "dd-MM-yyyy")];
+        clipboardProc.running = true;
+    }
+
+    Process {
+        id: clipboardProc
     }
 
     onVisibleChanged: {
@@ -400,6 +411,13 @@ QsPopupWindow {
                                 return Config.textColor;
                             }
                             opacity: dayCell.isCurrentMonth ? 1.0 : 0.15
+                        }
+
+                        HoverHandler {
+                            cursorShape: Qt.PointingHandCursor
+                        }
+                        TapHandler {
+                            onTapped: root.copyDate(dayCell.model.date)
                         }
                     }
                 }

@@ -1,0 +1,13 @@
+{
+    "Name": "Erase Button",
+    "Owner": "clarence112",
+    "Description": "Bind a button to erase, for pens that are single-ended.",
+    "PluginVersion": "1.0.0",
+    "SupportedDriverVersion": "0.6.6.2",
+    "RepositoryUrl": "https://github.com/clarence112/OTD-Eraser-Button-Plugin",
+    "DownloadUrl": "https://github.com/clarence112/OTD-Eraser-Button-Plugin/releases/download/1.0.0/erase-button-0.6.6.2-1.0.0.zip",
+    "CompressionFormat": "zip",
+    "SHA256": "",
+    "WikiUrl": "",
+    "LicenseIdentifier": "GPL-3.0-only"
+}
