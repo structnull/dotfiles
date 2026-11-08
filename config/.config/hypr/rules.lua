@@ -7,7 +7,7 @@ local config = {
         { name = "immediate-title", immediate = true, match = { title = [[^(glxgears|vkcubepp|hl_linux)$]] } },
 
         -- Media Players & UI Apps (Opacity & Grouping)
-        { name = "opacity-chat", opacity = "0.70 0.60", match = { class = [[^(Spotify|vesktop)$]] } },
+        { name = "opacity-chat", opacity = "0.70 0.60", match = { class = [[^(Spotify|vesktop|io.github.yapfast.Yapfast)$]] } },
         { name = "opacity-tools", opacity = "0.75 0.80", match = { class = [[^(code-oss|md.obsidian.Obsidian|codium|pcmanfm-qt|org.kde.polkit-kde-authentication-agent-1)$]] } },
         { name = "group-deny", group = "deny", match = { class = [[^(.*rnote.*|scrcpy|speedynote)$]] } },
 
@@ -19,6 +19,11 @@ local config = {
         { name = "pip-windows", float = true, pin = true, keep_aspect_ratio = true, persistent_size = true, match = { title = [[^(Picture-in-Picture)$]] } },
         { name = "video-aspect", keep_aspect_ratio = true, match = { class = [[^(io\.github\.celluloid_player\.Celluloid)$]] } },
 
+        -- Chromium extension popups (Bitwarden, etc.): class is chrome-<ext-id>-<profile>
+        -- (older builds use crx_<ext-id>), initial title is _crx_<ext-id>. They must
+        -- float and center at the known-good Bitwarden popout size, never tile.
+        { name = "browser-extension-popups", float = true, center = true, match = { class = [[^(?:(?:chrome|chromium|brave|microsoft-edge)-[a-z]+-|crx_)]] } },
+
         -- Idle Inhibit
         { name = "idle-media-games", idle_inhibit = "focus", match = { class = [[^(mpv|.+exe|org\.kde\.haruna|looking-glass-client|gamescope|steam_app.*|steam_proton.*)$]] } },
         { name = "idle-yt", idle_inhibit = "focus", match = { class = [[^(firefox)$]], title = [[^(.*YouTube.*)$]] } },
@@ -29,8 +34,9 @@ local config = {
         { name = "no-share-titles", no_screen_share = true, match = { title = [[^(.*[Ww]hats[Aa]pp.*|.*\) Inbox|Inbox|All mail)(.*)$]] } },
 
         -- Workspaces
+        { name = "special-scrolling-focused", scrolling_width = 1.0, match = { workspace = "special" } },
         { name = "discord-workspace", workspace = "5 silent", match = { title = [[^(.*(Disc|WebC)ord.*)$]] } },
-        { name = "discord-sa-workspace", workspace = "5 silent", match = { class = [[^(de\.shorsh\.discord-screenaudio)$]] } },
+        { name = "yapfast-workspace", workspace = "5 silent", match = { class = [[^io\.github\.yapfast\.Yapfast$]] } },
         { name = "sharing-indicator", workspace = "special silent", no_initial_focus = true, match = { title = [[^(Firefox — Sharing Indicator|.*is sharing (your screen|a window)\.)$]] } },
 
         -- Specific Edge Cases & Fixes
@@ -96,3 +102,30 @@ end
 
 watch_browser_popups("firefox", "Mozilla Firefox")
 watch_browser_popups("helium", "New Tab - Helium")
+
+-- Chromium extension popups open in their own window with a different class
+-- (chrome-<ext-id>-<profile>) and initial title (_crx_<ext-id>), so they never
+-- match watch_browser_popups. Float, center and focus them at map time; the
+-- window rule above covers the geometry, this makes sure they get focus.
+local function watch_extension_popups()
+    hl.on("window.open", function(w)
+        if not w or not w.class or not w.initial_title then return end
+
+        -- Chromium extension popup class: chrome-<ext-id>-<profile> (or crx_<ext-id>)
+        local is_chromium_ext = w.class:match("^chrome%-[a-z]+%-")
+            or w.class:match("^chromium%-[a-z]+%-")
+            or w.class:match("^brave%-[a-z]+%-")
+            or w.class:match("^microsoft%-edge%-[a-z]+%-")
+            or w.class:match("^crx_")
+        if not is_chromium_ext then return end
+
+        -- Extension popups always carry the _crx_<ext-id> initial title.
+        if not w.initial_title:match("^_crx_") then return end
+
+        hl.dispatch(hl.dsp.window.float({ action = "set", window = w }))
+        hl.dispatch(hl.dsp.window.center({ window = w }))
+        hl.dispatch(hl.dsp.focus({ window = w }))
+    end)
+end
+
+watch_extension_popups()

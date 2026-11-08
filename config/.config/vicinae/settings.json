@@ -25,6 +25,12 @@
       }
    },
    "providers": {
+      "@nikbpetrov/store.vicinae.it-tools": {
+         "enabled": false,
+         "preferences": {
+            "base-url": "https://sharevb-it-tools.vercel.app"
+         }
+      },
       "applications": {
          "preferences": {
             "defaultAction": "focus",
@@ -45,9 +51,13 @@
             "preserveTagged": true
          }
       },
+      "core": {
+         "enabled": true
+      },
       "files": {
+         "enabled": false,
          "preferences": {
-            "autoIndexing": true,
+            "autoIndexing": false,
             "excludedIndexingPaths": [],
             "indexingPaths": [
                "/home/adharsh"

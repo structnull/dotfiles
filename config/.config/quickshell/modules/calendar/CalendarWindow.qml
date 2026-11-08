@@ -49,6 +49,11 @@ QsPopupWindow {
         clipboardProc.running = true;
     }
 
+    function copyTime() {
+        clipboardProc.command = ["wl-copy", TimeService.format("HH:mm")];
+        clipboardProc.running = true;
+    }
+
     Process {
         id: clipboardProc
     }
@@ -173,6 +178,10 @@ QsPopupWindow {
                     color: Config.accentColor
                     Layout.alignment: Qt.AlignHCenter
                 }
+            }
+
+            TapHandler {
+                onTapped: root.copyTime()
             }
             
 

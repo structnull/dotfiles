@@ -37,6 +37,15 @@ end
 
 -- Inset special workspaces as a workspace-rule replacement for special_scale_factor.
 hl.workspace_rule({ workspace = "s[true]", gaps_out = 40 })
+hl.workspace_rule({ workspace = "s[true]", layout = "scrolling" })
+
+-- Static scrolling_width rules only affect windows when they open. Resize
+-- existing columns too when a special workspace is shown.
+hl.on("workspace.special_active", function(workspace)
+	if workspace then
+		hl.dispatch(hl.dsp.layout("colresize all 1.0"))
+	end
+end)
 
 -- Settings
 hl.config({
@@ -135,11 +144,12 @@ hl.config({
 			popups = true,
 			popups_ignorealpha = 0.4,
 			new_optimizations = true,
-			noise = 0,
 			ignore_opacity = true,
 			size = 3,
-			passes = 4,
+			passes = 6,
 		},
+
+
 	},
 
 	render = {
@@ -175,6 +185,8 @@ hl.config({
 		fullscreen_on_one_column = true,
 		column_width = 0.5,
 		direction = "right",
+		wrap_focus = false,
+		wrap_swapcol = false,
 	},
 })
 
