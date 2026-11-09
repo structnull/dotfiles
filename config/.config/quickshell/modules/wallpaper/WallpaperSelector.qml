@@ -247,6 +247,7 @@ PanelWindow {
             }
         }
 
+        cacheBuffer: root.expandedWidth * 2
         model: imageModel
 
         delegate: Item {
@@ -329,6 +330,7 @@ PanelWindow {
               sourceSize.width: item.selected ? root.expandedWidth : root.sliceWidth + Math.abs(root.skewOffset)
               sourceSize.height: root.sliceHeight
               fillMode: Image.PreserveAspectCrop
+              mipmap: false
               asynchronous: true
               cache: false
               smooth: true
@@ -367,6 +369,7 @@ PanelWindow {
     }
 
     Text {
+        textFormat: Text.PlainText
       id: selectedLabel
       visible: root.showLabels
       anchors.top: carousel.bottom
@@ -384,6 +387,7 @@ PanelWindow {
     }
 
     Text {
+        textFormat: Text.PlainText
       visible: root.filterable
       anchors.top: selectedLabel.bottom
       anchors.topMargin: 8

@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import qs.services
@@ -14,7 +15,7 @@ RowLayout {
     property var pendingMenuHandle: null
     property int pendingAnchorX: 0
     property int pendingAnchorY: 0
-    readonly property var sharedMenu: menuLoader.item
+    readonly property var sharedMenu: menuLoader.active ? menuLoader.item : null
 
     function openMenu(menuHandle, anchorX, anchorY) {
         pendingMenuHandle = menuHandle;
@@ -32,12 +33,14 @@ RowLayout {
         menuLoaded = true;
     }
 
-    Loader {
+    LazyLoader {
         id: menuLoader
         active: root.menuLoaded
         source: "./TrayMenu.qml"
 
-        onLoaded: root.openMenu(root.pendingMenuHandle, root.pendingAnchorX, root.pendingAnchorY)
+        onActiveChanged: {
+            if (active) root.openMenu(root.pendingMenuHandle, root.pendingAnchorX, root.pendingAnchorY);
+        }
     }
 
     Connections {
@@ -87,6 +90,7 @@ RowLayout {
 
         // Arrow Icon
         Text {
+            textFormat: Text.PlainText
             anchors.centerIn: parent
             text: "󰅁"
             font.family: Config.font
@@ -203,7 +207,7 @@ RowLayout {
                         anchors.centerIn: parent
                         width: 18
                         height: 18
-                        source: "image://icon/application-default-icon"
+                        source: Quickshell.iconPath("application-default-icon")
                         fillMode: Image.PreserveAspectFit
                         sourceSize: Qt.size(32, 32)
                         smooth: true

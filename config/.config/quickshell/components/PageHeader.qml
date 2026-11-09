@@ -29,6 +29,7 @@ RowLayout {
         color: Qt.alpha(root.iconColor, 0.15)
 
         Text {
+            textFormat: Text.PlainText
             anchors.centerIn: parent
             text: root.icon
             font.family: Config.font
@@ -38,6 +39,7 @@ RowLayout {
     }
 
     Text {
+        textFormat: Text.PlainText
         text: root.title
         color: Config.textColor
         font.bold: true

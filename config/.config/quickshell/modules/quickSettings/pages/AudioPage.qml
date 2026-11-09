@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import qs.services
@@ -12,7 +13,11 @@ Item {
 
     Layout.fillWidth: true
     implicitHeight: 480
-    Component.onCompleted: AudioService.refreshDevices()
+    Component.onCompleted: {
+        AudioService.audioPageConsumers++;
+        AudioService.refreshDevices();
+    }
+    Component.onDestruction: AudioService.audioPageConsumers--
 
     ColumnLayout {
         id: main
@@ -57,6 +62,7 @@ Item {
                     spacing: 8
 
                     Text {
+                        textFormat: Text.PlainText
                         text: "Output"
                         color: Config.textColor
                         font.family: Config.font
@@ -65,6 +71,7 @@ Item {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: AudioService.outputStatusText
                         color: Config.subtextColor
                         font.family: Config.font
@@ -81,6 +88,7 @@ Item {
                         color: Qt.alpha(Config.surface1Color, 0.6)
 
                         Text {
+                            textFormat: Text.PlainText
                             anchors.centerIn: parent
                             text: "No output devices found"
                             color: Config.subtextColor
@@ -95,7 +103,7 @@ Item {
                         spacing: 8
 
                         Repeater {
-                            model: AudioService.outputDevices
+                            model: ScriptModel { comparisonMode: ObjectComparison.Structure; values: AudioService.outputDevices }
 
                             DeviceCard {
                                 required property var modelData
@@ -124,6 +132,7 @@ Item {
                     spacing: 8
 
                     Text {
+                        textFormat: Text.PlainText
                         text: "Input"
                         color: Config.textColor
                         font.family: Config.font
@@ -132,6 +141,7 @@ Item {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: AudioService.inputStatusText
                         color: Config.subtextColor
                         font.family: Config.font
@@ -168,6 +178,7 @@ Item {
                             spacing: 8
 
                             Text {
+                                textFormat: Text.PlainText
                                 text: AudioService.sourceMuted ? "" : ""
                                 color: AudioService.sourceMuted ? Config.mutedColor : Config.subtextColor
                                 font.family: Config.font
@@ -261,6 +272,7 @@ Item {
                             }
 
                             Text {
+                                textFormat: Text.PlainText
                                 Layout.preferredWidth: 42
                                 horizontalAlignment: Text.AlignRight
                                 text: AudioService.sourcePercentage + "%"
@@ -279,6 +291,7 @@ Item {
                         spacing: 6
 
                         Text {
+                            textFormat: Text.PlainText
                             text: "Microphone source"
                             color: Config.subtextColor
                             font.family: Config.font
@@ -299,7 +312,7 @@ Item {
                                 spacing: 6
 
                                 Repeater {
-                                    model: AudioService.inputPorts
+                                    model: ScriptModel { comparisonMode: ObjectComparison.Structure; values: AudioService.inputPorts }
 
                                     Rectangle {
                                         required property var modelData
@@ -317,6 +330,7 @@ Item {
                                             spacing: 6
 
                                             Text {
+                                                textFormat: Text.PlainText
                                                 id: chipIcon
                                                 text: modelData.icon
                                                 font.family: Config.font
@@ -325,6 +339,7 @@ Item {
                                             }
 
                                             Text {
+                                                textFormat: Text.PlainText
                                                 id: chipLabel
                                                 text: modelData.name
                                                 font.family: Config.font
@@ -334,6 +349,7 @@ Item {
                                             }
 
                                             Text {
+                                                textFormat: Text.PlainText
                                                 id: chipStatus
                                                 text: switching ? "…" : ""
                                                 font.family: Config.font
@@ -362,6 +378,7 @@ Item {
                         color: Qt.alpha(Config.surface1Color, 0.6)
 
                         Text {
+                            textFormat: Text.PlainText
                             anchors.centerIn: parent
                             text: "No input devices found"
                             color: Config.subtextColor
@@ -376,7 +393,7 @@ Item {
                         spacing: 8
 
                         Repeater {
-                            model: AudioService.inputDevices
+                            model: ScriptModel { comparisonMode: ObjectComparison.Structure; values: AudioService.inputDevices }
 
                             DeviceCard {
                                 required property var modelData

@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Services.SystemTray
 pragma Singleton
 
@@ -14,7 +15,7 @@ QtObject {
     // --- ICON LOGIC ---
     function getIconSource(iconString) {
         if (!iconString)
-            return "image://icon/image-missing";
+            return Quickshell.iconPath("image-missing");
 
         // Docs v0.2.1: SystemTrayItem.icon can be used directly as an Image source.
         return iconString;

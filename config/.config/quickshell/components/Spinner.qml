@@ -3,6 +3,7 @@ import QtQuick
 import qs.config
 
 Text {
+    textFormat: Text.PlainText
     id: root
 
     property bool running: true

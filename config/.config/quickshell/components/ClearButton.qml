@@ -48,6 +48,7 @@ Rectangle {
         spacing: root.text === "" ? 0 : 6
 
         Text {
+            textFormat: Text.PlainText
             text: root.icon
             font.family: Config.font
             font.pixelSize: Config.fontSizeNormal
@@ -56,6 +57,7 @@ Rectangle {
         }
 
         Text {
+            textFormat: Text.PlainText
             id: label
             visible: text !== ""
             text: root.text

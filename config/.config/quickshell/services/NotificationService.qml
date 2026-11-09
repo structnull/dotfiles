@@ -68,29 +68,6 @@ Singleton {
 
     property int hoveredNotificationId: -1
 
-    Timer {
-        id: lifecycleTimer
-        interval: 50
-        repeat: true
-        running: root.activePopupCount > 0
-
-        onTriggered: {
-            for (let i = 0; i < root.notifications.length; i++) {
-                const wrapper = root.notifications[i];
-                if (!wrapper || !wrapper.popup || wrapper.isPaused)
-                    continue;
-
-                wrapper.remainingTime = Math.max(0, wrapper.remainingTime - interval);
-                wrapper.progress = 1.0 - (wrapper.remainingTime / wrapper.totalTime);
-
-                if (wrapper.remainingTime <= 0) {
-                    wrapper.progress = 1.0;
-                    wrapper.popup = false;
-                }
-            }
-        }
-    }
-
     // ========================================================================
     // NOTIFICATION SERVER
     // ========================================================================
@@ -121,9 +98,15 @@ Singleton {
             if (wrapper) {
                 root.notifications.unshift(wrapper);
 
-                // Only start the lifecycle (timer) if not in DND
-                if (showPopup)
-                    wrapper.startLifecycle();
+                // Dismiss before releasing the wrapper so server-owned image
+                // data is also released. Removal can synchronously emit dropped.
+                while (root.notifications.length > 100) {
+                    const oldest = root.notifications[root.notifications.length - 1];
+                    oldest.popup = false;
+                    if (oldest.notification)
+                        oldest.notification.dismiss();
+                    root.notifications = root.notifications.filter(item => item !== oldest);
+                }
             }
         }
     }
@@ -137,24 +120,21 @@ Singleton {
 
         property bool popup: false
 
-        // Countdown state, advanced by the shared lifecycle timer above.
-        property int totalTime: Config.notifTimeout
-        property int remainingTime: Config.notifTimeout
-
-        // Progress from 0.0 to 1.0 (for the progress bar in the Card)
+        readonly property int totalTime: Config.notifTimeout
         property real progress: 0.0
+        readonly property bool isPaused: root.hoveredNotificationId === (notification ? notification.id : -1)
 
-        function startLifecycle() {
-            remainingTime = totalTime;
-            progress = 0.0;
-        }
-
-        // Pause the timer on hover
-        property bool isPaused: root.hoveredNotificationId === (notification ? notification.id : -1)
-
-        onIsPausedChanged: {
-            if (!isPaused && popup && remainingTime <= 0)
-                popup = false;
+        // expireTimeout is a read-only client hint in QS 0.3.2. Keep the
+        // configured popup lifetime and tracked history/actions, as before.
+        readonly property NumberAnimation countdown: NumberAnimation {
+            target: wrapper
+            property: "progress"
+            from: 0
+            to: 1
+            duration: wrapper.totalTime
+            running: wrapper.popup
+            paused: wrapper.isPaused && wrapper.popup
+            onFinished: wrapper.popup = false
         }
 
         // Timestamp
@@ -193,6 +173,9 @@ Singleton {
             target: wrapper.notification ? wrapper.notification.Retainable : null
 
             function onDropped(): void {
+                wrapper.popup = false;
+                if (root.hoveredNotificationId === wrapper.notifId)
+                    root.hoveredNotificationId = -1;
                 root.notifications = root.notifications.filter(w => w !== wrapper);
             }
 
@@ -270,7 +253,7 @@ Singleton {
                 return "file://" + appIcon;
             if (appIcon.startsWith("file://") || appIcon.startsWith("image://"))
                 return appIcon;
-            return "image://icon/" + appIcon;
+            return Quickshell.iconPath(appIcon);
         }
 
         return "";

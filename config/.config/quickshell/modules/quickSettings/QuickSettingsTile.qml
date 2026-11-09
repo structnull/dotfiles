@@ -70,6 +70,7 @@ Rectangle {
         spacing: 4
 
         Text {
+            textFormat: Text.PlainText
             text: root.icon
             font.family: Config.font
             font.pixelSize: Config.fontSizeIcon
@@ -84,6 +85,7 @@ Rectangle {
         }
 
         Text {
+            textFormat: Text.PlainText
             text: root.label
             font.family: Config.font
             font.bold: true

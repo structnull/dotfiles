@@ -68,6 +68,7 @@ Item {
             }
 
             Text {
+                textFormat: Text.PlainText
                 anchors.centerIn: parent
                 text: root.icon
                 font.family: Config.font
@@ -212,6 +213,7 @@ Item {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     id: percentText
                     anchors.centerIn: parent
                     text: {
@@ -277,6 +279,7 @@ Item {
             }
 
             Text {
+                textFormat: Text.PlainText
                 anchors.centerIn: parent
                 text: root.detailsIcon
                 font.family: Config.font

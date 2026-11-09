@@ -11,6 +11,7 @@ BarButton {
     active: GrayscaleService.enabled
 
     contentItem: Text {
+        textFormat: Text.PlainText
         id: icon
         anchors.centerIn: parent
         text: "󰹊"

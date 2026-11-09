@@ -45,17 +45,11 @@ QsPopupWindow {
     }
 
     function copyDate(date) {
-        clipboardProc.command = ["wl-copy", Qt.formatDate(date, "dd-MM-yyyy")];
-        clipboardProc.running = true;
+        Quickshell.clipboardText = Qt.formatDate(date, "dd-MM-yyyy");
     }
 
     function copyTime() {
-        clipboardProc.command = ["wl-copy", TimeService.format("HH:mm")];
-        clipboardProc.running = true;
-    }
-
-    Process {
-        id: clipboardProc
+        Quickshell.clipboardText = TimeService.format("HH:mm");
     }
 
     onVisibleChanged: {
@@ -171,6 +165,7 @@ QsPopupWindow {
                 spacing: 0
 
                 Text {
+                    textFormat: Text.PlainText
                     text: TimeService.format("hh:mm AP")
                     font.family: Config.font
                     font.pixelSize: 52
@@ -207,6 +202,7 @@ QsPopupWindow {
                 Behavior on border.color { ColorAnimation { duration: Config.animDurationShort } }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     text: "󰅁"
                     font.family: Config.font
@@ -241,6 +237,7 @@ QsPopupWindow {
                 }
                 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     text: new Date(root.displayYear, root.displayMonth, 1).toLocaleDateString(Qt.locale(), "MMMM yyyy").toUpperCase()
                     font.family: Config.font
@@ -292,6 +289,7 @@ QsPopupWindow {
                 Behavior on border.color { ColorAnimation { duration: Config.animDurationShort } }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     text: "󰅂"
                     font.family: Config.font
@@ -337,6 +335,7 @@ QsPopupWindow {
                     locale: grid.locale
 
                     delegate: Text {
+                        textFormat: Text.PlainText
                         required property var model
                         horizontalAlignment: Text.AlignHCenter
                         text: model.shortName.toUpperCase()
@@ -407,6 +406,7 @@ QsPopupWindow {
                         }
 
                         Text {
+                            textFormat: Text.PlainText
                             id: dayText
                             anchors.centerIn: parent
                             horizontalAlignment: Text.AlignHCenter

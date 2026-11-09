@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import QtQuick.Controls
 import qs.config
@@ -85,6 +86,7 @@ Rectangle {
 
                 // Text (Icon)
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     visible: !root.connecting
                     text: root.icon
@@ -109,6 +111,7 @@ Rectangle {
             spacing: 2
 
             Text {
+                textFormat: Text.PlainText
                 text: root.title
                 color: Config.textColor
                 font.family: Config.font
@@ -123,6 +126,7 @@ Rectangle {
 
                 // Subtitle
                 Text {
+                    textFormat: Text.PlainText
                     visible: root.subtitle !== ""
                     text: root.subtitle
                     color: Config.textColor
@@ -133,6 +137,7 @@ Rectangle {
 
                 // Separator dot (only if there is subtitle AND status)
                 Text {
+                    textFormat: Text.PlainText
                     visible: root.subtitle !== "" && root.statusText !== ""
                     text: "•"
                     color: Config.textColor
@@ -142,6 +147,7 @@ Rectangle {
 
                 // Status (Connected, Paired...)
                 Text {
+                    textFormat: Text.PlainText
                     text: root.statusText
                     font.family: Config.font
                     color: {
@@ -159,6 +165,7 @@ Rectangle {
 
         // Lock Icon (Wi-Fi only)
         Text {
+            textFormat: Text.PlainText
             visible: root.secured && !root.active && !root.connecting
             text: ""
             font.family: Config.font
@@ -176,6 +183,7 @@ Rectangle {
             color: menuMouse.containsMouse || menuPopup.opened ? Config.surface2Color : "transparent"
 
             Text {
+                textFormat: Text.PlainText
                 anchors.centerIn: parent
                 text: "" // 3 vertical dots icon (mdi-dots-vertical)
                 font.family: Config.font
@@ -215,7 +223,7 @@ Rectangle {
                     spacing: 2
 
                     Repeater {
-                        model: root.menuModel
+                        model: ScriptModel { comparisonMode: ObjectComparison.Structure; values: root.menuModel }
                         delegate: Rectangle {
                             id: menuItem
 
@@ -233,6 +241,7 @@ Rectangle {
                                 spacing: 10
 
                                 Text {
+                                    textFormat: Text.PlainText
                                     visible: modelData.icon !== undefined
                                     text: modelData.icon || ""
                                     font.family: Config.font
@@ -240,6 +249,7 @@ Rectangle {
                                 }
 
                                 Text {
+                                    textFormat: Text.PlainText
                                     text: modelData.text
                                     color: modelData.textColor ?? Config.textColor
                                     font.family: Config.font

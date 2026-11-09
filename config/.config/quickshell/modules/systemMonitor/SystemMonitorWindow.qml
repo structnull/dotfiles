@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Shapes
 import QtQuick.Layouts
 import Quickshell.Services.UPower
 import qs.config
@@ -13,7 +14,24 @@ QsPopupWindow {
     popupMaxHeight: 720
     anchorSide: "left"
     contentImplicitHeight: content.implicitHeight
-    onVisibleChanged: SystemMonitorService.active = visible
+    property bool _monitorRegistered: false
+
+    function syncMonitoring() {
+        if (_monitorRegistered === visible)
+            return;
+        _monitorRegistered = visible;
+        if (visible)
+            SystemMonitorService.acquireWindow();
+        else
+            SystemMonitorService.releaseWindow();
+    }
+
+    onVisibleChanged: syncMonitoring()
+    Component.onCompleted: syncMonitoring()
+    Component.onDestruction: {
+        if (_monitorRegistered)
+            SystemMonitorService.releaseWindow();
+    }
 
     readonly property bool hasGpu: SystemMonitorService.gpuType !== "unknown"
     readonly property color accentBlue: Config.accentColor
@@ -90,6 +108,7 @@ QsPopupWindow {
             spacing: 10
 
             Text {
+                textFormat: Text.PlainText
                 text: "SYS  MONITOR"
                 font.family: Config.font
                 font.pixelSize: 13
@@ -109,6 +128,7 @@ QsPopupWindow {
             }
 
             Text {
+                textFormat: Text.PlainText
                 text: SystemMonitorService.uptime
                 font.family: Config.font
                 font.pixelSize: 13
@@ -140,6 +160,41 @@ QsPopupWindow {
                 }
             }
 
+            Shape {
+                anchors.fill: parent
+                antialiasing: true
+                ShapePath {
+                    fillColor: "transparent"
+                    strokeColor: Qt.alpha(Config.surface2Color, 0.4)
+                    strokeWidth: 0.5
+                    PathAngleArc { centerX: cpuGauge.width / 2; centerY: cpuGauge.height / 2; radiusX: 52; radiusY: 52; startAngle: 0; sweepAngle: 360 }
+                }
+                ShapePath {
+                    fillColor: "transparent"
+                    strokeColor: Qt.alpha(Config.surface2Color, 0.5)
+                    strokeWidth: 2.5
+                    PathAngleArc { centerX: cpuGauge.width / 2; centerY: cpuGauge.height / 2; radiusX: 62; radiusY: 62; startAngle: 0; sweepAngle: 360 }
+                }
+            }
+            Repeater {
+                model: 4
+                Shape {
+                    id: gaugeTick
+                    antialiasing: true
+                    required property int index
+                    anchors.fill: parent
+                    readonly property real angle: index * Math.PI / 2 - Math.PI / 2
+                    ShapePath {
+                        fillColor: "transparent"
+                        strokeColor: Qt.alpha(Config.surface2Color, 0.6)
+                        strokeWidth: 0.8
+                        startX: cpuGauge.width / 2 + 48 * Math.cos(gaugeTick.angle)
+                        startY: cpuGauge.height / 2 + 48 * Math.sin(gaugeTick.angle)
+                        PathLine { x: cpuGauge.width / 2 + 55 * Math.cos(gaugeTick.angle); y: cpuGauge.height / 2 + 55 * Math.sin(gaugeTick.angle) }
+                    }
+                }
+            }
+
             Canvas {
                 id: cpuCanvas
                 anchors.fill: parent
@@ -167,39 +222,12 @@ QsPopupWindow {
                     var cy = height / 2;
                     var outerR = 72;
                     var arcR = 62;
-                    var innerR = 52;
                     var dotCount = 24;
                     var activeDots = Math.floor((cpuGauge.animUsage / 100) * dotCount);
                     var accent = root.usageColor(cpuGauge.cpuUsage).toString();
                     var muted = Config.surface3Color.toString();
-                    var faint = Config.surface2Color.toString();
 
-                    // Inner guide ring
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, innerR, 0, 2 * Math.PI);
-                    ctx.strokeStyle = Qt.alpha(faint, 0.4).toString();
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-
-                    // Tick marks at N/E/S/W
-                    for (var t = 0; t < 4; t++) {
-                        var ta = (t / 4) * 2 * Math.PI - Math.PI / 2;
-                        ctx.beginPath();
-                        ctx.moveTo(cx + (innerR - 4) * Math.cos(ta), cy + (innerR - 4) * Math.sin(ta));
-                        ctx.lineTo(cx + (innerR + 3) * Math.cos(ta), cy + (innerR + 3) * Math.sin(ta));
-                        ctx.strokeStyle = Qt.alpha(faint, 0.6).toString();
-                        ctx.lineWidth = 0.8;
-                        ctx.stroke();
-                    }
-
-                    // Background arc
-                    var startAngle = -Math.PI / 2;
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, arcR, 0, 2 * Math.PI);
-                    ctx.strokeStyle = Qt.alpha(faint, 0.5).toString();
-                    ctx.lineWidth = 2.5;
-                    ctx.stroke();
-
+                    const startAngle = -Math.PI / 2;
                     // Progress arc
                     if (cpuGauge.animUsage > 0) {
                         var sweep = (cpuGauge.animUsage / 100) * 2 * Math.PI;
@@ -232,6 +260,7 @@ QsPopupWindow {
                 spacing: 2
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: SystemMonitorService.cpuUsage + "%"
                     font.family: Config.font
@@ -247,6 +276,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: "CPU"
                     font.family: Config.font
@@ -262,6 +292,7 @@ QsPopupWindow {
                     spacing: 4
 
                     Text {
+                        textFormat: Text.PlainText
                         text: "󰔏"
                         font.family: Config.font
                         font.pixelSize: 12
@@ -275,6 +306,7 @@ QsPopupWindow {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: SystemMonitorService.cpuTemp + "°"
                         font.family: Config.font
                         font.pixelSize: 13
@@ -292,55 +324,41 @@ QsPopupWindow {
         }
 
         // ==================== SINE WAVE SEPARATOR ====================
-        Canvas {
+        Shape {
             id: sineWave
             Layout.fillWidth: true
             Layout.preferredHeight: 26
-
+            antialiasing: true
             property real phase: 0
 
-            Timer {
-                running: true
-                repeat: true
-                interval: 80
-                onTriggered: {
-                    sineWave.phase += 0.03;
-                    sineWave.requestPaint();
-                }
+            function wave(amplitude, periods, speed, offset) {
+                const points = [];
+                if (width <= 0) return points;
+                for (let x = 0; x <= width; x += 2)
+                    points.push(Qt.point(x, height / 2 + amplitude * Math.sin((x / width) * periods * Math.PI + phase * speed + offset)));
+                return points;
             }
 
-            onPaint: {
-                var ctx = getContext("2d");
-                ctx.reset();
-                var h = height;
-                var w = width;
-                var accent = root.accentBlue.toString();
+            Timer {
+                running: root.visible
+                repeat: true
+                interval: 80
+                onTriggered: sineWave.phase += 0.03
+            }
 
-                // Primary wave
-                ctx.beginPath();
-                for (var x = 0; x <= w; x += 2) {
-                    var y = h / 2 + 5 * Math.sin((x / w) * 4 * Math.PI + phase);
-                    if (x === 0)
-                        ctx.moveTo(x, y);
-                    else
-                        ctx.lineTo(x, y);
-                }
-                ctx.strokeStyle = Qt.alpha(accent, 0.12).toString();
-                ctx.lineWidth = 1;
-                ctx.stroke();
-
-                // Secondary wave (offset)
-                ctx.beginPath();
-                for (var x2 = 0; x2 <= w; x2 += 2) {
-                    var y2 = h / 2 + 3.5 * Math.sin((x2 / w) * 3 * Math.PI + phase * 0.6 + 1.2);
-                    if (x2 === 0)
-                        ctx.moveTo(x2, y2);
-                    else
-                        ctx.lineTo(x2, y2);
-                }
-                ctx.strokeStyle = Qt.alpha(accent, 0.06).toString();
-                ctx.lineWidth = 1;
-                ctx.stroke();
+            ShapePath {
+                strokeColor: Qt.alpha(root.accentBlue, 0.12)
+                strokeWidth: 1
+                fillColor: "transparent"
+                capStyle: ShapePath.FlatCap
+                PathPolyline { path: sineWave.wave(5, 4, 1, 0) }
+            }
+            ShapePath {
+                strokeColor: Qt.alpha(root.accentBlue, 0.06)
+                strokeWidth: 1
+                fillColor: "transparent"
+                capStyle: ShapePath.FlatCap
+                PathPolyline { path: sineWave.wave(3.5, 3, 0.6, 1.2) }
             }
         }
 
@@ -363,6 +381,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     text: "GPU"
                     font.family: Config.font
                     font.pixelSize: 12
@@ -373,6 +392,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     text: SystemMonitorService.gpuType.toUpperCase()
                     font.family: Config.font
                     font.pixelSize: 12
@@ -413,6 +433,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     text: SystemMonitorService.gpuUsage + "%"
                     font.family: Config.font
                     font.pixelSize: 13
@@ -424,6 +445,7 @@ QsPopupWindow {
 
                 // GPU temp
                 Text {
+                    textFormat: Text.PlainText
                     text: SystemMonitorService.gpuTemp + "°"
                     font.family: Config.font
                     font.pixelSize: 12
@@ -473,21 +495,10 @@ QsPopupWindow {
                 implicitHeight: 38
                 
                 // Dotted border
-                Canvas {
+                DottedBorder {
                     anchors.fill: parent
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        var r = Config.radius;
-                        ctx.setLineDash([2, 4]);
-                        ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.8).toString();
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                        ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                        ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                        ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                        ctx.stroke();
-                    }
+                    radius: Config.radius
+                    strokeColor: Qt.alpha("#f5f5f0", 0.8)
                 }
                 
 
@@ -499,6 +510,7 @@ QsPopupWindow {
                     spacing: 6
 
                     Text {
+                        textFormat: Text.PlainText
                         text: "↓"
                         font.family: Config.font
                         font.pixelSize: 15
@@ -507,6 +519,7 @@ QsPopupWindow {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: SystemMonitorService.networkDown
                         font.family: Config.font
                         font.pixelSize: 13
@@ -523,21 +536,10 @@ QsPopupWindow {
                 implicitHeight: 38
                 
                 // Dotted border
-                Canvas {
+                DottedBorder {
                     anchors.fill: parent
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        var r = Config.radius;
-                        ctx.setLineDash([2, 4]);
-                        ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.8).toString();
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                        ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                        ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                        ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                        ctx.stroke();
-                    }
+                    radius: Config.radius
+                    strokeColor: Qt.alpha("#f5f5f0", 0.8)
                 }
                 
 
@@ -549,6 +551,7 @@ QsPopupWindow {
                     spacing: 6
 
                     Text {
+                        textFormat: Text.PlainText
                         text: "↑"
                         font.family: Config.font
                         font.pixelSize: 15
@@ -557,6 +560,7 @@ QsPopupWindow {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: SystemMonitorService.networkUp
                         font.family: Config.font
                         font.pixelSize: 13
@@ -569,14 +573,19 @@ QsPopupWindow {
         }
 
         // ==================== THIN RULE ====================
-        Canvas {
+        Shape {
+            id: thinRule
             Layout.fillWidth: true
             Layout.preferredHeight: 1
-            onPaint: {
-                var ctx = getContext("2d");
-                ctx.setLineDash([2, 4]);
-                ctx.strokeStyle = Qt.alpha(Config.textColor, 0.15).toString();
-                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(width, 0); ctx.stroke();
+            ShapePath {
+                strokeColor: Qt.alpha(Config.textColor, 0.15)
+                strokeWidth: 1
+                strokeStyle: ShapePath.DashLine
+                capStyle: ShapePath.FlatCap
+                dashPattern: [2, 4]
+                fillColor: "transparent"
+                startX: 0; startY: 0
+                PathLine { x: thinRule.width; y: 0 }
             }
         }
 
@@ -590,6 +599,7 @@ QsPopupWindow {
                 spacing: 6
 
                 Text {
+                    textFormat: Text.PlainText
                     text: "POWER"
                     font.family: Config.font
                     font.pixelSize: 12
@@ -603,6 +613,7 @@ QsPopupWindow {
 
 
                 Text {
+                    textFormat: Text.PlainText
                     text: root.profileLabel(PowerProfiles.profile)
                     font.family: Config.font
                     font.pixelSize: 12
@@ -622,21 +633,10 @@ QsPopupWindow {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 48
                 
-                Canvas {
+                DottedBorder {
                     anchors.fill: parent
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        var r = Config.radiusLarge;
-                        ctx.setLineDash([2, 4]);
-                        ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.8).toString();
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                        ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                        ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                        ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                        ctx.stroke();
-                    }
+                    radius: Config.radiusLarge
+                    strokeColor: Qt.alpha("#f5f5f0", 0.8)
                 }
 
                 readonly property real slotWidth: (width - 8) / 3
@@ -669,30 +669,33 @@ QsPopupWindow {
 
 
                     
-                    Canvas {
+                    Shape {
+                        id: powerBracket
                         anchors.fill: parent
+                        antialiasing: true
                         property color bracketColor: root.profileColor(root.profileForIndex(root.selectedPowerIndex))
                         Behavior on bracketColor { ColorAnimation { duration: Config.animDuration } }
-                        onBracketColorChanged: requestPaint()
-                        onPaint: {
-                            var ctx = getContext("2d");
-                            ctx.reset();
-                            ctx.strokeStyle = bracketColor.toString();
-                            ctx.lineWidth = 2;
-                            var w = width; var h = height;
-                            var r = Config.radius;
-                            var len = 10; // Bracket arm length
-                            
-                            ctx.beginPath();
-                            // Top left
-                            ctx.moveTo(len, 0); ctx.lineTo(r, 0); ctx.arcTo(0, 0, 0, r, r); ctx.lineTo(0, len);
-                            // Bottom left
-                            ctx.moveTo(0, h - len); ctx.lineTo(0, h - r); ctx.arcTo(0, h, r, h, r); ctx.lineTo(len, h);
-                            // Top right
-                            ctx.moveTo(w - len, 0); ctx.lineTo(w - r, 0); ctx.arcTo(w, 0, w, r, r); ctx.lineTo(w, len);
-                            // Bottom right
-                            ctx.moveTo(w, h - len); ctx.lineTo(w, h - r); ctx.arcTo(w, h, w - r, h, r); ctx.lineTo(w - len, h);
-                            ctx.stroke();
+                        ShapePath {
+                            strokeColor: powerBracket.bracketColor
+                            strokeWidth: 2
+                            capStyle: ShapePath.FlatCap
+                            fillColor: "transparent"
+                            startX: 10; startY: 0
+                            PathLine { x: Config.radius; y: 0 }
+                            PathArc { x: 0; y: Config.radius; radiusX: Config.radius; radiusY: Config.radius; direction: PathArc.Counterclockwise }
+                            PathLine { x: 0; y: 10 }
+                            PathMove { x: 0; y: powerBracket.height - 10 }
+                            PathLine { x: 0; y: powerBracket.height - Config.radius }
+                            PathArc { x: Config.radius; y: powerBracket.height; radiusX: Config.radius; radiusY: Config.radius; direction: PathArc.Counterclockwise }
+                            PathLine { x: 10; y: powerBracket.height }
+                            PathMove { x: powerBracket.width - 10; y: 0 }
+                            PathLine { x: powerBracket.width - Config.radius; y: 0 }
+                            PathArc { x: powerBracket.width; y: Config.radius; radiusX: Config.radius; radiusY: Config.radius }
+                            PathLine { x: powerBracket.width; y: 10 }
+                            PathMove { x: powerBracket.width; y: powerBracket.height - 10 }
+                            PathLine { x: powerBracket.width; y: powerBracket.height - Config.radius }
+                            PathArc { x: powerBracket.width - Config.radius; y: powerBracket.height; radiusX: Config.radius; radiusY: Config.radius }
+                            PathLine { x: powerBracket.width - 10; y: powerBracket.height }
                         }
                     }
                 }
@@ -737,6 +740,7 @@ QsPopupWindow {
                                 spacing: 5
 
                                 Text {
+                                    textFormat: Text.PlainText
                                     text: root.profileIcon(profileItem.profile)
                                     font.family: Config.font
                                     font.pixelSize: Config.fontSizeNormal
@@ -758,6 +762,7 @@ QsPopupWindow {
                                 }
 
                                 Text {
+                                    textFormat: Text.PlainText
                                     text: root.profileLabel(profileItem.profile)
                                     font.family: Config.font
                                     font.pixelSize: 13
@@ -819,6 +824,7 @@ QsPopupWindow {
         onUsageChanged: animatedUsage = usage
 
         Text {
+            textFormat: Text.PlainText
             text: metric.label
             font.family: Config.font
             font.pixelSize: 12
@@ -829,6 +835,7 @@ QsPopupWindow {
         }
 
         Text {
+            textFormat: Text.PlainText
             text: metric.detail
             font.family: Config.font
             font.pixelSize: 12
@@ -862,6 +869,7 @@ QsPopupWindow {
         }
 
         Text {
+            textFormat: Text.PlainText
             text: metric.usage + "%"
             font.family: Config.font
             font.pixelSize: 13

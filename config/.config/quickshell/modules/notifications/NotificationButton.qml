@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import qs.config
 import qs.services
 import "../../components/"
@@ -8,7 +9,7 @@ BarButton {
     id: root
 
     property bool popupLoaded: false
-    readonly property var popupWindow: notificationLoader.item
+    readonly property var popupWindow: notificationLoader.active ? notificationLoader.item : null
 
     function togglePopup() {
         if (popupWindow) {
@@ -28,6 +29,7 @@ BarButton {
     onRightClicked: NotificationService.toggleDnd()
 
     Text {
+        textFormat: Text.PlainText
         id: icon
         anchors.centerIn: parent
         text: {
@@ -63,6 +65,7 @@ BarButton {
         color: "#ff0000"
 
         Text {
+            textFormat: Text.PlainText
             id: badgeText
             anchors.centerIn: parent
             text: NotificationService.count > 99 ? "99+" : NotificationService.count.toString()
@@ -73,13 +76,13 @@ BarButton {
         }
     }
 
-    Loader {
+    LazyLoader {
         id: notificationLoader
-        active: root.popupLoaded
-        asynchronous: true
+        activeAsync: root.popupLoaded
         source: "./NotificationWindow.qml"
 
-        onLoaded: {
+        onActiveChanged: {
+            if (!active) return;
             item.anchorItem = root;
             item.visible = true;
         }

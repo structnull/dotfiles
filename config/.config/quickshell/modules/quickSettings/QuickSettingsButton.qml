@@ -34,7 +34,7 @@ BarButton {
     property bool volumeWheelSuppressingOsd: false
     property real volumePopupX: 0
     property real volumePopupY: 0
-    readonly property var popupWindow: quickSettingsLoader.item
+    readonly property var popupWindow: quickSettingsLoader.active ? quickSettingsLoader.item : null
 
     readonly property real barVolumeValue: AudioService.volumeKnown ? AudioService.volume : 0
     readonly property int barVolumePercent: Math.round(Math.max(0, Math.min(1.5, barVolumeValue)) * 100)
@@ -86,11 +86,17 @@ BarButton {
     onWidthChanged: Qt.callLater(syncOsdAnchor)
     onHeightChanged: Qt.callLater(syncOsdAnchor)
 
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: root.syncOsdAnchor()
+    onHostScreenChanged: Qt.callLater(syncOsdAnchor)
+    onShouldPublishAnchorChanged: Qt.callLater(syncOsdAnchor)
+
+    Connections {
+        target: Hyprland
+        function onFocusedMonitorChanged() { root.syncOsdAnchor(); }
+    }
+
+    Connections {
+        target: OsdService
+        function onAnchorRequested() { root.syncOsdAnchor(); }
     }
 
     RowLayout {
@@ -131,6 +137,7 @@ BarButton {
             Layout.alignment: Qt.AlignVCenter
 
             Text {
+                textFormat: Text.PlainText
                 id: outputIconCell
                 text: iconsLayout.outputIcon()
                 font.family: Config.font
@@ -157,6 +164,7 @@ BarButton {
             }
 
             Text {
+                textFormat: Text.PlainText
                 text: "•"
                 font.family: Config.font
                 font.pixelSize: Config.fontSizeSmall
@@ -164,6 +172,7 @@ BarButton {
             }
 
             Text {
+                textFormat: Text.PlainText
                 text: iconsLayout.sourceIcon()
                 font.family: Config.font
                 font.pixelSize: Config.fontSizeNormal
@@ -179,6 +188,7 @@ BarButton {
         }
 
         Text {
+            textFormat: Text.PlainText
             visible: CaffeineService.enabled
             text: ""
             font.family: Config.font
@@ -195,6 +205,7 @@ BarButton {
         }
 
         Text {
+            textFormat: Text.PlainText
             visible: GrayscaleService.enabled
             text: "󰹊"
             font.family: Config.font
@@ -215,13 +226,13 @@ BarButton {
         }
     }
 
-    Loader {
+    LazyLoader {
         id: quickSettingsLoader
-        active: root.popupLoaded
-        asynchronous: true
+        activeAsync: root.popupLoaded
         source: "./QuickSettingsWindow.qml"
 
-        onLoaded: {
+        onActiveChanged: {
+            if (!active) return;
             item.anchorItem = root;
             item.visible = true;
         }
@@ -310,6 +321,7 @@ BarButton {
             }
 
             Text {
+                textFormat: Text.PlainText
                 id: percentText
                 anchors.centerIn: parent
                 text: "[" + root.barVolumePercent + "%]"

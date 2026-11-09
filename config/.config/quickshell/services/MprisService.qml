@@ -14,8 +14,15 @@ Singleton {
     readonly property bool hasPlayer: activePlayer !== null
     readonly property string activePlayerKey: playerKey(activePlayer)
     property real sampledRawPosition: 0
-    property double sampledWallClockMs: 0
     property int playbackTick: 0
+    property int progressConsumers: 0
+
+    onProgressConsumersChanged: {
+        // The monotonic sample keeps advancing while hidden; publish it before
+        // a newly visible widget paints rather than ticking with no consumers.
+        if (progressConsumers > 0)
+            playbackTick++;
+    }
 
     readonly property string title: {
         const preferred = ((activePlayer?.trackTitle ?? "") + "").trim();
@@ -91,10 +98,8 @@ Singleton {
             return 0;
 
         let next = sampledRawPosition;
-        if (isPlaying && sampledWallClockMs > 0) {
-            const elapsedMs = Math.max(0, Date.now() - sampledWallClockMs);
-            next += elapsedMs / 1000.0;
-        }
+        if (isPlaying)
+            next += positionClock.elapsed();
 
         if (rawLength > 0)
             next = Math.min(rawLength, next);
@@ -131,10 +136,12 @@ Singleton {
     onIsPlayingChanged: syncPositionSample(rawPosition)
     onHasProgressChanged: syncPositionSample(rawPosition)
 
+    ElapsedTimer { id: positionClock }
+
     Timer {
-        interval: 80
+        interval: 250
         repeat: true
-        running: root.hasPlayer && root.hasProgress && root.isPlaying
+        running: root.progressConsumers > 0 && root.hasPlayer && root.hasProgress && root.isPlaying
         onTriggered: root.playbackTick++
     }
 
@@ -221,7 +228,8 @@ Singleton {
         const fallback = Math.max(0, rawPosition);
         const candidate = Math.max(0, (candidateRawPosition ?? fallback));
         sampledRawPosition = candidate;
-        sampledWallClockMs = Date.now();
+        positionClock.restart();
+        playbackTick++;
     }
 
     function updateActivePlayer() {

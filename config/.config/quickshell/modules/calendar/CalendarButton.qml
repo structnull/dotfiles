@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import qs.config
 import qs.services
 import "../../components/"
@@ -8,7 +9,7 @@ BarButton {
     id: root
 
     property bool popupLoaded: false
-    readonly property var popupWindow: calendarLoader.item
+    readonly property var popupWindow: calendarLoader.active ? calendarLoader.item : null
 
     function togglePopup() {
         if (popupWindow) {
@@ -27,6 +28,7 @@ BarButton {
     onClicked: togglePopup()
 
     Text {
+        textFormat: Text.PlainText
         id: clockText
         anchors.centerIn: parent
         text: TimeService.format("hh:mm AP")
@@ -40,13 +42,13 @@ BarButton {
         }
     }
 
-    Loader {
+    LazyLoader {
         id: calendarLoader
-        active: root.popupLoaded
-        asynchronous: true
+        activeAsync: root.popupLoaded
         source: "./CalendarWindow.qml"
 
-        onLoaded: {
+        onActiveChanged: {
+            if (!active) return;
             item.anchorItem = root;
             item.visible = true;
         }

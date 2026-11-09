@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import "../../components/"
@@ -8,7 +9,7 @@ BarButton {
     id: root
 
     property bool popupLoaded: false
-    readonly property var popupWindow: monitorLoader.item
+    readonly property var popupWindow: monitorLoader.active ? monitorLoader.item : null
 
     function togglePopup() {
         if (popupWindow) {
@@ -32,6 +33,7 @@ BarButton {
         spacing: Config.spacing
 
         Text {
+            textFormat: Text.PlainText
             text: "󰍛"
             font.family: Config.font
             font.pixelSize: Config.fontSizeLarge
@@ -43,13 +45,13 @@ BarButton {
         }
     }
 
-    Loader {
+    LazyLoader {
         id: monitorLoader
-        active: root.popupLoaded
-        asynchronous: true
+        activeAsync: root.popupLoaded
         source: "./SystemMonitorWindow.qml"
 
-        onLoaded: {
+        onActiveChanged: {
+            if (!active) return;
             item.anchorItem = root;
             item.visible = true;
         }

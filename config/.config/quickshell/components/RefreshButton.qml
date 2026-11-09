@@ -31,6 +31,7 @@ Rectangle {
 
     // Refresh Icon (visible when NOT loading)
     Text {
+        textFormat: Text.PlainText
         anchors.centerIn: parent
         text: "󰑐"
         font.family: Config.font

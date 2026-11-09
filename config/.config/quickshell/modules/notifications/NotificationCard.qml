@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 
 import qs.config
@@ -39,8 +40,15 @@ Item {
     readonly property bool showPopup: wrapper ? wrapper.popup : false
     readonly property string timeStr: wrapper ? wrapper.timeStr : ""
 
-    // Timer progress (0.0 to 1.0) - comes directly from the wrapper
-    readonly property real progress: wrapper ? wrapper.progress : 0.0
+    // Keep the original 50 ms visual steps. A continuous property animation
+    // otherwise repaints this separate window at the display's refresh rate.
+    // The service still owns the native countdown; history never subscribes.
+    readonly property real progress: {
+        if (!popupMode || !wrapper)
+            return 0;
+        const steps = Math.max(1, wrapper.totalTime / 50);
+        return Math.floor(wrapper.progress * steps) / steps;
+    }
 
     // Check if paused (hover)
     readonly property bool isPaused: wrapper && wrapper.isPaused
@@ -178,7 +186,7 @@ Item {
 
                         onStatusChanged: {
                             if (status === Image.Error && source !== "") {
-                                source = "image://icon/dialog-information";
+                                source = Quickshell.iconPath("dialog-information");
                             }
                         }
 
@@ -187,6 +195,7 @@ Item {
 
                     // Fallback icon if there is no image
                     Text {
+                        textFormat: Text.PlainText
                         visible: notifImage.status === Image.Error || (notifImage.source + "") === ""
                         anchors.centerIn: parent
                         text: "󰍡"
@@ -218,6 +227,7 @@ Item {
                         }
 
                         Text {
+                            textFormat: Text.PlainText
                             text: root.appName
                             color: root.isUrgent ? Config.errorColor : Config.accentColor
                             font.family: Config.font
@@ -229,6 +239,7 @@ Item {
 
                     // Time (only in history)
                     Text {
+                        textFormat: Text.PlainText
                         visible: !root.popupMode && root.timeStr !== ""
                         text: root.timeStr
                         color: Config.subtextColor
@@ -315,6 +326,7 @@ Item {
         }
 
         Text {
+            textFormat: Text.PlainText
             anchors.centerIn: parent
             text: "󰅖"
             font.family: Config.font

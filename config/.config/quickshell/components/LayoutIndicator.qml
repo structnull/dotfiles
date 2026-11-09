@@ -44,6 +44,7 @@ Item {
             opacity: LayoutService.visible ? 1 : 0
 
             Text {
+                textFormat: Text.PlainText
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.current.symbol
                 color: Config.accentColor
@@ -53,6 +54,7 @@ Item {
             }
 
             Text {
+                textFormat: Text.PlainText
                 anchors.verticalCenter: parent.verticalCenter
                 text: root.current.label
                 color: Config.textColor

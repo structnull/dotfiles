@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import qs.services
@@ -77,7 +78,7 @@ Item {
             Layout.fillHeight: true
             Layout.margins: 10
 
-            model: BluetoothService.isPowered ? BluetoothService.devicesList : []
+            model: ScriptModel { values: BluetoothService.isPowered ? BluetoothService.devicesList : [] }
 
             delegate: DeviceCard {
                 required property var modelData
@@ -157,6 +158,7 @@ Item {
                     color: Config.surface1Color
 
                     Text {
+                        textFormat: Text.PlainText
                         anchors.centerIn: parent
                         text: {
                             if (!BluetoothService.isPowered)
@@ -173,6 +175,7 @@ Item {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: {
                         if (!BluetoothService.isPowered)
@@ -188,6 +191,7 @@ Item {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: {
                         if (!BluetoothService.isPowered)

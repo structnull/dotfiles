@@ -5,6 +5,7 @@ import Quickshell
 import Quickshell.Io
 import qs.services
 import "./modules/bar/"
+import "./modules/osd/"
 
 ShellRoot {
     id: root
@@ -168,30 +169,26 @@ ShellRoot {
     // Bar - always active (main component)
     Bar {}
     // Notifications
-    Loader {
+    LazyLoader {
         id: notificationLoader
         active: NotificationService.activePopupCount > 0 || NotificationService.popups.length > 0
         source: "./modules/notifications/NotificationOverlay.qml"
     }
     // Power Overlay
-    Loader {
+    LazyLoader {
         id: powerLoader
         active: PowerService.overlayVisible
         source: "./modules/power/PowerOverlay.qml"
     }
     // OSD
-    Loader {
-        active: true
-        source: "./modules/osd/OsdOverlay.qml"
-    }
+    OsdOverlay {}
     // Wallpaper Selector
-    Loader {
-        active: WallpaperService.selectorVisible
-        asynchronous: true
+    LazyLoader {
+        activeAsync: WallpaperService.selectorVisible
         source: "./modules/wallpaper/WallpaperSelector.qml"
     }
     // Polkit Authentication
-    Loader {
+    LazyLoader {
         active: PolkitService.isActive
         source: "./modules/polkit/PolkitOverlay.qml"
     }

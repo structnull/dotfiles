@@ -4,6 +4,7 @@ import qs.services
 import qs.config
 
 Text {
+    textFormat: Text.PlainText
     id: root
 
     font.family: Config.font

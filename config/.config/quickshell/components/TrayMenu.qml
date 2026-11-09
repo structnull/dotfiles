@@ -180,6 +180,7 @@ PanelWindow {
                     anchors.margins: 5
                     spacing: 5
                     Text {
+                        textFormat: Text.PlainText
                         text: "⬅ Back"
                         color: Config.accentColor
                         font.family: Config.font
@@ -274,6 +275,7 @@ PanelWindow {
 
                         // Text
                         Text {
+                            textFormat: Text.PlainText
                             text: {
                                 var txt = modelData.text || modelData.title || "";
                                 return txt.replace(/&/g, "").replace(/_/g, "");
@@ -287,6 +289,7 @@ PanelWindow {
 
                         // Submenu Arrow
                         Text {
+                            textFormat: Text.PlainText
                             visible: parent.parent.hasSubMenu
                             text: "›"
                             color: Config.subtextColor

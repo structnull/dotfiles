@@ -95,6 +95,7 @@ Item {
         }
 
         Text {
+            textFormat: Text.PlainText
             text: root.windowTitle !== "" ? "" : ""
             visible: !root.showingLayout
             color: Config.textColor
@@ -117,6 +118,7 @@ Item {
         }
 
         Text {
+            textFormat: Text.PlainText
             id: titleText
             text: root.windowTitle
             visible: !root.showingLayout

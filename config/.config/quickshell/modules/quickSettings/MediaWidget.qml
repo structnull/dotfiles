@@ -1,8 +1,10 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import qs.services
+import "../../components/"
 
 Rectangle {
     id: root
@@ -16,6 +18,38 @@ Rectangle {
     radius: 4
     clip: true
     color: "transparent"
+
+    readonly property bool progressVisible: visible && (QsWindow.window?.visible ?? false)
+    property bool _progressRegistered: false
+
+    function syncProgressConsumer() {
+        if (_progressRegistered === progressVisible)
+            return;
+        if (progressVisible) {
+            // Publish the hidden interval before enabling progress transitions,
+            // so opening the popup starts at the current position immediately.
+            MprisService.progressConsumers++;
+            if (progressWave)
+                progressWave.syncProgress();
+            _progressRegistered = true;
+        } else {
+            _progressRegistered = false;
+            MprisService.progressConsumers--;
+        }
+    }
+
+    onProgressVisibleChanged: {
+        syncProgressConsumer();
+        if (!progressVisible && swapAnim && contentWrap) {
+            swapAnim.stop();
+            contentWrap.opacity = 1;
+        }
+    }
+    Component.onCompleted: syncProgressConsumer()
+    Component.onDestruction: {
+        if (_progressRegistered)
+            MprisService.progressConsumers--;
+    }
 
     property string transitionKey: MprisService.trackKey
     property bool sourceDropdownOpen: false
@@ -38,7 +72,10 @@ Rectangle {
             progressWave.visualProgress = MprisService.progress;
         if (swapAnim.running)
             swapAnim.stop();
-        swapAnim.start();
+        if (progressVisible)
+            swapAnim.start();
+        else if (contentWrap)
+            contentWrap.opacity = 1;
     }
 
     SequentialAnimation {
@@ -60,46 +97,9 @@ Rectangle {
     }
 
     // ====== DOTTED WIREFRAME BORDER ======
-    Canvas {
-        id: mediaBorder
+    WireframeBorder {
         anchors.fill: parent
-        antialiasing: true
-
-        property color strokeColor: Qt.alpha(Config.textColor, 0.2)
-
-        onStrokeColorChanged: requestPaint()
-        onWidthChanged: requestPaint()
-        onHeightChanged: requestPaint()
-
-        onPaint: {
-            var ctx = getContext("2d");
-            ctx.reset();
-            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
-            var r = 10; // Chamfer size
-            var cl = 8; // Corner extension length
-            
-            // Dotted edges
-            ctx.beginPath();
-            ctx.moveTo(x + r + cl, y); ctx.lineTo(x + w - r - cl, y);
-            ctx.moveTo(x + w, y + r + cl); ctx.lineTo(x + w, y + h - r - cl);
-            ctx.moveTo(x + w - r - cl, y + h); ctx.lineTo(x + r + cl, y + h);
-            ctx.moveTo(x, y + h - r - cl); ctx.lineTo(x, y + r + cl);
-            ctx.setLineDash([4, 4]);
-            ctx.strokeStyle = strokeColor.toString();
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            
-            // Solid corners
-            ctx.beginPath();
-            ctx.moveTo(x, y + r + cl); ctx.lineTo(x, y + r); ctx.lineTo(x + r, y); ctx.lineTo(x + r + cl, y);
-            ctx.moveTo(x + w - r - cl, y); ctx.lineTo(x + w - r, y); ctx.lineTo(x + w, y + r); ctx.lineTo(x + w, y + r + cl);
-            ctx.moveTo(x + w, y + h - r - cl); ctx.lineTo(x + w, y + h - r); ctx.lineTo(x + w - r, y + h); ctx.lineTo(x + w - r - cl, y + h);
-            ctx.moveTo(x + r + cl, y + h); ctx.lineTo(x + r, y + h); ctx.lineTo(x, y + h - r); ctx.lineTo(x, y + h - r - cl);
-            ctx.setLineDash([]);
-            ctx.strokeStyle = strokeColor.toString();
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
+        strokeColor: Qt.alpha(Config.textColor, 0.2)
     }
 
     Item {
@@ -132,6 +132,7 @@ Rectangle {
                     cache: true
                     smooth: true
                     sourceSize: Qt.size(320, 320)
+                    mipmap: false
                     visible: status === Image.Ready
                 }
 
@@ -153,6 +154,7 @@ Rectangle {
 
                 // Fallback icon
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     visible: !coverImage.visible
                     text: ""
@@ -162,29 +164,11 @@ Rectangle {
                 }
 
                 // Dotted frame around cover
-                Canvas {
+                WireframeBorder {
                     anchors.fill: parent
-                    antialiasing: true
-                        onPaint: {
-                            var ctx = getContext("2d");
-                            ctx.reset();
-                            ctx.setLineDash([4, 3]);
-                            ctx.strokeStyle = Qt.alpha(Config.textColor, 0.2).toString();
-                            ctx.lineWidth = 1;
-                            var r = 10; // Chamfer size for album cover
-                            var x = 0.5, y = 0.5, w = width - 1, h = height - 1;
-                            ctx.beginPath();
-                            ctx.moveTo(x + r, y);
-                            ctx.lineTo(x + w - r, y);
-                            ctx.lineTo(x + w, y + r);
-                            ctx.lineTo(x + w, y + h - r);
-                            ctx.lineTo(x + w - r, y + h);
-                            ctx.lineTo(x + r, y + h);
-                            ctx.lineTo(x, y + h - r);
-                            ctx.lineTo(x, y + r);
-                            ctx.closePath();
-                            ctx.stroke();
-                        }
+                    strokeColor: Qt.alpha(Config.textColor, 0.2)
+                    solidCorners: false
+                    dashPattern: [4, 3]
                 }
             }
 
@@ -203,6 +187,7 @@ Rectangle {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: MprisService.isPlaying ? "▸ PLAYING" : "‖ PAUSED"
                         font.family: Config.font
                         font.pixelSize: 9
@@ -221,6 +206,7 @@ Rectangle {
 
                 // Title
                 Text {
+                    textFormat: Text.PlainText
                     Layout.fillWidth: true
                     text: MprisService.title
                     color: Config.textColor
@@ -232,6 +218,7 @@ Rectangle {
 
                 // Artist
                 Text {
+                    textFormat: Text.PlainText
                     Layout.fillWidth: true
                     text: MprisService.album !== "" ? (MprisService.artist + " · " + MprisService.album) : MprisService.artist
                     color: Config.subtextColor
@@ -279,6 +266,7 @@ Rectangle {
                             }
 
                             Text {
+                                textFormat: Text.PlainText
                                 text: "Source: " + (MprisService.playerIdentity !== "" ? MprisService.playerIdentity : "Media")
                                 color: Config.subtextColor
                                 font.family: Config.font
@@ -288,6 +276,7 @@ Rectangle {
                             }
 
                             Text {
+                                textFormat: Text.PlainText
                                 text: sourceDropdownOpen ? "▴" : "▾"
                                 color: Config.subtextColor
                                 font.family: Config.font
@@ -343,7 +332,7 @@ Rectangle {
                             spacing: 4
 
                             Repeater {
-                                model: MprisService.orderedPlayers
+                                model: ScriptModel { values: MprisService.orderedPlayers }
 
                                 Rectangle {
                                     required property var modelData
@@ -374,6 +363,7 @@ Rectangle {
                                         }
 
                                         Text {
+                                            textFormat: Text.PlainText
                                             text: displayName
                                             font.family: Config.font
                                             font.pixelSize: Config.fontSizeSmall
@@ -384,6 +374,7 @@ Rectangle {
                                         }
 
                                         Text {
+                                            textFormat: Text.PlainText
                                             text: active ? "" : (playing ? "" : "")
                                             font.family: Config.font
                                             font.pixelSize: Config.fontSizeSmall
@@ -430,7 +421,7 @@ Rectangle {
                     }
 
                     Behavior on visualProgress {
-                        enabled: !seekArea.pressed
+                        enabled: !seekArea.pressed && root._progressRegistered
                         NumberAnimation {
                             duration: 180
                             easing.type: Easing.OutCubic
@@ -509,6 +500,7 @@ Rectangle {
                     spacing: 8
 
                     Text {
+                        textFormat: Text.PlainText
                         text: MprisService.elapsedText
                         color: Config.mutedColor
                         font.family: Config.font
@@ -551,6 +543,7 @@ Rectangle {
                         }
 
                         Text {
+                            textFormat: Text.PlainText
                             anchors.centerIn: parent
                             text: MprisService.isPlaying ? "" : ""
                             font.family: Config.font
@@ -589,6 +582,7 @@ Rectangle {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: MprisService.remainingText
                         color: Config.mutedColor
                         font.family: Config.font
@@ -628,6 +622,7 @@ Rectangle {
         }
 
         Text {
+            textFormat: Text.PlainText
             anchors.centerIn: parent
             text: btn.icon
             font.family: Config.font

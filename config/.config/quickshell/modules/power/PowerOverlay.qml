@@ -109,6 +109,7 @@ PanelWindow {
             spacing: 20
 
             Text {
+                textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
                 text: "What would you like to do?"
                 font.family: Config.font
@@ -178,6 +179,7 @@ PanelWindow {
                                 color: actionBtn.isSelected ? Qt.alpha(actionBtn.modelData.color, 0.2) : Config.surface0Color
 
                                 Text {
+                                    textFormat: Text.PlainText
                                     anchors.centerIn: parent
                                     text: actionBtn.modelData.icon
                                     font.family: Config.font
@@ -187,6 +189,7 @@ PanelWindow {
                             }
 
                             Text {
+                                textFormat: Text.PlainText
                                 Layout.alignment: Qt.AlignHCenter
                                 text: actionBtn.modelData.label
                                 font.family: Config.font
@@ -206,6 +209,7 @@ PanelWindow {
                             color: Config.surface2Color
 
                             Text {
+                                textFormat: Text.PlainText
                                 anchors.centerIn: parent
                                 text: String(actionBtn.index + 1)
                                 font.family: Config.font
@@ -265,6 +269,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
 
                             Text {
+                                textFormat: Text.PlainText
                                 id: keyText
                                 anchors.centerIn: parent
                                 text: modelData.key
@@ -276,6 +281,7 @@ PanelWindow {
                         }
 
                         Text {
+                            textFormat: Text.PlainText
                             text: modelData.label
                             font.family: Config.font
                             font.pixelSize: 10

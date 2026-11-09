@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import qs.config
 import qs.services
@@ -8,12 +9,8 @@ import "../../components/"
 BarButton {
     id: root
 
-    readonly property color okColor: "#7ee2a8"
-    readonly property color lowColor: "#ff5f57"
-    readonly property color pluggedColor: "#8ab4ff"
-
     property bool popupLoaded: false
-    readonly property var popupWindow: detailsLoader.item
+    readonly property var popupWindow: detailsLoader.active ? detailsLoader.item : null
 
     function togglePopup() {
         if (popupWindow) {
@@ -31,6 +28,19 @@ BarButton {
     visible: BatteryService.hasBattery || BatteryService.isPlugged
     contentItem: content
     onClicked: togglePopup()
+    activeFocusOnTab: true
+    border.width: activeFocus || highlighted ? 1 : 0
+    border.color: activeFocus ? Config.accentColor : Qt.alpha(Config.textColor, 0.26)
+    Accessible.role: Accessible.Button
+    Accessible.name: "Battery, " + (BatteryService.hasBattery ? BatteryService.percentage + " percent, " : "")
+        + BatteryService.statusText
+    Accessible.onPressAction: togglePopup()
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
+            togglePopup();
+            event.accepted = true;
+        }
+    }
 
     RowLayout {
         id: content
@@ -38,22 +48,24 @@ BarButton {
         spacing: 4
 
         Text {
+            textFormat: Text.PlainText
             text: BatteryService.getBatteryIcon()
             font.family: Config.font
             font.pixelSize: Config.fontSizeNormal + 1
             font.bold: true
             color: {
                 if (BatteryService.isCharging)
-                    return root.okColor;
+                    return Config.accentColor;
                 if (BatteryService.isLow)
-                    return root.lowColor;
+                    return Config.errorColor;
                 if (BatteryService.isPlugged)
-                    return root.pluggedColor;
+                    return Config.accentColor;
                 return Config.textColor;
             }
         }
 
         Text {
+            textFormat: Text.PlainText
             visible: BatteryService.hasBattery
             text: BatteryService.percentage + "%"
             font.family: Config.font
@@ -63,15 +75,16 @@ BarButton {
         }
     }
 
-    Loader {
+    LazyLoader {
         id: detailsLoader
-        active: root.popupLoaded
-        asynchronous: true
+        activeAsync: root.popupLoaded
         source: "./BatteryStatusWindow.qml"
 
-        onLoaded: {
-            item.anchorItem = root;
-            item.visible = true;
+        onActiveChanged: {
+            const popup = item as BatteryStatusWindow;
+            if (!active || !popup) return;
+            popup.anchorItem = root;
+            popup.visible = true;
         }
     }
 

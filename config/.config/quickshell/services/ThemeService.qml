@@ -13,7 +13,7 @@ Singleton {
     // =========================================================================
 
     // Current scheme mode: "dark" or "light"
-    property string mode: "dark"
+    property string mode: StateService.get("theme.mode", "dark")
     readonly property bool isDarkMode: mode === "dark"
 
     // Resolved color palette for the active mode
@@ -86,9 +86,12 @@ Singleton {
 
     // --- File Watcher ---
     FileView {
-        id: _colorFileWatcher
+        id: colorFile
         path: root._colorsPath
         watchChanges: true
+        blockLoading: true
+        printErrors: false
+        onLoaded: root._parseColors()
 
         onFileChanged: _reloadDebounce.restart()
     }
@@ -96,43 +99,19 @@ Singleton {
     Timer {
         id: _reloadDebounce
         interval: 200
-        onTriggered: {
-            if (!_loadProc.running)
-                root._loadColors();
-        }
+        onTriggered: root._loadColors()
     }
 
-    // --- Load Process (reads JSON via cat, same pattern as StateService) ---
     function _loadColors() {
-        _loadProc.running = true;
+        colorFile.reload();
     }
 
-    Process {
-        id: _loadProc
-        command: ["cat", root._colorsPath]
-
-        property string buffer: ""
-        stdout: SplitParser {
-            onRead: data => _loadProc.buffer += data
-        }
-
-        onExited: (exitCode, exitStatus) => {
-            if (exitCode !== 0) {
-                console.warn("[ThemeService] No colors.json found, using fallbacks");
-                root._loaded = false;
-                _loadProc.buffer = "";
-                return;
-            }
-
-            try {
-                const parsed = JSON.parse(_loadProc.buffer.trim());
-                root._palette = parsed;
-                root._loaded = true;
-            } catch (e) {
-                console.error("[ThemeService] JSON parse error:", e);
-                root._loaded = false;
-            }
-            _loadProc.buffer = "";
+    function _parseColors() {
+        try {
+            _palette = JSON.parse(colorFile.text());
+            _loaded = true;
+        } catch (error) {
+            _loaded = false;
         }
     }
 

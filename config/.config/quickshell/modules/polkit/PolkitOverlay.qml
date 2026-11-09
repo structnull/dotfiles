@@ -203,6 +203,7 @@ PanelWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     text: root.showSuccess ? "󰄬" : "󰌾"
                     font.family: Config.font
@@ -217,6 +218,7 @@ PanelWindow {
 
             // ── Title ────────────────────────────────────────────────
             Text {
+                textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
                 text: root.showSuccess ? "Authentication Successful" : "Authentication Required"
                 font.family: Config.font
@@ -231,6 +233,7 @@ PanelWindow {
 
             // ── Message ──────────────────────────────────────────────
             Text {
+                textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -244,6 +247,7 @@ PanelWindow {
 
             // ── Action ID ────────────────────────────────────────────
             Text {
+                textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -258,6 +262,7 @@ PanelWindow {
 
             // ── Supplementary message ────────────────────────────────
             Text {
+                textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignHCenter
@@ -277,6 +282,7 @@ PanelWindow {
 
                 // Prompt label
                 Text {
+                    textFormat: Text.PlainText
                     text: root.flow ? (root.flow.inputPrompt ?? "Password:") : "Password:"
                     font.family: Config.font
                     font.pixelSize: Config.fontSizeSmall
@@ -330,6 +336,7 @@ PanelWindow {
 
                     // Placeholder
                     Text {
+                        textFormat: Text.PlainText
                         anchors {
                             left: parent.left
                             leftMargin: 12
@@ -367,6 +374,7 @@ PanelWindow {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         anchors.centerIn: parent
                         text: "Cancel"
                         font.family: Config.font
@@ -404,6 +412,7 @@ PanelWindow {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         anchors.centerIn: parent
                         text: "Authenticate"
                         font.family: Config.font
@@ -445,6 +454,7 @@ PanelWindow {
                             anchors.verticalCenter: parent.verticalCenter
 
                             Text {
+                                textFormat: Text.PlainText
                                 id: hintKeyText
                                 anchors.centerIn: parent
                                 text: modelData.key
@@ -456,6 +466,7 @@ PanelWindow {
                         }
 
                         Text {
+                            textFormat: Text.PlainText
                             text: modelData.label
                             font.family: Config.font
                             font.pixelSize: 10

@@ -18,6 +18,7 @@ Singleton {
     property real anchorX: -1
     property real anchorY: -1
     property bool suppressed: false
+    signal anchorRequested
 
     // ========================================================================
     // HIDE TIMER
@@ -36,6 +37,7 @@ Singleton {
     function showVolume(vol: real, isMuted: bool) {
         if (suppressed)
             return;
+        anchorRequested();
         root.type = "volume";
         root.value = Math.max(0, Math.min(1.5, vol));
         root.muted = isMuted;
@@ -46,6 +48,7 @@ Singleton {
     function showBrightness(brightness: real) {
         if (suppressed)
             return;
+        anchorRequested();
         root.type = "brightness";
         root.value = Math.max(0.05, Math.min(1, brightness));
         root.muted = false;

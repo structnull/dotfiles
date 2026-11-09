@@ -31,6 +31,7 @@ Item {
 
         // --- Highlight Icon ---
         Text {
+            textFormat: Text.PlainText
             text: ""
             font.family: Config.font
             font.pixelSize: 48
@@ -44,6 +45,7 @@ Item {
             spacing: 5
 
             Text {
+                textFormat: Text.PlainText
                 text: "Password Required"
                 color: Config.subtextColor
                 font.pixelSize: Config.fontSizeNormal
@@ -52,6 +54,7 @@ Item {
             }
 
             Text {
+                textFormat: Text.PlainText
                 text: root.targetSsid
                 color: Config.textColor
                 font.bold: true
@@ -97,6 +100,7 @@ Item {
 
             // Show/Hide Password Button (Eye)
             Text {
+                textFormat: Text.PlainText
                 id: eyeIcon
                 anchors.right: parent.right
                 anchors.rightMargin: 10

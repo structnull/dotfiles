@@ -30,6 +30,23 @@ Singleton {
         }
     }
 
+    Connections {
+        target: Pipewire.nodes
+        function onValuesChanged() { Qt.callLater(root.rebuildDeviceLists); }
+    }
+
+    Instantiator {
+        model: ScriptModel {
+            values: Pipewire.nodes.values.filter(node => !node.isStream && node.audio)
+        }
+        delegate: Connections {
+            required property var modelData
+            target: modelData
+            function onPropertiesChanged() { Qt.callLater(root.rebuildDeviceLists); }
+            function onReadyChanged() { Qt.callLater(root.rebuildDeviceLists); }
+        }
+    }
+
     readonly property bool sinkReady: sink !== null && sink.audio !== null
     readonly property bool sourceReady: source !== null && source.audio !== null
 
@@ -92,6 +109,7 @@ Singleton {
     }
     property string outputDeviceType: "speaker"
 
+    property int audioPageConsumers: 0
     property var outputDevices: []
     property var inputDevices: []
     property string switchingOutputName: ""
@@ -437,8 +455,10 @@ Singleton {
         // the last known state set by pactl. If we have no port data yet, we leave it empty.
         // (Port enumeration has no native Pipewire equivalent in Quickshell.)
 
-        outputDevices = outputs;
-        inputDevices = finalInputs;
+        if (JSON.stringify(outputDevices) !== JSON.stringify(outputs))
+            outputDevices = outputs;
+        if (JSON.stringify(inputDevices) !== JSON.stringify(finalInputs))
+            inputDevices = finalInputs;
     }
 
     function refreshOutputType() {
@@ -653,9 +673,9 @@ Singleton {
     // through the PwNode binding layer. This timer catches those edge cases.
     Timer {
         id: outputTypeRefreshTimer
-        interval: 5000
+        interval: 30000
         repeat: true
-        running: true
+        running: root.audioPageConsumers > 0
         onTriggered: {
             root.refreshPortHintFromProperties();
             root.rebuildDeviceLists();

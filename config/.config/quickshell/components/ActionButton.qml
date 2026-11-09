@@ -43,6 +43,7 @@ Rectangle {
         spacing: 6
 
         Text {
+            textFormat: Text.PlainText
             visible: root.icon !== ""
             text: root.icon
             font.family: Config.font
@@ -51,6 +52,7 @@ Rectangle {
         }
 
         Text {
+            textFormat: Text.PlainText
             visible: root.text !== ""
             text: root.text
             font.family: Config.font

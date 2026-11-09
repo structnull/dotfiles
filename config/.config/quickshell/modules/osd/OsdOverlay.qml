@@ -200,6 +200,7 @@ Scope {
 
                     // Inline percentage readout — bracket style
                     Text {
+                        textFormat: Text.PlainText
                         Layout.alignment: Qt.AlignVCenter
                         text: {
                             var pct;

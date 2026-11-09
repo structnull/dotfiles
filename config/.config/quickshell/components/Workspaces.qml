@@ -107,7 +107,8 @@ Item {
             ids.push(activeId);
 
         ids.sort((a, b) => a - b);
-        visibleWorkspaceIds = ids;
+        if (ids.length !== visibleWorkspaceIds.length || ids.some((id, index) => id !== visibleWorkspaceIds[index]))
+            visibleWorkspaceIds = ids;
     }
 
     Component.onCompleted: updateWorkspaceModel()
@@ -127,12 +128,16 @@ Item {
         function onRawEvent(event) {
             if (!event)
                 return;
-            if (event.name === "workspace") {
+            switch (event.name) {
+            case "workspace":
+            case "createworkspace":
+            case "destroyworkspace":
+            case "movewindow":
+            case "openwindow":
+            case "closewindow":
                 workspaceUpdateTimer.restart();
+                break;
             }
-            const refreshEvents = ["createworkspace", "destroyworkspace", "movewindow", "openwindow", "closewindow"];
-            if (refreshEvents.includes(event.name))
-                workspaceUpdateTimer.restart();
         }
     }
 
@@ -159,7 +164,7 @@ Item {
                 spacing: root.itemSpacing
 
                 Repeater {
-                    model: root.visibleWorkspaceIds
+                    model: ScriptModel { values: root.visibleWorkspaceIds }
                     delegate: Item {
                         id: workspaceItem
                         required property var modelData
@@ -171,6 +176,7 @@ Item {
                         opacity: !isActive ? (workspaceHover.hovered ? 0.8 : 1.0) : 1
 
                         Text {
+                            textFormat: Text.PlainText
                             anchors.centerIn: parent
                             text: root.toRoman(workspaceItem.displayId)
                             font.family: Config.font

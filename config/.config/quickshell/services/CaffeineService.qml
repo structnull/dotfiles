@@ -3,7 +3,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import qs.services
 
 Singleton {
@@ -23,9 +22,4 @@ Singleton {
         StateService.set("caffeine.enabled", enabled);
     }
 
-    Process {
-        id: idleInhibitProc
-        command: ["systemd-inhibit", "--what=idle", "--mode=block", "--who=quickshell", "--why=Caffeine mode", "sleep", "infinity"]
-        running: root.enabled
-    }
 }

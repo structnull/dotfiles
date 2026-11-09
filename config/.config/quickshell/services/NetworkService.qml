@@ -12,6 +12,54 @@ Singleton {
 
     property var accessPoints: []
     property string connectingSsid: ""
+    property int settingsWindows: 0
+    property bool scanRequested: false
+    property var _scanDevice: null
+
+    function acquireSettingsWindow() {
+        settingsWindows++;
+        _syncScanner();
+        if (settingsWindows === 1)
+            _rebuildAccessPoints();
+    }
+
+    function releaseSettingsWindow() {
+        settingsWindows = Math.max(0, settingsWindows - 1);
+        // Keep the user's scan intent for the next popup session, but turn
+        // the native repeating scanner off while all windows are hidden.
+        _syncScanner();
+    }
+
+    function _syncScanner() {
+        // Unknown networks disappear from QS's model when scanning stops.
+        // Keep them available until an in-flight connection succeeds or fails.
+        const needed = settingsWindows > 0 || connectingSsid !== "";
+        const nextDevice = scanRequested && needed && wifiEnabled && wifiHardwareEnabled ? liveWifiDevice : null;
+        if (Qt.isQtObject(_scanDevice) && _scanDevice !== nextDevice)
+            _scanDevice.scannerEnabled = false;
+        _scanDevice = nextDevice;
+        if (_scanDevice)
+            _scanDevice.scannerEnabled = true;
+        else if (liveWifiDevice && (!needed || !wifiEnabled || !wifiHardwareEnabled))
+            liveWifiDevice.scannerEnabled = false;
+    }
+
+    function _radioChanged() {
+        if (!wifiEnabled || !wifiHardwareEnabled)
+            connectingSsid = "";
+        _syncScanner();
+    }
+
+    onConnectingSsidChanged: _syncScanner()
+    onWifiEnabledChanged: _radioChanged()
+    onWifiHardwareEnabledChanged: _radioChanged()
+
+    onLiveWifiDeviceChanged: {
+        // Native device objects can survive a config reload.
+        if (liveWifiDevice?.scannerEnabled)
+            scanRequested = true;
+        _syncScanner();
+    }
 
     readonly property var liveDevices: Array.from(Networking.devices.values)
     readonly property var liveWifiDevice: liveDevices.find(device => device.type === DeviceType.Wifi) ?? null
@@ -20,6 +68,7 @@ Singleton {
     readonly property var liveActiveNetwork: liveWifiNetworks.find(network => network.connected) ?? null
 
     readonly property bool wifiEnabled: Networking.wifiEnabled
+    readonly property bool wifiHardwareEnabled: Networking.wifiHardwareEnabled
     readonly property bool wifiConnected: (liveWifiDevice?.connected ?? false) || liveActiveNetwork !== null
     readonly property bool ethernetConnected: liveDevices.some(device => device.type === DeviceType.Wired && (device.connected || (device.network?.connected ?? false)))
     readonly property string ethernetInterface: liveEthernetDevice?.name ?? ""
@@ -78,9 +127,8 @@ Singleton {
     }
 
     function scan() {
-        if (liveWifiDevice) {
-            liveWifiDevice.scannerEnabled = true;
-        }
+        scanRequested = true;
+        _syncScanner();
     }
 
     function disconnect() {
@@ -118,7 +166,14 @@ Singleton {
 
     // --- INTERNAL: Build accessPoints from native API ---
 
+    function _scheduleAccessPointsUpdate() {
+        if (settingsWindows > 0)
+            Qt.callLater(root._rebuildAccessPoints);
+    }
+
     function _rebuildAccessPoints() {
+        if (settingsWindows === 0)
+            return;
         const networks = liveWifiNetworks;
         var tempParams = [];
         const seen = new Set();
@@ -145,10 +200,8 @@ Singleton {
 
         // Sort: Connected > Saved > Signal
         tempParams.sort((a, b) => {
-            if (a.active)
-                return -1;
-            if (b.active)
-                return 1;
+            if (a.active !== b.active)
+                return a.active ? -1 : 1;
             if (a.saved && !b.saved)
                 return -1;
             if (!a.saved && b.saved)
@@ -156,29 +209,35 @@ Singleton {
             return b.signal - a.signal;
         });
 
-        root.accessPoints = tempParams;
+        if (JSON.stringify(root.accessPoints) !== JSON.stringify(tempParams))
+            root.accessPoints = tempParams;
     }
 
     // Rebuild whenever the wifi networks list changes
-    onLiveWifiNetworksChanged: _rebuildAccessPoints()
+    onLiveWifiNetworksChanged: _scheduleAccessPointsUpdate()
 
-    // --- INTERNAL: Listen for connectionFailed on all wifi networks ---
-
-    // Use Instantiator to attach connectionFailed handlers to each WifiNetwork
+    // QObject-bound Connections are released with each delegate. Rebuild only
+    // when network data changes, coalescing property bursts into one update.
     Instantiator {
-        model: liveWifiDevice?.networks ?? null
-        delegate: QtObject {
+        model: ScriptModel { values: root.liveWifiNetworks }
+        delegate: Connections {
+            id: networkSignals
             required property var modelData
+            target: modelData
 
-            Component.onCompleted: {
-                if (modelData.connectionFailed) {
-                    modelData.connectionFailed.connect(reason => {
-                        console.warn("[NetworkService] Connection failed for " + modelData.name + ": " + reason);
-                        if (root.connectingSsid === modelData.name) {
-                            root.connectingSsid = "";
-                        }
-                    });
-                }
+            function onConnectionFailed(reason) {
+                console.warn("[NetworkService] Connection failed for " + modelData.name + ": " + reason);
+                if (root.connectingSsid === modelData.name)
+                    root.connectingSsid = "";
+            }
+            readonly property Connections details: Connections {
+                target: networkSignals.modelData
+                enabled: root.settingsWindows > 0
+                function onNameChanged() { root._scheduleAccessPointsUpdate(); }
+                function onSignalStrengthChanged() { root._scheduleAccessPointsUpdate(); }
+                function onConnectedChanged() { root._scheduleAccessPointsUpdate(); }
+                function onKnownChanged() { root._scheduleAccessPointsUpdate(); }
+                function onSecurityChanged() { root._scheduleAccessPointsUpdate(); }
             }
         }
     }

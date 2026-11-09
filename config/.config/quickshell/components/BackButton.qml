@@ -39,6 +39,7 @@ Button {
 
     // --- Content (Icon) ---
     Text {
+        textFormat: Text.PlainText
         // Center relative to the wrapper
         anchors.centerIn: parent
 

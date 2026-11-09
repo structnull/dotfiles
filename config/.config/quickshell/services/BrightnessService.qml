@@ -14,6 +14,8 @@ Singleton {
     readonly property string backlightPath: "/sys/class/backlight/" + backlightDevice + "/brightness"
     readonly property string maxBrightnessPath: "/sys/class/backlight/" + backlightDevice + "/max_brightness"
 
+    property string lastWrittenRaw: ""
+    property bool brightnessWatchObserved: false
     property int maxValue: 0
     property bool hasBacklight: false
     property real pendingBrightness: NaN
@@ -39,8 +41,12 @@ Singleton {
     property real nightLightIntensity: StateService.get("nightLight.intensity", 0.5)
 
     Component.onCompleted: {
+        updateTemperatureFromIntensity();
         detectBacklightDevice.running = true;
         ensureHyprsunsetRunning.running = true;
+        // State now loads synchronously, so its initial signal may precede us.
+        if (!StateService.isLoading)
+            applyStateTimer.restart();
     }
 
     function updateTemperatureFromIntensity() {
@@ -52,13 +58,11 @@ Singleton {
     }
 
     function readMaxBrightness() {
-        maxBrightnessProcess.command = ["/bin/cat", maxBrightnessPath];
-        maxBrightnessProcess.running = true;
+        maxBrightnessFile.reload();
     }
 
     function readBrightness() {
-        brightnessProcess.command = ["/bin/cat", backlightPath];
-        brightnessProcess.running = true;
+        brightnessFile.reload();
     }
 
     function clampBrightness(value) {
@@ -96,8 +100,8 @@ Singleton {
     }
 
     function scheduleBrightnessApply() {
-        if (!setBrightnessProcess.running)
-            applyBrightnessTimer.restart();
+        if (!setBrightnessProcess.running && !applyBrightnessTimer.running)
+            applyBrightnessTimer.start();
     }
 
     function applyTargetBrightness() {
@@ -108,6 +112,9 @@ Singleton {
             ? Math.round(clampBrightness(targetBrightness) * root.maxValue)
             : Math.round(clampBrightness(targetBrightness) * 100) + "%";
         root.targetBrightness = NaN;
+        if (rawValue.toString() === lastWrittenRaw)
+            return;
+        lastWrittenRaw = rawValue.toString();
         setBrightnessProcess.command = ["brightnessctl", "set", rawValue.toString()];
         setBrightnessProcess.running = true;
     }
@@ -130,7 +137,8 @@ Singleton {
     function disableNightLight() {
         nightLightEnabled = false;
         StateService.set("nightLight.enabled", false);
-        disableNightLightProc.running = true;
+        nightLightDebounce.stop();
+        Quickshell.execDetached(["hyprctl", "hyprsunset", "identity"]);
     }
 
     function setNightLightIntensity(intensity) {
@@ -152,8 +160,16 @@ Singleton {
     }
 
     function applyNightLight() {
-        enableNightLightProc.command = ["hyprctl", "hyprsunset", "temperature", nightLightTemperature.toString()];
-        enableNightLightProc.running = true;
+        nightLightDebounce.restart();
+    }
+
+    Timer {
+        id: nightLightDebounce
+        interval: 100
+        onTriggered: {
+            if (root.nightLightEnabled)
+                Quickshell.execDetached(["hyprctl", "hyprsunset", "temperature", root.nightLightTemperature.toString()]);
+        }
     }
 
     Connections {
@@ -192,31 +208,39 @@ Singleton {
                 root.hasBacklight = true;
                 root.readMaxBrightness();
                 root.readBrightness();
-                watchBrightnessEvents.running = true;
-                updateTimer.start();
             }
         }
     }
 
-    Process {
-        id: maxBrightnessProcess
-        stdout: SplitParser {
-            onRead: data => {
-                const value = parseInt(data.trim());
-                if (!isNaN(value) && value > 0) {
-                    root.maxValue = value;
-                }
+    FileView {
+        id: maxBrightnessFile
+        path: root.maxBrightnessPath
+        printErrors: false
+        onLoaded: {
+            const value = parseInt(text().trim());
+            if (!isNaN(value) && value > 0) {
+                root.maxValue = value;
+                root.hasBacklight = true;
+                brightnessFile.reload();
             }
         }
     }
 
-    Process {
-        id: brightnessProcess
-        stdout: SplitParser {
-            onRead: data => {
-                const value = parseInt(data.trim());
-                root.applyBrightnessReading(value);
-            }
+    FileView {
+        id: brightnessFile
+        path: root.backlightPath
+        watchChanges: true
+        printErrors: false
+        onFileChanged: {
+            root.brightnessWatchObserved = true;
+            reload();
+        }
+        onLoaded: {
+            const value = parseInt(text().trim());
+            // A subsequent external change must allow writing a previous target again.
+            if (!root.hasPendingBrightness && !setBrightnessProcess.running)
+                root.lastWrittenRaw = value.toString();
+            root.applyBrightnessReading(value);
         }
     }
 
@@ -226,40 +250,24 @@ Singleton {
         }
         stderr: StdioCollector {
         }
-        onExited: {
+        onExited: code => {
+            if (code !== 0)
+                root.lastWrittenRaw = "";
             if (root.hasTargetBrightness) {
-                root.applyTargetBrightness();
+                applyBrightnessTimer.restart();
             } else {
                 brightnessSettleTimer.restart();
             }
         }
     }
 
-    Process {
-        id: watchBrightnessEvents
-        command: ["/bin/sh", "-c", "command -v inotifywait >/dev/null 2>&1 || exit 0; inotifywait -m -q -e modify " + backlightPath]
-        stdout: SplitParser {
-            onRead: data => {
-                if (data.trim() !== "")
-                    root.readBrightness();
-            }
-        }
-    }
-
+    // Sysfs drivers do not all emit inotify events. This is an in-process
+    // fallback until this driver's watcher has proved it can notify us.
     Timer {
-        id: updateTimer
-        interval: watchBrightnessEvents.running ? 2000 : 100
+        interval: 10000
         repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            // Adjust interval dynamically if inotifywait is not available
-            if (!watchBrightnessEvents.running && interval !== 100) {
-                interval = 100;
-            } else if (watchBrightnessEvents.running && interval !== 2000) {
-                interval = 2000;
-            }
-            root.readBrightness();
-        }
+        running: root.available && !root.brightnessWatchObserved
+        onTriggered: brightnessFile.reload()
     }
 
     Timer {
@@ -273,7 +281,7 @@ Singleton {
 
     Timer {
         id: applyBrightnessTimer
-        interval: 16
+        interval: 40
         onTriggered: root.applyTargetBrightness()
     }
 
@@ -286,12 +294,4 @@ Singleton {
         }
     }
 
-    Process {
-        id: enableNightLightProc
-    }
-
-    Process {
-        id: disableNightLightProc
-        command: ["hyprctl", "hyprsunset", "identity"]
-    }
 }

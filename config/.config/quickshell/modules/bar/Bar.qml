@@ -27,6 +27,11 @@ Scope {
             id: panelWindow
             required property var modelData
 
+            IdleInhibitor {
+                window: panelWindow
+                enabled: CaffeineService.enabled && panelWindow.screen === Quickshell.screens[0]
+            }
+
             property bool enableAutoHide: StateService.get("bar.autoHide", false)
 
             // NameSpace

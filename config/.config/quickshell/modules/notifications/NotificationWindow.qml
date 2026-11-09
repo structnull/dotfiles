@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import Quickshell
 import QtQuick.Layouts
 import QtQuick.Controls
 import qs.config
@@ -37,6 +38,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.centerIn: parent
                     text: NotificationService.dndEnabled ? "󰂛" : "󰂚"
                     font.family: Config.font
@@ -51,6 +53,7 @@ QsPopupWindow {
                 spacing: 2
 
                 Text {
+                    textFormat: Text.PlainText
                     text: "Notifications"
                     font.family: Config.font
                     font.bold: true
@@ -59,6 +62,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     visible: NotificationService.count > 0 || NotificationService.dndEnabled
                     text: {
                         if (NotificationService.dndEnabled)
@@ -118,7 +122,7 @@ QsPopupWindow {
                 spacing: 10
                 visible: NotificationService.count > 0
 
-                model: NotificationService.notifications
+                model: ScriptModel { values: Array.from(NotificationService.notifications) }
 
                 add: Transition {
                     NumberAnimation {
@@ -193,6 +197,7 @@ QsPopupWindow {
                     color: NotificationService.dndEnabled ? Qt.alpha(Config.warningColor, 0.2) : Config.surface1Color
 
                     Text {
+                        textFormat: Text.PlainText
                         anchors.centerIn: parent
                         text: NotificationService.dndEnabled ? "󰂛" : "󰂜"
                         font.family: Config.font
@@ -203,6 +208,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: NotificationService.dndEnabled ? "Do Not Disturb" : "No notifications"
                     font.family: Config.font
@@ -212,6 +218,7 @@ QsPopupWindow {
                 }
 
                 Text {
+                    textFormat: Text.PlainText
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: NotificationService.dndEnabled ? "Notifications silenced" : "You're all caught up!"
                     font.family: Config.font

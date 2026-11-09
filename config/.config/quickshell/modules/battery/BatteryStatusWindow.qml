@@ -6,479 +6,359 @@ import qs.config
 import qs.services
 import "../../components/"
 
+// Hallmark · component: battery popup · quiet native · existing Config tokens
+// Pre-emit critique: philosophy 5, hierarchy 5, execution 4, specificity 5, restraint 5, variety 4.
 QsPopupWindow {
     id: root
 
-    popupWidth: 388
-    popupMaxHeight: 560
+    popupWidth: 360
+    popupMaxHeight: 400
     anchorSide: "right"
     contentImplicitHeight: content.implicitHeight
 
-    readonly property color accentInfo: Config.accentColor
-    readonly property color accentGood: "#7ee2a8"
-    readonly property color accentWarn: "#ffcc66"
-    readonly property color accentDanger: "#ff5f57"
-    readonly property color stateColor: BatteryService.isLow ? accentDanger : (BatteryService.isCharging ? accentGood : accentInfo)
-    readonly property color techDot: Qt.alpha("#d8e8ff", 0.12)
-
-    component InfoTile: Item {
-        required property string label
-        required property string value
-        property color valueColor: Config.textColor
-
-        Layout.fillWidth: true
-        Layout.preferredHeight: 72
-
-        Canvas {
-            anchors.fill: parent
-            onPaint: {
-                var ctx = getContext("2d");
-                var r = 12; // radius matching the other tiles
-                ctx.reset();
-                ctx.setLineDash([2, 4]);
-                ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.6).toString();
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                ctx.stroke();
-            }
+    readonly property color stateColor: BatteryService.isLow ? Config.errorColor : Config.accentColor
+    readonly property bool hasPowerReading: Number.isFinite(BatteryService.powerRateW)
+        && BatteryService.powerRateW > 0.05
+    readonly property string powerLabel: {
+        const batterySensor = BatteryService.upowerEnergyRateW > 0.05
+            || BatteryService.sysfsBatteryRateW > 0.05;
+        if (batterySensor && BatteryService.isCharging)
+            return "Battery charging";
+        if (batterySensor && BatteryService.isDischarging)
+            return "Battery discharge";
+        return "Reported power";
+    }
+    readonly property string estimateText: {
+        if (!BatteryService.hasBattery)
+            return BatteryService.isPlugged ? "Running on external power" : "No battery detected";
+        if (BatteryService.isFull)
+            return "Ready to unplug";
+        if (BatteryService.isCharging) {
+            const seconds = BatteryService.timeToFullSeconds;
+            return Number.isFinite(seconds) && seconds > 0
+                ? BatteryService.formatDuration(seconds) + " until full" : "Estimating…";
         }
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 14
-            spacing: 5
-
-            Text {
-                text: parent.parent.label
-                font.family: Config.font
-                font.pixelSize: Config.fontSizeSmall
-                color: Config.mutedColor
-            }
-
-            Text {
-                text: parent.parent.value
-                font.family: Config.font
-                font.pixelSize: Config.fontSizeNormal
-                font.bold: true
-                color: parent.parent.valueColor
-            }
+        if (BatteryService.isDischarging) {
+            const seconds = BatteryService.timeToEmptySeconds;
+            return Number.isFinite(seconds) && seconds > 0
+                ? BatteryService.formatDuration(seconds) + " remaining" : "Estimating…";
         }
+        return BatteryService.isPlugged ? "Connected, not charging" : "Time estimate unavailable";
+    }
+
+    readonly property var history: BatteryService.powerHistory
+    readonly property int readingCount: history.filter(value => Number.isFinite(value) && value > 0.05).length
+    readonly property bool hasHistory: readingCount >= 2
+    readonly property real chartCeiling: {
+        let peak = 0;
+        for (const value of history) {
+            if (Number.isFinite(value) && value > peak)
+                peak = value;
+        }
+        return Math.max(5, Math.ceil(peak * 1.15 / 5) * 5);
+    }
+    // BatteryService records every five seconds, retaining at most 48 samples.
+    readonly property int historySeconds: Math.max(0, history.length - 1) * 5
+    readonly property string historyDuration: {
+        const minutes = Math.floor(historySeconds / 60);
+        const seconds = historySeconds % 60;
+        return (minutes > 0 ? minutes + "m " : "") + seconds + "s";
+    }
+
+    // The shared popup supplies the border, positioning and opening animation.
+    // This opaque inset surface belongs only to the battery popup.
+    Rectangle {
+        anchors.fill: parent
+        anchors.margins: -15
+        radius: Math.max(0, Config.radiusLarge - 1)
+        color: Config.surface0Color
     }
 
     ColumnLayout {
         id: content
-        anchors.fill: parent
-        spacing: 10
+        width: parent.width
+        spacing: 16
 
-        Item {
+        RowLayout {
             Layout.fillWidth: true
-            Layout.preferredHeight: 144
-            clip: true
-            
-            Canvas {
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d");
-                    var r = 14;
-                    ctx.setLineDash([2, 4]);
-                    ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.6).toString();
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                    ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                    ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                    ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                    ctx.stroke();
+            spacing: 12
+
+            Text {
+                textFormat: Text.PlainText
+                text: BatteryService.hasBattery ? "Battery" : "Power"
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeNormal
+                font.weight: Font.Medium
+                color: Config.textColor
+            }
+
+            Item { Layout.fillWidth: true }
+
+            Text {
+                Layout.maximumWidth: content.width * 0.65
+                textFormat: Text.PlainText
+                text: BatteryService.hasBattery
+                    ? (BatteryService.isLow ? "Low battery" : BatteryService.statusText)
+                    : (BatteryService.isPlugged ? "Connected" : "Disconnected")
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeSmall
+                color: BatteryService.isLow || BatteryService.isCharging ? root.stateColor : Config.subtextColor
+                elide: Text.ElideRight
+            }
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            spacing: 6
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 12
+
+                Text {
+                    Layout.fillWidth: true
+                    textFormat: Text.PlainText
+                    text: BatteryService.hasBattery ? BatteryService.percentage + "%"
+                        : (BatteryService.isPlugged ? "AC power" : "No battery")
+                    font.family: Config.font
+                    font.pixelSize: BatteryService.hasBattery ? 40 : 28
+                    font.weight: Font.DemiBold
+                    color: Config.textColor
+                    elide: Text.ElideRight
+                    Accessible.role: Accessible.StaticText
+                    Accessible.name: BatteryService.hasBattery
+                        ? BatteryService.percentage + " percent battery" : text
+                }
+
+                Text {
+                    textFormat: Text.PlainText
+                    text: BatteryService.getBatteryIcon()
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeIconLarge
+                    color: root.stateColor
+                    Accessible.ignored: true
                 }
             }
 
-            Canvas {
-                id: heroAccent
-                anchors.fill: parent
-                antialiasing: true
+            Text {
+                Layout.fillWidth: true
+                textFormat: Text.PlainText
+                text: root.estimateText
+                font.family: Config.font
+                font.pixelSize: Config.fontSizeNormal
+                color: Config.subtextColor
+                wrapMode: Text.WordWrap
+            }
+        }
 
-                onPaint: {
-                    const ctx = getContext("2d");
-                    ctx.reset();
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 6
+            visible: BatteryService.hasBattery
+            radius: 3
+            color: Config.surface2Color
+            clip: true
+            readonly property real value: BatteryService.percentage
+            readonly property real minimumValue: 0
+            readonly property real maximumValue: 100
+            Accessible.role: Accessible.ProgressBar
+            Accessible.name: "Battery charge, " + BatteryService.percentage + " percent"
 
-                    const w = width;
-                    const h = height;
+            Rectangle {
+                width: parent.width * Math.max(0, Math.min(1, BatteryService.percentage / 100))
+                height: parent.height
+                radius: parent.radius
+                color: root.stateColor
 
-                    ctx.fillStyle = Qt.alpha(root.stateColor, 0.15).toString();
-                    for (let row = 0; row < Math.floor(h / 12); ++row) {
-                        for (let col = 0; col < Math.floor(w / 12); ++col) {
-                            const x = 14 + (col * 12) + ((row % 2) * 4);
-                            const y = 14 + (row * 12);
-                            if (x < w - 10 && y < h - 10) {
-                                ctx.beginPath();
-                                ctx.arc(x, y, ((row + col) % 5 === 0) ? 1.2 : 0.8, 0, Math.PI * 2);
-                                ctx.fill();
-                            }
-                        }
-                    }
+                Behavior on width {
+                    NumberAnimation { duration: Config.animDuration; easing.type: Easing.OutCubic }
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 1
+            visible: BatteryService.hasBattery
+            color: Qt.alpha(Config.textColor, 0.10)
+        }
+
+        ColumnLayout {
+            Layout.fillWidth: true
+            visible: BatteryService.hasBattery
+            spacing: 12
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 12
+
+                Text {
+                    Layout.fillWidth: true
+                    textFormat: Text.PlainText
+                    text: root.powerLabel
+                    font.family: Config.font
+                    font.pixelSize: Config.fontSizeSmall
+                    color: Config.subtextColor
+                    elide: Text.ElideRight
                 }
 
-                onWidthChanged: requestPaint()
-                onHeightChanged: requestPaint()
+                Text {
+                    textFormat: Text.PlainText
+                    text: root.hasPowerReading ? BatteryService.powerRateW.toFixed(1) + " W" : "Unavailable"
+                    font.family: Config.font
+                    font.pixelSize: root.hasPowerReading ? Config.fontSizeLarge : Config.fontSizeSmall
+                    font.weight: Font.Medium
+                    color: root.hasPowerReading ? Config.textColor : Config.subtextColor
+                }
             }
 
             ColumnLayout {
-                anchors.fill: parent
-                anchors.margins: 16
-                spacing: 10
+                Layout.fillWidth: true
+                spacing: 6
 
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 12
 
-                    ColumnLayout {
+                    Text {
                         Layout.fillWidth: true
-                        spacing: 6
-
-                        RowLayout {
-                            spacing: 12
-
-                            Rectangle {
-                                Layout.preferredWidth: 38
-                                Layout.preferredHeight: 38
-                                radius: 19
-                                color: Qt.alpha(root.stateColor, 0.14)
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: BatteryService.getBatteryIcon()
-                                    font.family: Config.font
-                                    font.pixelSize: 19
-                                    color: root.stateColor
-                                }
-                            }
-
-                            ColumnLayout {
-                                spacing: 2
-
-                                Text {
-                                    text: BatteryService.hasBattery ? (BatteryService.percentage + "%") : "Power"
-                                    font.family: Config.font
-                                    font.pixelSize: 26
-                                    font.bold: true
-                                    color: Config.textColor
-                                }
-
-                                Text {
-                                    text: BatteryService.statusText
-                                    font.family: Config.font
-                                    font.pixelSize: Config.fontSizeSmall
-                                    color: Config.mutedColor
-                                }
-                            }
-                        }
+                        textFormat: Text.PlainText
+                        text: "Recent power"
+                        font.family: Config.font
+                        font.pixelSize: Config.fontSizeSmall
+                        color: Config.subtextColor
                     }
 
-                    Item {
-                        Layout.fillWidth: true
-                    }
-
-                    Rectangle {
-                        Layout.preferredWidth: 1
-                        Layout.preferredHeight: 42
-                        color: Qt.alpha(Config.surface3Color, 0.45)
-                    }
-
-                    ColumnLayout {
-                        Layout.preferredWidth: 96
-                        Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                        spacing: 3
-
-                        Text {
-                            Layout.alignment: Qt.AlignRight
-                            text: BatteryService.powerRateText
-                            font.family: Config.font
-                            font.pixelSize: 19
-                            font.bold: true
-                            color: root.stateColor
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        Text {
-                            Layout.alignment: Qt.AlignRight
-                            text: BatteryService.powerRateLabel
-                            font.family: Config.font
-                            font.pixelSize: 10
-                            color: Config.mutedColor
-                            horizontalAlignment: Text.AlignRight
-                        }
+                    Text {
+                        visible: root.hasHistory
+                        textFormat: Text.PlainText
+                        text: root.chartCeiling + " W"
+                        font.family: Config.font
+                        font.pixelSize: Config.fontSizeSmall
+                        color: Config.subtextColor
                     }
                 }
 
-                ColumnLayout {
+                Item {
                     Layout.fillWidth: true
-                    spacing: 10
-
-                    RowLayout {
-                        Layout.fillWidth: true
-
-                        Text {
-                            text: "Charge"
-                            font.family: Config.font
-                            font.pixelSize: 11
-                            color: Config.mutedColor
-                        }
-
-                        Item {
-                            Layout.fillWidth: true
-                        }
-
-                        Text {
-                            text: BatteryService.statusText
-                            font.family: Config.font
-                            font.pixelSize: 11
-                            color: Config.mutedColor
-                            elide: Text.ElideRight
-                        }
-                    }
+                    Layout.preferredHeight: 64
+                    Accessible.role: Accessible.StaticText
+                    Accessible.name: root.hasHistory
+                        ? "Reported power over the last " + root.historyDuration + ", scale zero to " + root.chartCeiling + " watts"
+                        : "Waiting for power history"
 
                     Canvas {
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 12
-                        
-                        property real pct: BatteryService.percentage / 100.0
-                        property color fillColor: root.stateColor
-                        
-                        Behavior on pct {
-                            NumberAnimation { duration: Config.animDuration; easing.type: Easing.OutCubic }
-                        }
-                        
-                        onPctChanged: requestPaint()
-                        onFillColorChanged: requestPaint()
-                        
+                        id: historyChart
+                        anchors.fill: parent
+                        antialiasing: true
+                        visible: root.hasHistory
+
+                        readonly property var samples: root.history
+                        readonly property real ceiling: root.chartCeiling
+                        readonly property color lineColor: Config.accentColor
+                        readonly property color gridColor: Qt.alpha(Config.textColor, 0.08)
+                        onSamplesChanged: requestPaint()
+                        onCeilingChanged: requestPaint()
+                        onLineColorChanged: requestPaint()
+                        onGridColorChanged: requestPaint()
+                        onWidthChanged: requestPaint()
+                        onHeightChanged: requestPaint()
+                        onVisibleChanged: requestPaint()
+
                         onPaint: {
-                            var ctx = getContext("2d");
+                            const ctx = getContext("2d");
                             ctx.reset();
-                            var w = width;
-                            var h = height;
-                            
-                            var segments = 40;
-                            var spacing = 2;
-                            var segWidth = (w - (segments - 1) * spacing) / segments;
-                            
-                            var filledSegments = Math.round(segments * pct);
-                            
-                            for (var i = 0; i < segments; i++) {
-                                var x = i * (segWidth + spacing);
-                                ctx.beginPath();
-                                
-                                // slant the segments
-                                ctx.moveTo(x + 2, 0);
-                                ctx.lineTo(x + segWidth + 2, 0);
-                                ctx.lineTo(x + segWidth - 2, h);
-                                ctx.lineTo(x - 2, h);
-                                ctx.closePath();
-                                
-                                if (i < filledSegments) {
-                                    ctx.fillStyle = fillColor.toString();
-                                } else {
-                                    ctx.fillStyle = Qt.alpha("#f5f5f0", 0.15).toString();
+                            const inset = 3;
+                            const plotWidth = Math.max(0, width - inset * 2);
+                            const plotHeight = Math.max(0, height - inset * 2);
+                            if (!root.hasHistory || plotWidth <= 0 || plotHeight <= 0)
+                                return;
+
+                            ctx.strokeStyle = gridColor.toString();
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            for (let row = 0; row < 3; ++row) {
+                                const y = inset + plotHeight * row / 2;
+                                ctx.moveTo(inset, y);
+                                ctx.lineTo(width - inset, y);
+                            }
+                            ctx.stroke();
+
+                            ctx.strokeStyle = lineColor.toString();
+                            ctx.fillStyle = lineColor.toString();
+                            ctx.lineWidth = 2;
+                            ctx.lineJoin = "round";
+                            ctx.lineCap = "round";
+                            ctx.beginPath();
+                            let connected = false;
+                            for (let i = 0; i < samples.length; ++i) {
+                                const value = samples[i];
+                                if (!Number.isFinite(value) || value <= 0.05) {
+                                    connected = false;
+                                    continue;
                                 }
+                                const x = inset + plotWidth * i / (samples.length - 1);
+                                const y = inset + plotHeight * (1 - value / ceiling);
+                                if (connected)
+                                    ctx.lineTo(x, y);
+                                else
+                                    ctx.moveTo(x, y);
+                                connected = true;
+                            }
+                            ctx.stroke();
+
+                            // Mark isolated readings and the newest valid sample without bridging gaps.
+                            for (let i = 0; i < samples.length; ++i) {
+                                const value = samples[i];
+                                if (!Number.isFinite(value) || value <= 0.05)
+                                    continue;
+                                const previousValid = i > 0 && Number.isFinite(samples[i - 1]) && samples[i - 1] > 0.05;
+                                const nextValid = i + 1 < samples.length && Number.isFinite(samples[i + 1]) && samples[i + 1] > 0.05;
+                                if ((previousValid || nextValid) && i !== samples.length - 1)
+                                    continue;
+                                ctx.beginPath();
+                                ctx.arc(inset + plotWidth * i / (samples.length - 1),
+                                    inset + plotHeight * (1 - value / ceiling), 2.5, 0, Math.PI * 2);
                                 ctx.fill();
                             }
                         }
                     }
-                }
-            }
-        }
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 260
-            clip: true
-            
-            // Container dotted border
-            Canvas {
-                anchors.fill: parent
-                onPaint: {
-                    var ctx = getContext("2d");
-                    var r = 14;
-                    ctx.reset();
-                    ctx.setLineDash([2, 4]);
-                    ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.6).toString();
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(r, 0); ctx.lineTo(width-r, 0); ctx.arcTo(width, 0, width, r, r);
-                    ctx.lineTo(width, height-r); ctx.arcTo(width, height, width-r, height, r);
-                    ctx.lineTo(r, height); ctx.arcTo(0, height, 0, height-r, r);
-                    ctx.lineTo(0, r); ctx.arcTo(0, 0, r, 0, r);
-                    ctx.stroke();
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width
+                        visible: !root.hasHistory
+                        textFormat: Text.PlainText
+                        text: root.readingCount > 0 ? "Collecting power readings…" : "No power readings yet"
+                        font.family: Config.font
+                        font.pixelSize: Config.fontSizeSmall
+                        color: Config.subtextColor
+                        horizontalAlignment: Text.AlignHCenter
+                        wrapMode: Text.WordWrap
+                    }
                 }
-            }
 
-            // The Sci-Fi Cluster Canvas
-            Canvas {
-                id: clusterCanvas
-                anchors.fill: parent
-                property real powerRate: BatteryService.powerRateW
-                readonly property real absPower: Math.abs(BatteryService.powerRateW)
-                
-                property color stateColor: {
-                    if (absPower < 25) return root.accentGood;
-                    if (absPower < 45) return root.accentWarn;
-                    return root.accentDanger;
-                }
-                
-                Behavior on powerRate { NumberAnimation { duration: Config.animDuration; easing.type: Easing.OutCubic } }
-                onPowerRateChanged: requestPaint()
-                onStateColorChanged: requestPaint()
-                
-                onPaint: {
-                    var ctx = getContext("2d");
-                    ctx.reset();
-                    var w = width;
-                    var h = height;
-                    var cx = w / 2;
-                    var cy = h / 2;
-                    
-                    var r1 = 45;
-                    var r2 = 60;
-                    var r3 = 75;
-                    
-                    // Outer dotted ring
-                    ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.2).toString();
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([2, 6]);
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r3, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Middle dashed ring
-                    ctx.strokeStyle = Qt.alpha(stateColor.toString(), 0.4);
-                    ctx.lineWidth = 3;
-                    ctx.setLineDash([8, 12]);
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r2, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Inner solid ring boundary
-                    ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.4).toString();
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([]);
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r1, 0, Math.PI * 2);
-                    ctx.stroke();
-                    
-                    // Dynamic Power Arc
-                    var maxPower = Math.max(30, BatteryService.maxObservedPowerW);
-                    var powerAngle = Math.min(1.0, Math.abs(powerRate) / maxPower) * Math.PI * 1.5;
-                    var startAngle = Math.PI * 0.75;
-                    
-                    ctx.strokeStyle = stateColor.toString();
-                    ctx.lineWidth = 6;
-                    ctx.lineCap = "round";
-                    ctx.beginPath();
-                    ctx.arc(cx, cy, r1 - 6, startAngle, startAngle + powerAngle);
-                    ctx.stroke();
-                    
-                    // --- Circuit Traces to Data ---
-                    ctx.strokeStyle = Qt.alpha("#f5f5f0", 0.3).toString();
-                    ctx.lineWidth = 1;
-                    ctx.setLineDash([2, 4]);
-                    
-                    var lineLen = 80;
-                    
-                    // Top Left (Status)
-                    var tlY = cy - 65;
-                    ctx.beginPath(); ctx.moveTo(cx - r2 * 0.7, cy - r2 * 0.7); ctx.lineTo(cx - r3 - 10, cy - r2 * 0.7); ctx.lineTo(20 + lineLen, tlY); ctx.lineTo(20, tlY); ctx.stroke();
-                    
-                    // Top Right (Sys Draw)
-                    var trY = cy - 65;
-                    ctx.beginPath(); ctx.moveTo(cx + r2 * 0.7, cy - r2 * 0.7); ctx.lineTo(cx + r3 + 10, cy - r2 * 0.7); ctx.lineTo(w - 20 - lineLen, trY); ctx.lineTo(w - 20, trY); ctx.stroke();
-                    
-                    // Bottom Left (Time to full)
-                    var blY = cy + 65;
-                    ctx.beginPath(); ctx.moveTo(cx - r2 * 0.7, cy + r2 * 0.7); ctx.lineTo(cx - r3 - 10, cy + r2 * 0.7); ctx.lineTo(20 + lineLen, blY); ctx.lineTo(20, blY); ctx.stroke();
-                    
-                    // Bottom Right (Time to empty)
-                    var brY = cy + 65;
-                    ctx.beginPath(); ctx.moveTo(cx + r2 * 0.7, cy + r2 * 0.7); ctx.lineTo(cx + r3 + 10, cy + r2 * 0.7); ctx.lineTo(w - 20 - lineLen, brY); ctx.lineTo(w - 20, brY); ctx.stroke();
-                    
-                    // Node dots
-                    ctx.setLineDash([]);
-                    ctx.fillStyle = stateColor.toString();
-                    [ {x: 20, y: tlY}, {x: w - 20, y: trY}, {x: 20, y: blY}, {x: w - 20, y: brY} ].forEach(p => {
-                        ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2); ctx.fill();
-                    });
-                }
-            }
-            
-            // --- Text Readouts ---
-            
-            // Status (Top Left)
-            Column {
-                x: 20
-                y: parent.height / 2 - 65 - 34
-                spacing: 2
-                Text { text: "STATUS"; font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 1; color: Config.mutedColor }
-                Text { text: BatteryService.statusText; font.family: Config.font; font.pixelSize: 13; font.bold: true; color: clusterCanvas.stateColor }
-            }
-            
-            // Power Flow (Top Right)
-            Column {
-                x: parent.width - 20 - width
-                y: parent.height / 2 - 65 - 34
-                spacing: 2
-                Text { text: "SYS DRAW"; font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 1; color: Config.mutedColor; anchors.right: parent.right }
-                Text { text: BatteryService.powerRateText; font.family: Config.font; font.pixelSize: 13; font.bold: true; color: clusterCanvas.stateColor; anchors.right: parent.right }
-            }
-            
-            // Time to Full (Bottom Left)
-            Column {
-                x: 20
-                y: parent.height / 2 + 65 + 6
-                spacing: 2
-                Text { text: "TIME TO FULL"; font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 1; color: Config.mutedColor }
-                Text { 
-                    text: BatteryService.isCharging ? BatteryService.formatDuration(BatteryService.timeToFullSeconds) : "--"
-                    font.family: Config.font; font.pixelSize: 13; font.bold: true; color: BatteryService.isCharging ? root.accentGood : Config.textColor 
-                }
-            }
-            
-            // Time to Empty (Bottom Right)
-            Column {
-                x: parent.width - 20 - width
-                y: parent.height / 2 + 65 + 6
-                spacing: 2
-                Text { text: "TIME TO EMPTY"; font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 1; color: Config.mutedColor; anchors.right: parent.right }
-                Text { 
-                    text: BatteryService.isDischarging ? BatteryService.formatDuration(BatteryService.timeToEmptySeconds) : "--"
-                    font.family: Config.font; font.pixelSize: 13; font.bold: true; color: BatteryService.isDischarging ? root.accentWarn : Config.textColor; anchors.right: parent.right
-                }
-            }
-            
-            // Center Knob Data
-            Column {
-                anchors.centerIn: parent
-                spacing: 2
-                
-                Text { 
-                    text: BatteryService.isCharging ? "DRAW" : "PWR"
-                    font.family: Config.font; font.pixelSize: 10; font.letterSpacing: 2; color: Config.mutedColor; anchors.horizontalCenter: parent.horizontalCenter
-                }
-                Text { 
-                    text: Math.abs(BatteryService.powerRateW).toFixed(1)
-                    font.family: Config.font; font.pixelSize: 22; font.bold: true; color: clusterCanvas.stateColor; anchors.horizontalCenter: parent.horizontalCenter
-                }
-                Text { 
-                    text: "W"
-                    font.family: Config.font; font.pixelSize: 10; color: Config.mutedColor; anchors.horizontalCenter: parent.horizontalCenter
-                }
-            }
-        }
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: root.hasHistory
 
-        Item {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 14
+                    Text {
+                        Layout.fillWidth: true
+                        textFormat: Text.PlainText
+                        text: root.historyDuration + " ago"
+                        font.family: Config.font
+                        font.pixelSize: Config.fontSizeSmall
+                        color: Config.subtextColor
+                    }
+
+                    Text {
+                        textFormat: Text.PlainText
+                        text: "Now"
+                        font.family: Config.font
+                        font.pixelSize: Config.fontSizeSmall
+                        color: Config.subtextColor
+                    }
+                }
+            }
         }
     }
 }

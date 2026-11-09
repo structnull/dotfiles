@@ -51,7 +51,7 @@ Scope {
                 anchors.fill: parent
 
                 // Uses the list of active popups
-                model: NotificationService.popups
+                model: ScriptModel { values: Array.from(NotificationService.popups) }
 
                 spacing: 0
                 interactive: false

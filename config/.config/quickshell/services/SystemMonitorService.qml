@@ -16,6 +16,19 @@ Singleton {
     readonly property int cpuUsage: internal.cpuUsage
     readonly property int cpuTemp: internal.cpuTemp
     property bool active: false
+    property int visibleWindows: 0
+
+    function acquireWindow() {
+        visibleWindows++;
+        if (visibleWindows === 1)
+            active = true;
+    }
+
+    function releaseWindow() {
+        visibleWindows = Math.max(0, visibleWindows - 1);
+        if (visibleWindows === 0)
+            active = false;
+    }
 
     // ========================================================================
     // GPU PROPERTIES
@@ -45,13 +58,15 @@ Singleton {
     }
 
     function _triggerGpuUpdate() {
+        if (!active)
+            return;
         if (internal.gpuType === "nvidia") {
             updateNvidiaGpu.running = true;
         } else if (internal.gpuType === "amd") {
-            updateAmdGpuUsage.running = true;
-            updateAmdGpuTemp.running = true;
+            gpuUsageFile.reload();
+            gpuTempFile.reload();
         } else if (internal.gpuType === "intel") {
-            updateIntelGpuTemp.running = true;
+            gpuTempFile.reload();
         }
     }
 
@@ -129,18 +144,23 @@ Singleton {
     // INITIALIZATION
     // ========================================================================
 
-    Component.onCompleted: detectGpu.running = true
+    property string cpuTempPath: ""
+    property string gpuUsagePath: ""
+    property string gpuTempPath: ""
+
+    Component.onCompleted: detectSensors.running = true
 
     onActiveChanged: {
+        internal.prevNetworkSampleMs = 0;
         if (active)
             triggerFullUpdate();
     }
 
     function triggerFullUpdate() {
-        detectGpu.running = true;
-        updateCoreStats.running = true;
-        updateCpuTemp.running = true;
+        _readCoreStats();
         updateDisk.running = true;
+        if (gpuMonitorEnabled)
+            _triggerGpuUpdate();
     }
 
     // ========================================================================
@@ -152,8 +172,7 @@ Singleton {
         running: root.active
         repeat: true
         onTriggered: {
-            updateCoreStats.running = true;
-            updateCpuTemp.running = true;
+            root._readCoreStats();
 
             if (root.gpuMonitorEnabled) {
                 root._triggerGpuUpdate();
@@ -192,27 +211,72 @@ Singleton {
     // GPU DETECTION
     // ========================================================================
 
+    // Discover sensor paths once; all recurring reads below stay in-process.
     Process {
-        id: detectGpu
+        id: detectSensors
         command: ["bash", "-c", `
-            if command -v nvidia-smi &>/dev/null && nvidia-smi &>/dev/null; then
-                echo "nvidia"
-            elif [ -f /sys/class/drm/card0/device/gpu_busy_percent ] || [ -f /sys/class/drm/card1/device/gpu_busy_percent ]; then
-                echo "amd"
-            elif [ -d /sys/class/drm/card0/gt ] || ls /sys/class/drm/card*/device/hwmon/hwmon*/temp1_input 2>/dev/null | head -1; then
-                echo "intel"
+            cpu_temp=""
+            intel_temp=""
+            for zone in /sys/class/thermal/thermal_zone*/temp; do
+                [ -f "$zone" ] || continue
+                IFS= read -r type < "\${zone%/temp}/type"
+                case "$type" in
+                    *cpu*|*x86_pkg*|*coretemp*) [ -n "$cpu_temp" ] || cpu_temp="$zone" ;;
+                    *gpu*|*pch*) [ -n "$intel_temp" ] || intel_temp="$zone" ;;
+                esac
+            done
+            if [ -z "$cpu_temp" ]; then
+                for hwmon in /sys/class/hwmon/hwmon*; do
+                    [ -f "$hwmon/name" ] || continue
+                    IFS= read -r name < "$hwmon/name"
+                    case "$name" in
+                        k10temp|coretemp|zenpower) cpu_temp="$hwmon/temp1_input"; break ;;
+                    esac
+                done
+            fi
+            [ -n "$cpu_temp" ] || cpu_temp=/sys/class/thermal/thermal_zone0/temp
+            printf 'cpu %s\n' "$cpu_temp"
+            if command -v nvidia-smi >/dev/null && nvidia-smi >/dev/null 2>&1; then
+                printf 'gpu nvidia\n'
+                exit
+            fi
+            for card in /sys/class/drm/card*/device; do
+                if [ -f "$card/gpu_busy_percent" ]; then
+                    printf 'gpu amd\nusage %s\n' "$card/gpu_busy_percent"
+                    for temp in "$card"/hwmon/hwmon*/temp1_input; do
+                        [ -f "$temp" ] && { printf 'temp %s\n' "$temp"; break; }
+                    done
+                    exit
+                fi
+            done
+            for temp in /sys/class/drm/card*/device/hwmon/hwmon*/temp1_input; do
+                if [ -f "$temp" ]; then
+                    printf 'gpu intel\ntemp %s\n' "$temp"
+                    exit
+                fi
+            done
+            if [ -d /sys/class/drm/card0/gt ]; then
+                printf 'gpu intel\ntemp %s\n' "\${intel_temp:-/sys/class/thermal/thermal_zone0/temp}"
             else
-                echo "unknown"
+                printf 'gpu unknown\n'
             fi
         `]
         stdout: SplitParser {
             onRead: data => {
-                const type = data.trim();
-                internal.gpuType = type;
-
-                if (root.gpuMonitorEnabled) {
+                const split = data.indexOf(" ");
+                const key = data.slice(0, split);
+                const value = data.slice(split + 1).trim();
+                if (key === "cpu") root.cpuTempPath = value;
+                else if (key === "usage") root.gpuUsagePath = value;
+                else if (key === "temp") root.gpuTempPath = value;
+                else if (key === "gpu") internal.gpuType = value;
+            }
+        }
+        onExited: {
+            if (root.active) {
+                cpuTempFile.reload();
+                if (root.gpuMonitorEnabled)
                     root._triggerGpuUpdate();
-                }
             }
         }
     }
@@ -267,7 +331,7 @@ Singleton {
 
         const rx = parseFloat(parts[1]);
         const tx = parseFloat(parts[2]);
-        const nowMs = Date.now();
+        const nowMs = networkClock.elapsedMs();
 
         if (internal.prevRx > 0 && internal.prevNetworkSampleMs > 0) {
             const elapsedSeconds = Math.max(0.001, (nowMs - internal.prevNetworkSampleMs) / 1000.0);
@@ -303,84 +367,101 @@ Singleton {
         }
     }
 
-    // ========================================================================
-    // CORE MONITORING
-    // ========================================================================
+    function _readCoreStats() {
+        cpuFile.reload();
+        memFile.reload();
+        uptimeFile.reload();
+        networkFile.reload();
+        if (cpuTempPath !== "")
+            cpuTempFile.reload();
+    }
 
-    Process {
-        id: updateCoreStats
-        command: ["bash", "-c", `
-            cpu_line=$(head -1 /proc/stat)
-            set -- $(awk '/MemTotal:/ {total=$2} /MemAvailable:/ {available=$2} END {print total, available}' /proc/meminfo)
-            mem_total_kib=$1
-            mem_available_kib=$2
-            mem_used=$(( (mem_total_kib - mem_available_kib) * 1024 ))
-            mem_total=$(( mem_total_kib * 1024 ))
+    ElapsedTimer { id: networkClock }
 
-            rx=0
-            tx=0
-            for iface in /sys/class/net/*/; do
-                name=$(basename "$iface")
-                [ "$name" = "lo" ] && continue
-                [ -f "$iface/statistics/rx_bytes" ] || continue
-                rx=$((rx + $(cat "$iface/statistics/rx_bytes")))
-                tx=$((tx + $(cat "$iface/statistics/tx_bytes")))
-            done
+    FileView {
+        preload: root.active
+        printErrors: false
+        id: cpuFile
+        path: "/proc/stat"
+        onLoaded: root._applyCpuSnapshot(text().split("\n")[0].trim().split(/\s+/))
+    }
 
-            uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
-
-            printf 'cpu %s\\n' "$cpu_line"
-            printf 'ram %s %s\\n' "$mem_total" "$mem_used"
-            printf 'net %s %s\\n' "$rx" "$tx"
-            printf 'uptime %s\\n' "$uptime_seconds"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const lines = data.trim().split("\n");
-                for (const line of lines) {
-                    const parts = line.trim().split(/\s+/);
-                    if (parts.length === 0)
-                        continue;
-
-                    if (parts[0] === "cpu")
-                        root._applyCpuSnapshot(parts);
-                    else if (parts[0] === "ram")
-                        root._applyRamSnapshot(parts);
-                    else if (parts[0] === "net")
-                        root._applyNetworkSnapshot(parts);
-                    else if (parts[0] === "uptime")
-                        root._applyUptimeSnapshot(parts);
-                }
-            }
+    FileView {
+        preload: root.active
+        printErrors: false
+        id: memFile
+        path: "/proc/meminfo"
+        onLoaded: {
+            const data = text();
+            const total = /^MemTotal:\s+(\d+)/m.exec(data);
+            const available = /^MemAvailable:\s+(\d+)/m.exec(data);
+            if (total && available)
+                root._applyRamSnapshot(["ram", Number(total[1]) * 1024, (Number(total[1]) - Number(available[1])) * 1024]);
         }
     }
 
-    // ========================================================================
-    // CPU TEMPERATURE MONITORING
-    // ========================================================================
+    FileView {
+        preload: root.active
+        printErrors: false
+        id: uptimeFile
+        path: "/proc/uptime"
+        onLoaded: root._applyUptimeSnapshot(["uptime", text().trim().split(/\s+/)[0]])
+    }
 
-    Process {
-        id: updateCpuTemp
-        command: ["bash", "-c", `
-            for zone in /sys/class/thermal/thermal_zone*/temp; do
-                type_file="\${zone%/temp}/type"
-                if [ -f "$type_file" ]; then
-                    type=$(cat "$type_file" 2>/dev/null)
-                    if [[ "$type" == *"cpu"* ]] || [[ "$type" == *"x86_pkg"* ]] || [[ "$type" == *"coretemp"* ]]; then
-                        cat "$zone" 2>/dev/null
-                        exit 0
-                    fi
-                fi
-            done
-            cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo "0"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const temp = parseInt(data.trim());
-                if (!isNaN(temp)) {
-                    internal.cpuTemp = Math.round(temp / 1000);
+    // /proc/net/dev exposes the same counters as sysfs and includes hotplugged
+    // interfaces automatically, without discovery or one reader per interface.
+    FileView {
+        preload: root.active
+        printErrors: false
+        id: networkFile
+        path: "/proc/net/dev"
+        onLoaded: {
+            let rx = 0;
+            let tx = 0;
+            for (const line of text().split("\n")) {
+                const colon = line.indexOf(":");
+                if (colon < 0 || line.slice(0, colon).trim() === "lo")
+                    continue;
+                const counters = line.slice(colon + 1).trim().split(/\s+/);
+                if (counters.length >= 9) {
+                    rx += Number(counters[0]);
+                    tx += Number(counters[8]);
                 }
             }
+            root._applyNetworkSnapshot(["net", rx, tx]);
+        }
+    }
+
+    FileView {
+        preload: root.active
+        printErrors: false
+        id: cpuTempFile
+        path: root.cpuTempPath
+        onLoaded: {
+            const value = parseInt(text());
+            if (!isNaN(value)) internal.cpuTemp = Math.round(value / 1000);
+        }
+    }
+
+    FileView {
+        preload: root.active && root.gpuMonitorEnabled
+        printErrors: false
+        id: gpuUsageFile
+        path: root.gpuUsagePath
+        onLoaded: {
+            const value = parseInt(text());
+            if (root.gpuMonitorEnabled && !isNaN(value)) internal.gpuUsage = value;
+        }
+    }
+
+    FileView {
+        preload: root.active && root.gpuMonitorEnabled
+        printErrors: false
+        id: gpuTempFile
+        path: root.gpuTempPath
+        onLoaded: {
+            const value = parseInt(text());
+            if (root.gpuMonitorEnabled && !isNaN(value)) internal.gpuTemp = Math.round(value / 1000);
         }
     }
 
@@ -390,13 +471,13 @@ Singleton {
 
     Process {
         id: updateDisk
-        command: ["bash", "-c", "df -B1 / | awk 'NR==2{print $2,$3}'"]
+        command: ["df", "-B1", "/"]
         stdout: SplitParser {
             onRead: data => {
                 const parts = data.trim().split(/\s+/);
-                if (parts.length >= 2) {
-                    const total = parseFloat(parts[0]);
-                    const used = parseFloat(parts[1]);
+                if (parts.length >= 6) {
+                    const total = parseFloat(parts[1]);
+                    const used = parseFloat(parts[2]);
                     if (total > 0) {
                         internal.diskUsage = Math.round((used / total) * 100);
                         internal.diskUsed = root._formatGiB(used);
@@ -423,81 +504,6 @@ Singleton {
 
                     if (!isNaN(usage)) internal.gpuUsage = usage;
                     if (!isNaN(temp)) internal.gpuTemp = temp;
-                }
-            }
-        }
-    }
-
-    // ========================================================================
-    // AMD GPU MONITORING
-    // ========================================================================
-
-    Process {
-        id: updateAmdGpuUsage
-        command: ["bash", "-c", `
-            for card in /sys/class/drm/card*/device/gpu_busy_percent; do
-                if [ -f "$card" ]; then
-                    cat "$card" 2>/dev/null
-                    exit 0
-                fi
-            done
-            echo "0"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const usage = parseInt(data.trim());
-                if (!isNaN(usage)) {
-                    internal.gpuUsage = usage;
-                }
-            }
-        }
-    }
-
-    Process {
-        id: updateAmdGpuTemp
-        command: ["bash", "-c", `
-            for hwmon in /sys/class/drm/card*/device/hwmon/hwmon*/temp1_input; do
-                if [ -f "$hwmon" ]; then
-                    cat "$hwmon" 2>/dev/null
-                    exit 0
-                fi
-            done
-            cat /sys/class/drm/card0/device/hwmon/hwmon*/temp1_input 2>/dev/null || echo "0"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const temp = parseInt(data.trim());
-                if (!isNaN(temp)) {
-                    internal.gpuTemp = Math.round(temp / 1000);
-                }
-            }
-        }
-    }
-
-    // ========================================================================
-    // INTEL GPU MONITORING
-    // ========================================================================
-
-    Process {
-        id: updateIntelGpuTemp
-        command: ["bash", "-c", `
-            for zone in /sys/class/thermal/thermal_zone*/temp; do
-                type_file="\${zone%/temp}/type"
-                if [ -f "$type_file" ]; then
-                    type=$(cat "$type_file" 2>/dev/null)
-                    if [[ "$type" == *"gpu"* ]] || [[ "$type" == *"pch"* ]]; then
-                        cat "$zone" 2>/dev/null
-                        exit 0
-                    fi
-                fi
-            done
-            cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null || echo "0"
-        `]
-        stdout: SplitParser {
-            onRead: data => {
-                const temp = parseInt(data.trim());
-                if (!isNaN(temp)) {
-                    internal.gpuTemp = Math.round(temp / 1000);
                 }
             }
         }

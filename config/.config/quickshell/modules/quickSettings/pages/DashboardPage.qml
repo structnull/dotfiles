@@ -29,6 +29,7 @@ Item {
 
             // Username label
             Text {
+                textFormat: Text.PlainText
                 text: Quickshell.env("USER").toUpperCase()
                 font.family: Config.font
                 font.pixelSize: 13
@@ -49,6 +50,7 @@ Item {
 
             // Date
             Text {
+                textFormat: Text.PlainText
                 text: TimeService.format("ddd, dd MMM")
                 font.family: Config.font
                 font.pixelSize: 12
@@ -73,6 +75,7 @@ Item {
                     spacing: 5
 
                     Text {
+                        textFormat: Text.PlainText
                         text: BatteryService.getBatteryIcon()
                         font.family: Config.font
                         font.pixelSize: Config.fontSizeNormal
@@ -94,6 +97,7 @@ Item {
                     }
 
                     Text {
+                        textFormat: Text.PlainText
                         text: BatteryService.percentage + "%"
                         font.family: Config.font
                         font.pixelSize: 12
@@ -129,6 +133,7 @@ Item {
 
             // Section label
             Text {
+                textFormat: Text.PlainText
                 text: "CONTROLS"
                 font.family: Config.font
                 font.pixelSize: 11
@@ -212,6 +217,7 @@ Item {
 
             // Section label
             Text {
+                textFormat: Text.PlainText
                 text: "AUDIO"
                 font.family: Config.font
                 font.pixelSize: 11
