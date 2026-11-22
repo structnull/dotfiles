@@ -7,6 +7,7 @@ import "../../components/"
 
 BarButton {
     id: root
+    accessibleName: "System monitor"
 
     property bool popupLoaded: false
     readonly property var popupWindow: monitorLoader.active ? monitorLoader.item : null

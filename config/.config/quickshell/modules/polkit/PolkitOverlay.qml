@@ -32,7 +32,6 @@ PanelWindow {
 
     readonly property var flow: PolkitService.flow
     property string password: ""
-    property bool showSuccess: false
 
     // Shake animation state
     property real shakeOffset: 0
@@ -52,18 +51,17 @@ PanelWindow {
             }
         }
 
-        function onIsCompletedChanged() {
-            if (root.flow && root.flow.isCompleted && root.flow.isSuccessful) {
-                root.showSuccess = true;
-                successTimer.restart();
-            }
-        }
+        function onInputPromptChanged() { root.resetResponse(); }
+        function onIsResponseRequiredChanged() { root.resetResponse(); }
     }
 
-    Timer {
-        id: successTimer
-        interval: 600
-        onTriggered: root.showSuccess = false
+    onFlowChanged: resetResponse()
+    onWindowConnected: resetResponse()
+
+    function resetResponse() {
+        password = "";
+        if (visible && flow?.isResponseRequired)
+            Qt.callLater(passwordInput.forceActiveFocus);
     }
 
     // Shake animation on auth failure
@@ -148,7 +146,7 @@ PanelWindow {
         radius: Config.radiusLarge
         color: Config.surface0Color
         border.width: 1
-        border.color: root.showSuccess ? Config.successColor : Config.surface2Color
+        border.color: Config.surface2Color
 
         scale: root.visible ? 1.0 : 0.92
         opacity: root.visible ? 1.0 : 0.0
@@ -195,8 +193,7 @@ PanelWindow {
                 Layout.preferredWidth: 56
                 Layout.preferredHeight: 56
                 radius: 28
-                color: root.showSuccess ? Qt.alpha(Config.successColor, 0.15)
-                                        : Qt.alpha(Config.accentColor, 0.15)
+                color: Qt.alpha(Config.accentColor, 0.15)
 
                 Behavior on color {
                     ColorAnimation { duration: Config.animDuration }
@@ -205,10 +202,10 @@ PanelWindow {
                 Text {
                     textFormat: Text.PlainText
                     anchors.centerIn: parent
-                    text: root.showSuccess ? "󰄬" : "󰌾"
+                    text: "󰌾"
                     font.family: Config.font
                     font.pixelSize: 26
-                    color: root.showSuccess ? Config.successColor : Config.accentColor
+                    color: Config.accentColor
 
                     Behavior on color {
                         ColorAnimation { duration: Config.animDuration }
@@ -220,11 +217,11 @@ PanelWindow {
             Text {
                 textFormat: Text.PlainText
                 Layout.alignment: Qt.AlignHCenter
-                text: root.showSuccess ? "Authentication Successful" : "Authentication Required"
+                text: "Authentication Required"
                 font.family: Config.font
                 font.pixelSize: Config.fontSizeLarge
                 font.bold: true
-                color: root.showSuccess ? Config.successColor : Config.textColor
+                color: Config.textColor
 
                 Behavior on color {
                     ColorAnimation { duration: Config.animDuration }
@@ -293,7 +290,7 @@ PanelWindow {
                     id: inputContainer
 
                     Layout.fillWidth: true
-                    height: 40
+                    Layout.preferredHeight: 40
                     radius: Config.radius
                     color: Config.surface1Color
                     border.width: 2
@@ -423,6 +420,7 @@ PanelWindow {
 
                     MouseArea {
                         id: authMouse
+                        enabled: !!root.flow?.isResponseRequired
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
@@ -484,25 +482,12 @@ PanelWindow {
     // =========================================================================
 
     function submitPassword() {
-        if (root.flow && root.password !== "") {
-            root.flow.submit(root.password);
-        }
+        if (!flow?.isResponseRequired || password === "")
+            return;
+        const response = password;
+        password = "";
+        flow.submit(response);
     }
 
-    // =========================================================================
-    // AUTO-FOCUS
-    // =========================================================================
-
-    onVisibleChanged: {
-        if (visible) {
-            root.password = "";
-            focusTimer.restart();
-        }
-    }
-
-    Timer {
-        id: focusTimer
-        interval: 50
-        onTriggered: passwordInput.forceActiveFocus()
-    }
+    onVisibleChanged: resetResponse()
 }

@@ -64,38 +64,34 @@ ShellRoot {
         OsdService.showBrightness(brightnessNow);
     }
 
-    Timer {
-        id: osdStateArmTimer
-        interval: 800
-        running: true
-        repeat: false
-        onTriggered: {
-            root.osdTrackedVolume = Math.max(0, Math.min(1.5, AudioService.volumeForOsd));
-            root.osdTrackedMuted = AudioService.muted;
-            root.osdTrackedBrightness = Math.max(0.05, Math.min(1.0, BrightnessService.brightness));
-            root.osdAudioReady = true;
-            root.osdBrightnessReady = true;
-        }
+    function armAudioOsd() {
+        osdTrackedVolume = AudioService.volumeForOsd;
+        osdTrackedMuted = AudioService.muted;
+        osdAudioReady = AudioService.volumeKnown;
+    }
+
+    function armBrightnessOsd() {
+        osdTrackedBrightness = BrightnessService.brightness;
+        osdBrightnessReady = BrightnessService.brightnessKnown;
+    }
+
+    Component.onCompleted: {
+        armAudioOsd();
+        armBrightnessOsd();
     }
 
     Connections {
         target: AudioService
-
-        function onVolumeForOsdChanged() {
-            root.maybeShowVolumeOsd();
-        }
-
-        function onMutedChanged() {
-            root.maybeShowVolumeOsd();
-        }
+        function onVolumeKnownChanged() { root.armAudioOsd(); }
+        function onSinkChanged() { root.armAudioOsd(); }
+        function onVolumeForOsdChanged() { root.maybeShowVolumeOsd(); }
+        function onMutedChanged() { root.maybeShowVolumeOsd(); }
     }
 
     Connections {
         target: BrightnessService
-
-        function onBrightnessChanged() {
-            root.maybeShowBrightnessOsd();
-        }
+        function onBrightnessKnownChanged() { root.armBrightnessOsd(); }
+        function onBrightnessChanged() { root.maybeShowBrightnessOsd(); }
     }
 
     // =========================================================================
@@ -105,22 +101,22 @@ ShellRoot {
     IpcHandler {
         target: "power"
 
-        function showOverlay() {
+        function showOverlay(): void {
             PowerService.showOverlay();
         }
 
-        function hideOverlay() {
+        function hideOverlay(): void {
             PowerService.hideOverlay();
         }
 
-        function toggleOverlay() {
+        function toggleOverlay(): void {
             if (PowerService.overlayVisible)
                 PowerService.hideOverlay();
             else
                 PowerService.showOverlay();
         }
 
-        function execute(actionId: string) {
+        function execute(actionId: string): void {
             PowerService.executeAction(actionId);
         }
     }
@@ -128,11 +124,11 @@ ShellRoot {
     IpcHandler {
         target: "theme"
 
-        function generateFromImage(imagePath: string) {
+        function generateFromImage(imagePath: string): void {
             ThemeService.generateFromImage(imagePath);
         }
 
-        function generateFromColor(hex: string) {
+        function generateFromColor(hex: string): void {
             ThemeService.generateFromColor(hex);
         }
     }
@@ -140,15 +136,15 @@ ShellRoot {
     IpcHandler {
         target: "wallpaper"
 
-        function show() {
+        function show(): void {
             WallpaperService.show();
         }
 
-        function hide() {
+        function hide(): void {
             WallpaperService.hide();
         }
 
-        function toggle() {
+        function toggle(): void {
             WallpaperService.toggle();
         }
     }
@@ -171,13 +167,13 @@ ShellRoot {
     // Notifications
     LazyLoader {
         id: notificationLoader
-        active: NotificationService.activePopupCount > 0 || NotificationService.popups.length > 0
+        active: NotificationService.activePopupCount > 0
         source: "./modules/notifications/NotificationOverlay.qml"
     }
     // Power Overlay
     LazyLoader {
         id: powerLoader
-        active: PowerService.overlayVisible
+        active: PowerService.overlayLoaded
         source: "./modules/power/PowerOverlay.qml"
     }
     // OSD

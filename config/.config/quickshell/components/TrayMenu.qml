@@ -11,19 +11,38 @@ PanelWindow {
     id: root
 
     // Properties received when opening
-    property var rootMenuHandle: null
-    property int anchorX: 0
-    property int anchorY: 0
+    property QsMenuHandle rootMenuHandle: null
+    property Item anchorItem: null
+    readonly property var anchorWindow: anchorItem ? anchorItem.QsWindow.window : null
+    readonly property point anchorPosition: {
+        if (!anchorItem)
+            return Qt.point(0, 0);
+        // mapToGlobal itself does not track window or item movement.
+        const position = anchorWindow?.windowTransform;
+        const x = anchorItem.x;
+        const y = anchorItem.y;
+        return anchorItem.mapToGlobal(0, anchorItem.height);
+    }
     property bool isClosing: false
     property real openProgress: 0.0
 
     // --- WINDOW CONFIGURATION ---
     color: "transparent"
     visible: false
+    screen: anchorWindow?.screen ?? Quickshell.screens[0] ?? null
+    onAnchorItemChanged: { if (!anchorItem) close(); }
+    onRootMenuHandleChanged: { if (!rootMenuHandle) close(); }
+    onVisibleChanged: {
+        if (visible)
+            TrayService.registerActiveMenu(root);
+        else
+            TrayService.unregisterActiveMenu(root);
+    }
 
     // Size
-    implicitWidth: Math.max(220, mainColumn.implicitWidth)
-    implicitHeight: mainColumn.implicitHeight
+    implicitWidth: Math.max(1, Math.min(220, (screen?.width ?? 1920) - 10))
+    implicitHeight: Math.min(mainColumn.implicitHeight + 2 * frameInset, Math.max(1, (screen?.height ?? 1080) - 10))
+    readonly property int frameInset: 2
 
     WlrLayershell.namespace: "qs_modules"
     WlrLayershell.layer: WlrLayer.Overlay
@@ -36,37 +55,19 @@ PanelWindow {
         top: true
     }
     margins {
-        left: Math.min(root.screen.width - implicitWidth - 10, root.anchorX)
-        top: Math.min(root.screen.height - implicitHeight - 10, root.anchorY)
+        left: Math.max(5, Math.min((screen?.width ?? implicitWidth) - implicitWidth - 5, anchorPosition.x - (screen?.x ?? 0)))
+        top: Math.max(5, Math.min((screen?.height ?? implicitHeight) - implicitHeight - 5, anchorPosition.y - (screen?.y ?? 0) + 5))
     }
 
-    // --- NAVIGATION SYSTEM ---
-    // Keeps the history of where we are. If empty, we are at the root.
-    ListModel {
-        id: menuStack
-    }
-
-    function pushSubMenu(menuItem) {
-        if (menuItem && menuItem.menu) {
-            // Adds the submenu to the history
-            menuStack.append({
-                "handle": menuItem.menu
-            });
-        }
-    }
+    property list<QsMenuEntry> menuStack: []
+    readonly property QsMenuHandle currentMenuHandle: menuStack.length > 0
+        ? menuStack[menuStack.length - 1] : rootMenuHandle
 
     function popSubMenu() {
-        if (menuStack.count > 0) {
-            menuStack.remove(menuStack.count - 1);
+        if (menuStack.length > 0) {
+            menuStack.pop();
+            menuViewport.contentY = 0;
         }
-    }
-
-    // Defines which menu to show: the last from the stack or the root
-    property var currentMenuHandle: {
-        if (menuStack.count > 0) {
-            return menuStack.get(menuStack.count - 1).handle;
-        }
-        return root.rootMenuHandle;
     }
 
     // --- FOCUS AND CLOSING ---
@@ -78,7 +79,10 @@ PanelWindow {
     }
 
     function open() {
-        menuStack.clear();
+        if (!rootMenuHandle || !anchorItem)
+            return;
+        menuViewport.contentY = 0;
+        menuStack = [];
         isClosing = false;
         closeAnimation.stop();
         openProgress = 0;
@@ -118,7 +122,7 @@ PanelWindow {
                 return;
 
             root.visible = false;
-            menuStack.clear(); // Resets navigation on close
+            menuStack = []; // Resets navigation on close
             focusGrab.active = false;
             root.isClosing = false;
         }
@@ -150,174 +154,173 @@ PanelWindow {
         clip: true
         transformOrigin: Item.Top
 
-        y: (1 - root.openProgress) * -10
         scale: 0.97 + (root.openProgress * 0.03)
         opacity: root.openProgress
 
         focus: true
         Keys.onEscapePressed: {
-            if (menuStack.count > 0)
+            if (menuStack.length > 0)
                 popSubMenu();
             else
                 root.close();
         }
 
-        ColumnLayout {
-            id: mainColumn
-            width: parent.width
-            spacing: 0
+        Flickable {
+            id: menuViewport
+            anchors.fill: parent
+            anchors.margins: root.frameInset
+            contentWidth: width
+            contentHeight: mainColumn.implicitHeight
+            interactive: contentHeight > height
+            boundsBehavior: Flickable.StopAtBounds
+            ColumnLayout {
+                id: mainColumn
+                width: parent.width
+                spacing: 0
 
-            // --- HEADER / BACK ---
-            // Only appears if we are inside a submenu
-            Rectangle {
-                visible: menuStack.count > 0
-                Layout.fillWidth: true
-                Layout.preferredHeight: 30
-                color: backMouse.containsMouse ? Config.surface1Color : "transparent"
+                // --- HEADER / BACK ---
+                // Only appears if we are inside a submenu
+                Rectangle {
+                    visible: menuStack.length > 0
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 30
+                    color: backMouse.containsMouse ? Config.surface1Color : "transparent"
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 5
-                    spacing: 5
-                    Text {
-                        textFormat: Text.PlainText
-                        text: "⬅ Back"
-                        color: Config.accentColor
-                        font.family: Config.font
-                        font.bold: true
-                        font.pixelSize: Config.fontSizeSmall
-                    }
-                }
-                MouseArea {
-                    id: backMouse
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: popSubMenu()
-                }
-            }
-
-            // Divider if there is a back button
-            Rectangle {
-                visible: menuStack.count > 0
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Config.surface2Color
-            }
-
-            // --- ITEMS LIST ---
-            Repeater {
-                model: menuOpener.children
-
-                delegate: Rectangle {
-                    id: itemDelegate
-
-                    required property var modelData
-                    required property int index
-
-                    // Helpers
-                    property bool isSeparator: (modelData.type === "separator" || modelData.isSeparator === true)
-                    property bool isEnabled: modelData.enabled !== false
-                    property bool hasSubMenu: (modelData.children && modelData.children.length > 0) || modelData.type === "menu"
-
-                    Layout.preferredWidth: mainColumn.width - 3
-                    Layout.preferredHeight: isSeparator ? 6 : 32
-                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-
-                    color: itemMouse.containsMouse && !isSeparator ? Config.surface1Color : "transparent"
-                    radius: Config.radius
-                    opacity: isEnabled ? 1.0 : 0.5
-
-                    // Separator
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: parent.width - 10
-                        height: 1
-                        color: Config.surface2Color
-                        visible: parent.isSeparator
-                    }
-
-                    // Item Content
                     RowLayout {
                         anchors.fill: parent
-                        anchors.leftMargin: 8
-                        anchors.rightMargin: 8
-                        spacing: 10
-                        visible: !parent.isSeparator
-
-                        // Icon (resolved via TrayService to handle theme names, pixmaps, and file paths)
-                        Image {
-                            Layout.preferredWidth: 16
-                            Layout.preferredHeight: 16
-                            source: modelData.icon ? TrayService.getMenuIconSource(modelData.icon) : ""
-                            visible: source !== "" && status === Image.Ready
-                            sourceSize: Qt.size(16, 16)
-                            fillMode: Image.PreserveAspectFit
-                            smooth: true
-                            asynchronous: true
-                        }
-
-                        // Checkbox
-                        Rectangle {
-                            Layout.preferredWidth: 10
-                            Layout.preferredHeight: 10
-                            radius: (modelData.toggleType === 2) ? 5 : 2
-                            color: "transparent"
-                            border.color: Config.textColor
-                            visible: (modelData.toggleType > 0) && (modelData.checked === true || modelData.status === "active")
-                            Rectangle {
-                                anchors.centerIn: parent
-                                width: 6
-                                height: 6
-                                radius: parent.radius - 1
-                                color: Config.textColor
-                            }
-                        }
-
-                        // Text
+                        anchors.margins: 5
+                        spacing: 5
                         Text {
                             textFormat: Text.PlainText
-                            text: {
-                                var txt = modelData.text || modelData.title || "";
-                                return txt.replace(/&/g, "").replace(/_/g, "");
-                            }
-                            color: Config.textColor
+                            text: "⬅ Back"
+                            color: Config.accentColor
                             font.family: Config.font
+                            font.bold: true
                             font.pixelSize: Config.fontSizeSmall
-                            Layout.fillWidth: true
-                            elide: Text.ElideRight
-                        }
-
-                        // Submenu Arrow
-                        Text {
-                            textFormat: Text.PlainText
-                            visible: parent.parent.hasSubMenu
-                            text: "›"
-                            color: Config.subtextColor
-                            font.pixelSize: 14
                         }
                     }
-
                     MouseArea {
-                        id: itemMouse
+                        id: backMouse
                         anchors.fill: parent
-                        hoverEnabled: !parent.isSeparator && parent.isEnabled
-                        enabled: hoverEnabled
-                        cursorShape: Qt.PointingHandCursor
+                        hoverEnabled: true
+                        onClicked: popSubMenu()
+                    }
+                }
 
-                        onClicked: {
-                            if (parent.hasSubMenu) {
-                                // Pushes the submenu and the interface updates automatically
-                                root.pushSubMenu(modelData);
-                            } else {
-                                // Normal Action
-                                if (typeof modelData.activate === 'function')
-                                    modelData.activate();
-                                else if (typeof modelData.triggered === 'function')
-                                    modelData.triggered();
-                                else if (typeof modelData.click === 'function')
-                                    modelData.click();
+                // Divider if there is a back button
+                Rectangle {
+                    visible: menuStack.length > 0
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 1
+                    color: Config.surface2Color
+                }
 
-                                root.close();
+                // --- ITEMS LIST ---
+                Repeater {
+                    model: menuOpener.children
+
+                    delegate: Rectangle {
+                        id: itemDelegate
+
+                        required property QsMenuEntry modelData
+
+                        // Helpers
+                        readonly property bool isSeparator: modelData?.isSeparator ?? false
+                        readonly property bool isEnabled: modelData?.enabled ?? false
+                        readonly property bool hasSubMenu: modelData?.hasChildren ?? false
+
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: isSeparator ? 6 : 32
+                        Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+
+                        color: itemMouse.containsMouse && !isSeparator ? Config.surface1Color : "transparent"
+                        radius: Config.radius
+                        opacity: isEnabled ? 1.0 : 0.5
+
+                        // Separator
+                        Rectangle {
+                            anchors.centerIn: parent
+                            width: parent.width - 10
+                            height: 1
+                            color: Config.surface2Color
+                            visible: parent.isSeparator
+                        }
+
+                        // Item Content
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 8
+                            anchors.rightMargin: 8
+                            spacing: 10
+                            visible: !parent.isSeparator
+
+                            // Icon (resolved via TrayService to handle theme names, pixmaps, and file paths)
+                            Image {
+                                Layout.preferredWidth: 16
+                                Layout.preferredHeight: 16
+                                source: itemDelegate.modelData ? itemDelegate.modelData.icon : ""
+                                visible: source !== "" && status === Image.Ready
+                                sourceSize: Qt.size(16, 16)
+                                fillMode: Image.PreserveAspectFit
+                                smooth: true
+                                asynchronous: true
+                            }
+
+                            // Checkbox
+                            Rectangle {
+                                Layout.preferredWidth: 10
+                                Layout.preferredHeight: 10
+                                radius: itemDelegate.modelData?.buttonType === QsMenuButtonType.RadioButton ? 5 : 2
+                                color: "transparent"
+                                border.color: Config.textColor
+                                visible: itemDelegate.modelData && itemDelegate.modelData.buttonType !== QsMenuButtonType.None
+                                Rectangle {
+                                    anchors.centerIn: parent
+                                    width: 6
+                                    height: itemDelegate.modelData?.checkState === Qt.PartiallyChecked ? 2 : 6
+                                    visible: itemDelegate.modelData?.checkState !== Qt.Unchecked
+                                    radius: Math.max(0, parent.radius - 1)
+                                    color: Config.textColor
+                                }
+                            }
+
+                            // Text
+                            Text {
+                                textFormat: Text.PlainText
+                                text: (itemDelegate.modelData?.text ?? "").replace(/&&|&/g, marker => marker === "&&" ? "&" : "")
+                                color: Config.textColor
+                                font.family: Config.font
+                                font.pixelSize: Config.fontSizeSmall
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
+
+                            // Submenu Arrow
+                            Text {
+                                textFormat: Text.PlainText
+                                visible: itemDelegate.hasSubMenu
+                                text: "›"
+                                color: Config.subtextColor
+                                font.pixelSize: 14
+                            }
+                        }
+
+                        MouseArea {
+                            id: itemMouse
+                            anchors.fill: parent
+                            hoverEnabled: !parent.isSeparator && parent.isEnabled
+                            enabled: hoverEnabled
+                            cursorShape: Qt.PointingHandCursor
+
+                            onClicked: {
+                                const entry = itemDelegate.modelData;
+                                if (itemDelegate.hasSubMenu) {
+                                    root.menuStack.push(entry);
+                                    menuViewport.contentY = 0;
+                                } else {
+                                    entry.triggered();
+                                    root.close();
+                                }
                             }
                         }
                     }

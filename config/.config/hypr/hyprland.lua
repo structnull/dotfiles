@@ -259,10 +259,10 @@ hl.device({
 })
 
 -- Gestures
-hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
-hl.gesture({ fingers = 3, direction = "down", mods = "ALT", action = "close" })
+hl.gesture({ fingers = 4, direction = "horizontal", action = "workspace" })
+hl.gesture({ fingers = 4, direction = "down", mods = "ALT", action = "close" })
 -- Scrolling layout only: pan the tape with a four-finger swipe.
-hl.gesture({ fingers = 4, direction = "horizontal", action = "scroll_move" })
+hl.gesture({ fingers = 3, direction = "horizontal", action = "scroll_move" })
 
 -- Autostart
 hl.on("hyprland.start", function()

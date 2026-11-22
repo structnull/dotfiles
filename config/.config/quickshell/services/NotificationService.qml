@@ -16,11 +16,16 @@ Singleton {
     property bool dndEnabled: false
 
     function clearActivePopups() {
-        for (let i = 0; i < notifications.length; i++) {
-            if (notifications[i] && notifications[i].popup) {
-                notifications[i].popup = false;
-            }
-        }
+        for (const wrapper of popups.slice())
+            hidePopup(wrapper);
+    }
+
+    function hidePopup(wrapper) {
+        if (!wrapper || !wrapper.popup)
+            return;
+        wrapper.popup = false;
+        if (wrapper.notification?.transient)
+            wrapper.notification.expire();
     }
 
     function applyDndState(enabled: bool) {
@@ -60,8 +65,10 @@ Singleton {
     // NOTIFICATION LISTS
     // ========================================================================
 
-    readonly property list<NotifWrapper> notifications: []
-    readonly property list<NotifWrapper> popups: notifications.filter(n => n && n.popup)
+    readonly property list<NotifWrapper> records: []
+    readonly property list<NotifWrapper> notifications: records.filter(n => n?.notification && !n.notification.transient)
+    readonly property list<NotifWrapper> popups: records.filter(n => n?.popup)
+    readonly property int maxPopups: 5
 
     readonly property int count: notifications.length
     readonly property int activePopupCount: popups.length
@@ -77,7 +84,7 @@ Singleton {
 
         keepOnReload: true
         actionsSupported: true
-        actionIconsSupported: true
+        actionIconsSupported: false
         bodyHyperlinksSupported: true
         bodyImagesSupported: true
         bodyMarkupSupported: true
@@ -85,28 +92,27 @@ Singleton {
         persistenceSupported: true
 
         onNotification: notif => {
+            const showPopup = !root.dndEnabled && !notif.lastGeneration;
+            if (notif.transient && !showPopup)
+                return;
+
             notif.tracked = true;
-
-            // If DND is active, don't show popup but still keep in history
-            const showPopup = !root.dndEnabled;
-
             const wrapper = notifComponent.createObject(root, {
-                "popup": showPopup,
-                "notification": notif
+                popup: showPopup,
+                notification: notif
             });
+            if (!wrapper) {
+                notif.tracked = false;
+                return;
+            }
 
-            if (wrapper) {
-                root.notifications.unshift(wrapper);
-
-                // Dismiss before releasing the wrapper so server-owned image
-                // data is also released. Removal can synchronously emit dropped.
-                while (root.notifications.length > 100) {
-                    const oldest = root.notifications[root.notifications.length - 1];
-                    oldest.popup = false;
-                    if (oldest.notification)
-                        oldest.notification.dismiss();
-                    root.notifications = root.notifications.filter(item => item !== oldest);
-                }
+            root.records.unshift(wrapper);
+            while (root.popups.length > root.maxPopups)
+                root.hidePopup(root.popups[root.popups.length - 1]);
+            while (root.notifications.length > 100) {
+                const oldest = root.notifications[root.notifications.length - 1];
+                oldest.notification?.dismiss();
+                root.records = root.records.filter(item => item !== oldest);
             }
         }
     }
@@ -134,13 +140,12 @@ Singleton {
             duration: wrapper.totalTime
             running: wrapper.popup
             paused: wrapper.isPaused && wrapper.popup
-            onFinished: wrapper.popup = false
+            onFinished: root.hidePopup(wrapper)
         }
 
         // Timestamp
         readonly property date time: new Date()
-        readonly property string timeStr: {
-            const now = new Date();
+        function ageAt(now: date): string {
             const diff = now.getTime() - time.getTime();
             const minutes = Math.floor(diff / 60000);
 
@@ -176,7 +181,7 @@ Singleton {
                 wrapper.popup = false;
                 if (root.hoveredNotificationId === wrapper.notifId)
                     root.hoveredNotificationId = -1;
-                root.notifications = root.notifications.filter(w => w !== wrapper);
+                root.records = root.records.filter(w => w !== wrapper);
             }
 
             function onAboutToDestroy(): void {
@@ -203,25 +208,13 @@ Singleton {
     }
 
     function expireNotification(notifId) {
-        for (let i = 0; i < notifications.length; i++) {
-            if (notifications[i].notifId === notifId) {
-                notifications[i].popup = false;
-                break;
-            }
-        }
+        hidePopup(popups.find(wrapper => wrapper.notifId === notifId));
     }
 
     function removeNotification(notifId) {
-        for (let i = 0; i < notifications.length; i++) {
-            if (notifications[i].notifId === notifId) {
-                const wrapper = notifications[i];
-                wrapper.popup = false;
-                if (wrapper.notification) {
-                    wrapper.notification.dismiss();
-                }
-                break;
-            }
-        }
+        const wrapper = records.find(item => item.notifId === notifId);
+        if (wrapper)
+            wrapper.notification?.dismiss();
     }
 
     function clearAll() {

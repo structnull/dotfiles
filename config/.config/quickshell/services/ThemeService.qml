@@ -31,14 +31,34 @@ Singleton {
     // Whether matugen-generated colors are loaded
     readonly property bool loaded: _loaded
 
+    property var _pendingCommand: null
+    property bool _generating: false
+
     function generateFromImage(imagePath: string) {
-        _genProc.command = ["matugen", "image", "--mode", mode, "--type", "scheme-vibrant", "--prefer", "saturation", imagePath];
-        _genProc.running = true;
+        _pendingCommand = ["matugen", "image", "--mode", mode, "--type", "scheme-vibrant", "--prefer", "saturation", imagePath];
+        _generatePending();
     }
 
     function generateFromColor(hex: string) {
-        _genProc.command = ["matugen", "color", "hex", "--mode", mode, "--type", "scheme-vibrant", hex];
-        _genProc.running = true;
+        _pendingCommand = ["matugen", "color", "hex", "--mode", mode, "--type", "scheme-vibrant", hex];
+        _generatePending();
+    }
+
+    function _generatePending() {
+        if (_generating || !_pendingCommand)
+            return;
+        const command = _pendingCommand;
+        _pendingCommand = null;
+        _generating = true;
+        _genProc.exec(command);
+    }
+
+    function _checkStartFailure() {
+        if (_generating && !_genProc.running) {
+            console.warn("[ThemeService] Could not start matugen");
+            _generating = false;
+            _generatePending();
+        }
     }
 
     // =========================================================================
@@ -108,10 +128,14 @@ Singleton {
 
     function _parseColors() {
         try {
-            _palette = JSON.parse(colorFile.text());
+            const palette = JSON.parse(colorFile.text());
+            const scheme = palette?.[mode];
+            if (!scheme || typeof scheme.primary !== "string" || typeof scheme.surface !== "string")
+                return;
+            _palette = palette;
             _loaded = true;
         } catch (error) {
-            _loaded = false;
+            // Keep the last valid palette while Matugen is writing.
         }
     }
 
@@ -123,13 +147,15 @@ Singleton {
             onRead: data => console.warn("[ThemeService matugen]:", data)
         }
 
+        onRunningChanged: {
+            if (!running)
+                Qt.callLater(root._checkStartFailure);
+        }
         onExited: (exitCode, exitStatus) => {
-            if (exitCode === 0) {
-                console.log("[ThemeService] Matugen generation complete");
-                // File watcher will pick up the change and reload
-            } else {
-                console.error("[ThemeService] Matugen failed with exit code:", exitCode);
-            }
+            root._generating = false;
+            if (exitCode !== 0 || exitStatus !== 0)
+                console.warn("[ThemeService] Matugen failed with exit code:", exitCode);
+            Qt.callLater(root._generatePending);
         }
     }
 }

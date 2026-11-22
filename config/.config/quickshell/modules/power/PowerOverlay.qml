@@ -10,7 +10,7 @@ import qs.services
 PanelWindow {
     id: root
 
-    visible: PowerService.overlayVisible
+    visible: PowerService.overlayLoaded
 
     anchors {
         top: true
@@ -21,7 +21,9 @@ PanelWindow {
 
     WlrLayershell.namespace: "qs_modules"
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+    WlrLayershell.keyboardFocus: PowerService.overlayVisible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+    mask: PowerService.overlayVisible ? null : emptyRegion
+    Region { id: emptyRegion }
 
     color: "transparent"
 
@@ -64,12 +66,26 @@ PanelWindow {
     }
 
     function executeSelected() {
-        PowerService.executeAction(actions[selectedIndex].id);
+        if (PowerService.overlayVisible)
+            PowerService.executeAction(actions[selectedIndex].id);
     }
 
     MouseArea {
         anchors.fill: parent
         onClicked: PowerService.hideOverlay()
+    }
+
+    Text {
+        anchors.top: powerWidget.bottom
+        anchors.topMargin: 12
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: Math.min(powerWidget.width, parent.width)
+        text: PowerService.error
+        textFormat: Text.PlainText
+        color: Config.errorColor
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.Wrap
+        visible: PowerService.overlayVisible && text !== ""
     }
 
     // Central widget
@@ -346,11 +362,19 @@ PanelWindow {
         }
     }
 
-    onVisibleChanged: {
-        if (visible) {
+    Connections {
+        target: PowerService
+        function onOverlayVisibleChanged() { root.syncFocus(); }
+    }
+
+    Component.onCompleted: syncFocus()
+
+    function syncFocus() {
+        if (PowerService.overlayVisible) {
             selectedIndex = 0;
             focusTimer.restart();
         } else {
+            focusTimer.stop();
             focusGrab.active = false;
         }
     }

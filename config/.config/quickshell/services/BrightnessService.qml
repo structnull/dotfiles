@@ -15,12 +15,17 @@ Singleton {
     readonly property string maxBrightnessPath: "/sys/class/backlight/" + backlightDevice + "/max_brightness"
 
     property string lastWrittenRaw: ""
-    property bool brightnessWatchObserved: false
+    property bool brightnessKnown: false
     property int maxValue: 0
     property bool hasBacklight: false
     property real pendingBrightness: NaN
     property real targetBrightness: NaN
     readonly property bool available: hasBacklight && maxValue > 0
+    onAvailableChanged: {
+        if (available && hasTargetBrightness)
+            scheduleBrightnessApply();
+    }
+
     readonly property bool hasPendingBrightness: !isNaN(pendingBrightness)
     readonly property bool hasTargetBrightness: !isNaN(targetBrightness)
 
@@ -38,12 +43,12 @@ Singleton {
 
     property bool nightLightEnabled: StateService.get("nightLight.enabled", false)
     property int nightLightTemperature: 4000
+    property bool nightLightDaemonRequested: false
     property real nightLightIntensity: StateService.get("nightLight.intensity", 0.5)
 
     Component.onCompleted: {
         updateTemperatureFromIntensity();
         detectBacklightDevice.running = true;
-        ensureHyprsunsetRunning.running = true;
         // State now loads synchronously, so its initial signal may precede us.
         if (!StateService.isLoading)
             applyStateTimer.restart();
@@ -70,7 +75,7 @@ Singleton {
     }
 
     function applyBrightnessReading(rawValue) {
-        if (isNaN(rawValue))
+        if (isNaN(rawValue) || root.maxValue <= 0)
             return;
 
         const nextBrightness = clampBrightness(root.maxValue > 0 ? rawValue / root.maxValue : root.brightness);
@@ -87,6 +92,7 @@ Singleton {
         }
 
         root.brightness = nextBrightness;
+        root.brightnessKnown = true;
     }
 
     function setBrightness(value) {
@@ -105,7 +111,7 @@ Singleton {
     }
 
     function applyTargetBrightness() {
-        if (!hasTargetBrightness || setBrightnessProcess.running)
+        if (!available || !hasTargetBrightness || setBrightnessProcess.running)
             return;
 
         const rawValue = root.maxValue > 0
@@ -115,7 +121,7 @@ Singleton {
         if (rawValue.toString() === lastWrittenRaw)
             return;
         lastWrittenRaw = rawValue.toString();
-        setBrightnessProcess.command = ["brightnessctl", "set", rawValue.toString()];
+        setBrightnessProcess.command = ["brightnessctl", "--class", "backlight", "--device", root.backlightDevice, "set", rawValue.toString()];
         setBrightnessProcess.running = true;
     }
 
@@ -138,7 +144,8 @@ Singleton {
         nightLightEnabled = false;
         StateService.set("nightLight.enabled", false);
         nightLightDebounce.stop();
-        Quickshell.execDetached(["hyprctl", "hyprsunset", "identity"]);
+        if (Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE"))
+            Quickshell.execDetached(["hyprctl", "hyprsunset", "identity"]);
     }
 
     function setNightLightIntensity(intensity) {
@@ -160,7 +167,12 @@ Singleton {
     }
 
     function applyNightLight() {
-        nightLightDebounce.restart();
+        if (!Quickshell.env("HYPRLAND_INSTANCE_SIGNATURE"))
+            return;
+        if (nightLightDaemonRequested)
+            nightLightDebounce.restart();
+        else if (!ensureHyprsunsetRunning.running)
+            ensureHyprsunsetRunning.running = true;
     }
 
     Timer {
@@ -204,6 +216,10 @@ Singleton {
                 if (device === "")
                     return;
 
+                if (root.backlightDevice !== device) {
+                    root.brightnessKnown = false;
+                    root.maxValue = 0;
+                }
                 root.backlightDevice = device;
                 root.hasBacklight = true;
                 root.readMaxBrightness();
@@ -231,14 +247,11 @@ Singleton {
         path: root.backlightPath
         watchChanges: true
         printErrors: false
-        onFileChanged: {
-            root.brightnessWatchObserved = true;
-            reload();
-        }
+        onFileChanged: reload()
         onLoaded: {
             const value = parseInt(text().trim());
             // A subsequent external change must allow writing a previous target again.
-            if (!root.hasPendingBrightness && !setBrightnessProcess.running)
+            if (!isNaN(value) && !root.hasPendingBrightness && !setBrightnessProcess.running)
                 root.lastWrittenRaw = value.toString();
             root.applyBrightnessReading(value);
         }
@@ -248,11 +261,12 @@ Singleton {
         id: setBrightnessProcess
         stdout: StdioCollector {
         }
-        stderr: StdioCollector {
-        }
+        stderr: StdioCollector { id: setBrightnessError }
         onExited: code => {
-            if (code !== 0)
+            if (code !== 0) {
                 root.lastWrittenRaw = "";
+                console.warn("[BrightnessService]", setBrightnessError.text.trim());
+            }
             if (root.hasTargetBrightness) {
                 applyBrightnessTimer.restart();
             } else {
@@ -261,12 +275,11 @@ Singleton {
         }
     }
 
-    // Sysfs drivers do not all emit inotify events. This is an in-process
-    // fallback until this driver's watcher has proved it can notify us.
+    // Some sysfs changes do not emit inotify events.
     Timer {
         interval: 10000
         repeat: true
-        running: root.available && !root.brightnessWatchObserved
+        running: root.available
         onTriggered: brightnessFile.reload()
     }
 
@@ -287,11 +300,13 @@ Singleton {
 
     Process {
         id: ensureHyprsunsetRunning
-        command: ["/bin/sh", "-c", "if ! pgrep -x hyprsunset >/dev/null 2>&1; then hyprsunset & disown; sleep 0.5; fi"]
-        onExited: {
-            if (!StateService.isLoading && root.nightLightEnabled)
-                root.applyNightLight();
+        command: ["sh", "-c", "pgrep -x hyprsunset >/dev/null || systemctl --user start hyprsunset.service"]
+        onExited: code => {
+            if (code !== 0 && root.nightLightEnabled)
+                Quickshell.execDetached(["hyprsunset"]);
+            root.nightLightDaemonRequested = code === 0 || root.nightLightEnabled;
+            if (root.nightLightEnabled)
+                nightLightDebounce.restart();
         }
     }
-
 }

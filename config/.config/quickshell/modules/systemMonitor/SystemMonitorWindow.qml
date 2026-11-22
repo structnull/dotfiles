@@ -13,7 +13,7 @@ QsPopupWindow {
     popupWidth: 380
     popupMaxHeight: 720
     anchorSide: "left"
-    contentImplicitHeight: content.implicitHeight
+    contentImplicitHeight: monitorContent.implicitHeight
     property bool _monitorRegistered: false
 
     function syncMonitoring() {
@@ -98,7 +98,7 @@ QsPopupWindow {
     readonly property int selectedPowerIndex: indexForProfile(PowerProfiles.profile)
 
     ColumnLayout {
-        id: content
+        id: monitorContent
         anchors.fill: parent
         spacing: 14
 
@@ -120,8 +120,8 @@ QsPopupWindow {
             }
 
             Rectangle {
-                width: 4
-                height: 4
+                implicitWidth: 4
+                implicitHeight: 4
                 radius: 2
                 color: root.accentBlue
                 opacity: 0.5
@@ -412,7 +412,7 @@ QsPopupWindow {
                     }
 
                     Rectangle {
-                        width: parent.width * (SystemMonitorService.gpuUsage / 100)
+                        width: SystemMonitorService.gpuUsageKnown ? parent.width * (SystemMonitorService.gpuUsage / 100) : 0
                         height: parent.height
                         radius: 2
                         color: root.usageColor(SystemMonitorService.gpuUsage)
@@ -434,7 +434,7 @@ QsPopupWindow {
 
                 Text {
                     textFormat: Text.PlainText
-                    text: SystemMonitorService.gpuUsage + "%"
+                    text: SystemMonitorService.gpuUsageKnown ? SystemMonitorService.gpuUsage + "%" : "—"
                     font.family: Config.font
                     font.pixelSize: 13
                     font.bold: true
@@ -446,10 +446,10 @@ QsPopupWindow {
                 // GPU temp
                 Text {
                     textFormat: Text.PlainText
-                    text: SystemMonitorService.gpuTemp + "°"
+                    text: SystemMonitorService.gpuTempKnown ? SystemMonitorService.gpuTemp + "°" : "—"
                     font.family: Config.font
                     font.pixelSize: 12
-                    color: root.tempColor(SystemMonitorService.gpuTemp)
+                    color: SystemMonitorService.gpuTempKnown ? root.tempColor(SystemMonitorService.gpuTemp) : Config.subtextColor
                     opacity: 0.7
                     Layout.preferredWidth: 26
 

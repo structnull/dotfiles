@@ -8,8 +8,9 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    readonly property string statePath: Quickshell.env("HOME") + "/.config/quickshell/state.json"
-    readonly property string defaultsPath: Quickshell.env("HOME") + "/.config/quickshell/defaults.json"
+    readonly property string statePath: Quickshell.statePath("state.json")
+    readonly property string defaultsPath: Quickshell.shellPath("defaults.json")
+    readonly property string legacyPath: Quickshell.shellPath("state.json")
     property var state: ({})
     property bool isLoading: true
     property bool _initialized: false
@@ -25,6 +26,8 @@ Singleton {
         // Flush the trailing debounce on reload/exit, after animations stop.
         if (_pendingEdits.length > 0) {
             stateFile.blockWrites = true;
+            stateFile.reload();
+            _acceptDiskState();
             stateFile.setText(JSON.stringify(state, null, 2) + "\n");
         }
     }
@@ -60,6 +63,14 @@ Singleton {
     FileView {
         id: defaultsFile
         path: root.defaultsPath
+        blockLoading: true
+        printErrors: false
+    }
+
+    FileView {
+        id: legacyFile
+        path: root.legacyPath
+        preload: false
         blockLoading: true
         printErrors: false
     }
@@ -165,9 +176,15 @@ Singleton {
             state = _parse(stateFile.text());
         } catch (error) {
             try {
-                state = _parse(defaultsFile.text());
-            } catch (fallbackError) {
-                state = {};
+                state = _parse(legacyFile.text());
+                if (!stateFile.loaded)
+                    stateFile.setText(JSON.stringify(state, null, 2) + "\n");
+            } catch (legacyError) {
+                try {
+                    state = _parse(defaultsFile.text());
+                } catch (fallbackError) {
+                    state = {};
+                }
             }
         }
         isLoading = false;

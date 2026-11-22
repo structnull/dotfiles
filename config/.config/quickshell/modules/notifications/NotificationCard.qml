@@ -2,6 +2,8 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
 import QtQuick.Layouts
+import QtQuick.Controls
+import Quickshell.Services.Notifications
 
 import qs.config
 import qs.services
@@ -38,7 +40,7 @@ Item {
     readonly property var actions: wrapper ? wrapper.actions : []
     readonly property bool hasActions: wrapper ? wrapper.hasActions : false
     readonly property bool showPopup: wrapper ? wrapper.popup : false
-    readonly property string timeStr: wrapper ? wrapper.timeStr : ""
+    readonly property string timeStr: !popupMode && wrapper ? wrapper.ageAt(TimeService.date) : ""
 
     // Keep the original 50 ms visual steps. A continuous property animation
     // otherwise repaints this separate window at the display's refresh rate.
@@ -53,49 +55,33 @@ Item {
     // Check if paused (hover)
     readonly property bool isPaused: wrapper && wrapper.isPaused
 
-    // Filter actions that should not be shown as buttons
-    readonly property var visibleActions: {
-        if (!actions || actions.length === 0)
-            return [];
+    readonly property var defaultAction: actions.find(action => action?.identifier === "default") ?? null
+    readonly property var visibleActions: actions.filter(action => action && action.identifier !== "default")
 
-        let filtered = [];
-        for (let i = 0; i < actions.length; i++) {
-            const action = actions[i];
-            if (!action)
-                continue;
-
-            const identifier = (action.identifier || "").toLowerCase();
-            const text = action.text || "";
-
-            if (identifier === "default" && text === "")
-                continue;
-            if (identifier === "activate" && text === "")
-                continue;
-            if (text.toLowerCase() === identifier && (identifier === "default" || identifier === "activate"))
-                continue;
-
-            if (text !== "") {
-                filtered.push(action);
+    HoverHandler {
+        id: hover
+        onHoveredChanged: {
+            if (root.popupMode) {
+                if (hovered)
+                    NotificationService.setHovered(root.notifId);
+                else if (NotificationService.hoveredNotificationId === root.notifId)
+                    NotificationService.clearHovered();
             }
         }
-        return filtered;
     }
 
-    readonly property bool hasVisibleActions: visibleActions && visibleActions.length > 0
-
-    function getActionLabel(action) {
-        if (!action)
-            return "";
-
-        const text = action.text || "";
-        if (text !== "")
-            return text;
-
-        const id = action.identifier || "";
-        if (id === "")
-            return "Open";
-
-        return id.charAt(0).toUpperCase() + id.slice(1);
+    MouseArea {
+        width: parent.width
+        height: root.visualHeight
+        acceptedButtons: Qt.RightButton | Qt.LeftButton
+        onClicked: mouse => {
+            if (mouse.button === Qt.RightButton)
+                root.startExitAnimation(true);
+            else if (root.defaultAction)
+                root.defaultAction.invoke();
+            else if (root.popupMode)
+                root.startExitAnimation(false);
+        }
     }
 
     // ========================================================================
@@ -177,18 +163,11 @@ Item {
                         anchors.margins: root.image !== "" ? 0 : 8
                         fillMode: Image.PreserveAspectCrop
 
-                        mipmap: true
-                        antialiasing: true
+                        asynchronous: true
                         smooth: true
                         sourceSize: Qt.size(128, 128)
 
                         source: NotificationService.getIconSource(root.appIcon, root.image)
-
-                        onStatusChanged: {
-                            if (status === Image.Error && source !== "") {
-                                source = Quickshell.iconPath("dialog-information");
-                            }
-                        }
 
 
                     }
@@ -223,7 +202,7 @@ Item {
                             font.bold: true
                             Layout.fillWidth: true
                             elide: Text.ElideRight
-                            textFormat: Text.StyledText
+                            textFormat: Text.PlainText
                         }
 
                         Text {
@@ -264,6 +243,20 @@ Item {
                     }
                 }
             }
+            Flow {
+                Layout.fillWidth: true
+                visible: root.visibleActions.length > 0
+                spacing: 6
+
+                Repeater {
+                    model: root.visibleActions
+                    delegate: Button {
+                        required property NotificationAction modelData
+                        text: modelData?.text || "Open"
+                        onClicked: modelData?.invoke()
+                    }
+                }
+            }
         }
 
     }
@@ -278,31 +271,9 @@ Item {
         border.color: {
             if (root.isUrgent)
                 return Config.errorColor;
-            if (mouseArea.containsMouse)
+            if (hover.hovered)
                 return Config.surface2Color;
             return "transparent";
-        }
-    }
-
-    // Main MouseArea
-    MouseArea {
-        id: mouseArea
-        width: parent.width
-        height: root.visualHeight
-        hoverEnabled: true
-        acceptedButtons: Qt.RightButton | Qt.LeftButton
-
-        onEntered: NotificationService.setHovered(root.notifId)
-        onExited: NotificationService.clearHovered()
-
-        onClicked: mouse => {
-            if (mouse.button === Qt.RightButton) {
-                root.startExitAnimation(true);
-            } else {
-                if (root.popupMode) {
-                    root.startExitAnimation(false);
-                }
-            }
         }
     }
 

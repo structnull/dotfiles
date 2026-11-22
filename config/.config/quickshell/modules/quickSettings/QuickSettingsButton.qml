@@ -10,28 +10,19 @@ import "../../components/"
 
 BarButton {
     id: root
+    accessibleName: "Quick settings"
 
     readonly property var hostScreen: QsWindow.window?.screen ?? null
     readonly property var hostMonitor: hostScreen ? Hyprland.monitorFor(hostScreen) : null
-    readonly property bool shouldPublishAnchor: {
-        const focused = Hyprland.focusedMonitor;
-        if (!focused || !hostMonitor)
-            return true;
-        return focused.name === hostMonitor.name;
-    }
-
     function syncOsdAnchor() {
-        if (!shouldPublishAnchor && OsdService.anchorX > 0 && OsdService.anchorY > 0)
+        const focused = Hyprland.focusedMonitor;
+        if (!hostScreen || (focused && focused !== hostMonitor))
             return;
-
-        const bottomCenter = root.mapToGlobal(root.width / 2, root.height);
-        OsdService.anchorX = bottomCenter.x;
-        OsdService.anchorY = bottomCenter.y;
+        OsdService.offerAnchor(hostScreen, mapToGlobal(width / 2, height));
     }
 
     property bool popupLoaded: false
     property bool volumePopupVisible: false
-    property bool volumeWheelSuppressingOsd: false
     property real volumePopupX: 0
     property real volumePopupY: 0
     readonly property var popupWindow: quickSettingsLoader.active ? quickSettingsLoader.item : null
@@ -60,11 +51,7 @@ BarButton {
     }
 
     function suppressVolumeOsdForWheel() {
-        if (!OsdService.suppressed) {
-            volumeWheelSuppressingOsd = true;
-            OsdService.suppressed = true;
-        }
-
+        OsdService.suppress(root, true);
         volumeOsdSuppressTimer.restart();
     }
 
@@ -80,14 +67,7 @@ BarButton {
     active: popupWindow?.visible ?? false
     contentItem: iconsLayout
     onClicked: togglePopup()
-    Component.onCompleted: Qt.callLater(syncOsdAnchor)
-    onXChanged: Qt.callLater(syncOsdAnchor)
-    onYChanged: Qt.callLater(syncOsdAnchor)
-    onWidthChanged: Qt.callLater(syncOsdAnchor)
-    onHeightChanged: Qt.callLater(syncOsdAnchor)
-
-    onHostScreenChanged: Qt.callLater(syncOsdAnchor)
-    onShouldPublishAnchorChanged: Qt.callLater(syncOsdAnchor)
+    Component.onDestruction: OsdService.suppress(root, false)
 
     Connections {
         target: Hyprland
@@ -258,14 +238,7 @@ BarButton {
         id: volumeOsdSuppressTimer
         interval: 180
         repeat: false
-        onTriggered: {
-            if (!root.volumeWheelSuppressingOsd)
-                return;
-
-            root.volumeWheelSuppressingOsd = false;
-            if (!(root.popupWindow?.visible ?? false))
-                OsdService.suppressed = false;
-        }
+        onTriggered: OsdService.suppress(root, false)
     }
 
     PanelWindow {

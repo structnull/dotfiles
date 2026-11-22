@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import Quickshell.Hyprland
 import qs.config
 import qs.services
@@ -13,11 +14,12 @@ Item {
     readonly property int horizontalPadding: Config.padding
     readonly property int iconBoxWidth: 14
 
-    // Internal state to force clearing
-    property bool windowExists: Hyprland.activeToplevel !== null
+    readonly property var activeToplevel: Hyprland.activeToplevel
+    readonly property var hostMonitor: QsWindow.window?.screen ? Hyprland.monitorFor(QsWindow.window.screen) : null
+    readonly property bool windowExists: activeToplevel !== null
+        && (!hostMonitor || activeToplevel.workspace === hostMonitor.activeWorkspace)
     property bool specialWorkspaceActive: false
     property string specialWorkspaceMonitor: ""
-    property string pendingWorkspaceName: ""
     readonly property bool specialWorkspaceFocused: {
         const workspace = Hyprland.activeToplevel?.workspace;
         const workspaceName = workspace?.name ?? "";
@@ -30,39 +32,13 @@ Item {
     readonly property bool showingLayout: LayoutService.visible
     readonly property bool showingWindowInfo: windowExists && !specialWorkspaceFocused && !showingLayout
 
-    Timer {
-        id: workspaceFocusRefresh
-        interval: 75
-        repeat: false
-        onTriggered: {
-            const activeWindow = Hyprland.activeToplevel;
-            root.windowExists = activeWindow !== null && activeWindow.workspace?.name === root.pendingWorkspaceName;
-        }
-    }
-
-    // Logic to verify focus changes
     Connections {
         target: Hyprland
         function onRawEvent(event) {
-            // "activewindowv2" is sent even when clicking the desktop (returns empty)
-            if (event.name === "activewindowv2") {
-                // If the address is empty, no window is focused
-                root.windowExists = event.data !== "," && event.data !== "";
-            }
-
             if (event.name === "activespecial") {
                 const parts = (event.data ?? "").split(",");
                 root.specialWorkspaceActive = (parts[0] ?? "") !== "";
                 root.specialWorkspaceMonitor = parts[1] ?? "";
-            }
-
-            // Clear immediately when changing workspaces. Hyprland can briefly
-            // keep reporting the previous active toplevel until the new focus
-            // event arrives.
-            if (event.name === "workspace") {
-                root.windowExists = false;
-                root.pendingWorkspaceName = event.data ?? "";
-                workspaceFocusRefresh.restart();
             }
         }
     }

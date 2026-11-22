@@ -14,20 +14,11 @@ QsPopupWindow {
     popupWidth: 360
     popupMaxHeight: 400
     anchorSide: "right"
-    contentImplicitHeight: content.implicitHeight
+    contentImplicitHeight: batteryContent.implicitHeight
 
     readonly property color stateColor: BatteryService.isLow ? Config.errorColor : Config.accentColor
-    readonly property bool hasPowerReading: Number.isFinite(BatteryService.powerRateW)
-        && BatteryService.powerRateW > 0.05
-    readonly property string powerLabel: {
-        const batterySensor = BatteryService.upowerEnergyRateW > 0.05
-            || BatteryService.sysfsBatteryRateW > 0.05;
-        if (batterySensor && BatteryService.isCharging)
-            return "Battery charging";
-        if (batterySensor && BatteryService.isDischarging)
-            return "Battery discharge";
-        return "Reported power";
-    }
+    readonly property bool hasPowerReading: BatteryService.powerRateKnown
+    readonly property string powerLabel: BatteryService.powerRateLabel
     readonly property string estimateText: {
         if (!BatteryService.hasBattery)
             return BatteryService.isPlugged ? "Running on external power" : "No battery detected";
@@ -75,7 +66,7 @@ QsPopupWindow {
     }
 
     ColumnLayout {
-        id: content
+        id: batteryContent
         width: parent.width
         spacing: 16
 
@@ -95,7 +86,7 @@ QsPopupWindow {
             Item { Layout.fillWidth: true }
 
             Text {
-                Layout.maximumWidth: content.width * 0.65
+                Layout.maximumWidth: batteryContent.width * 0.65
                 textFormat: Text.PlainText
                 text: BatteryService.hasBattery
                     ? (BatteryService.isLow ? "Low battery" : BatteryService.statusText)

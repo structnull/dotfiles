@@ -12,34 +12,31 @@ RowLayout {
     // Drawer state
     property bool isOpen: false
     property bool menuLoaded: false
-    property var pendingMenuHandle: null
-    property int pendingAnchorX: 0
-    property int pendingAnchorY: 0
+    property Item menuAnchor: null
+    property var menuItem: null
     readonly property var sharedMenu: menuLoader.active ? menuLoader.item : null
 
-    function openMenu(menuHandle, anchorX, anchorY) {
-        pendingMenuHandle = menuHandle;
-        pendingAnchorX = anchorX;
-        pendingAnchorY = anchorY;
-
-        if (sharedMenu) {
-            sharedMenu.rootMenuHandle = pendingMenuHandle;
-            sharedMenu.anchorX = pendingAnchorX;
-            sharedMenu.anchorY = pendingAnchorY;
+    function openMenu(anchor, trayItem) {
+        menuAnchor = anchor;
+        menuItem = trayItem;
+        if (sharedMenu)
             sharedMenu.open();
-            return;
-        }
-
-        menuLoaded = true;
+        else
+            menuLoaded = true;
     }
 
     LazyLoader {
         id: menuLoader
         active: root.menuLoaded
-        source: "./TrayMenu.qml"
-
         onActiveChanged: {
-            if (active) root.openMenu(root.pendingMenuHandle, root.pendingAnchorX, root.pendingAnchorY);
+            if (active)
+                item.open();
+        }
+        component: Component {
+            TrayMenu {
+                anchorItem: root.menuAnchor
+                rootMenuHandle: root.menuItem?.menu ?? null
+            }
         }
     }
 
@@ -49,11 +46,10 @@ RowLayout {
         function onVisibleChanged() {
             if (!root.sharedMenu)
                 return;
-            if (root.sharedMenu.visible)
-                TrayService.registerActiveMenu(root.sharedMenu);
-            else {
-                TrayService.unregisterActiveMenu(root.sharedMenu);
+            if (!root.sharedMenu.visible) {
                 root.menuLoaded = false;
+                root.menuItem = null;
+                root.menuAnchor = null;
             }
         }
     }
@@ -207,7 +203,7 @@ RowLayout {
                         anchors.centerIn: parent
                         width: 18
                         height: 18
-                        source: Quickshell.iconPath("application-default-icon")
+                        source: visible ? Quickshell.iconPath("application-default-icon") : ""
                         fillMode: Image.PreserveAspectFit
                         sourceSize: Qt.size(32, 32)
                         smooth: true
@@ -224,18 +220,13 @@ RowLayout {
                         onClicked: mouse => {
                             if (!trayDelegate.trayItem)
                                 return;
-                            if (mouse.button === Qt.LeftButton) {
-                                trayDelegate.trayItem.activate();
-                                if (root.sharedMenu)
-                                    root.sharedMenu.close();
-                            } else if (mouse.button === Qt.RightButton) {
-                                if (trayDelegate.trayItem.hasMenu) {
-                                    // 1. Gets the absolute position of the icon on screen
-                                    var globalPos = trayDelegate.mapToGlobal(0, trayDelegate.height);
-
-                                    // 2. Opens the shared menu near the icon
-                                    root.openMenu(trayDelegate.trayItem.menu, globalPos.x, globalPos.y + 5);
-                                }
+                            const trayItem = trayDelegate.trayItem;
+                            if (mouse.button === Qt.RightButton || trayItem.onlyMenu) {
+                                if (trayItem.hasMenu)
+                                    root.openMenu(trayDelegate, trayItem);
+                            } else {
+                                trayItem.activate();
+                                root.sharedMenu?.close();
                             }
                         }
                     }

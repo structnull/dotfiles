@@ -7,6 +7,7 @@ import "../../components/"
 
 BarButton {
     id: root
+    accessibleName: "Calendar"
 
     property bool popupLoaded: false
     readonly property var popupWindow: calendarLoader.active ? calendarLoader.item : null

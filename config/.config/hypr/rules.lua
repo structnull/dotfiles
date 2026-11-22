@@ -30,8 +30,8 @@ local config = {
         { name = "idle-fs", idle_inhibit = "focus", match = { class = [[^(firefox)$]], fullscreen = true } },
 
         -- Privacy / Screen Share Blocking
-        { name = "no-share-classes", no_screen_share = true, match = { class = [[^(vesktop|org\.keepassxc\.KeePassXC)$]] } },
-        { name = "no-share-titles", no_screen_share = true, match = { title = [[^(.*[Ww]hats[Aa]pp.*|.*\) Inbox|Inbox|All mail)(.*)$]] } },
+        -- { name = "no-share-classes", no_screen_share = true, match = { class = [[^(vesktop|org\.keepassxc\.KeePassXC)$]] } },
+        -- { name = "no-share-titles", no_screen_share = true, match = { title = [[^(.*[Ww]hats[Aa]pp.*|.*\) Inbox|Inbox|All mail)(.*)$]] } },
 
         -- Workspaces
         { name = "special-scrolling-focused", scrolling_width = 1.0, match = { workspace = "special" } },

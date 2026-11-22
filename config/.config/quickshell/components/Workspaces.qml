@@ -84,62 +84,11 @@ Item {
     // --- Normal Workspace Math ---
     property int activeId: (activeWorkspace && activeWorkspace.id > 0) ? activeWorkspace.id : 1
     property int monitorOffset: Math.floor((activeId - 1) / 100) * 100
-    property var visibleWorkspaceIds: []
+    readonly property var visibleWorkspaces: Hyprland.workspaces.values.filter(workspace =>
+        workspace.id > 0 && Math.floor((workspace.id - 1) / 100) * 100 === monitorOffset)
 
     implicitWidth: Math.max(activeWidth, indicatorRow.implicitWidth)
     implicitHeight: activeHeight + 4
-
-    // --- Dynamic Workspace List ---
-    function updateWorkspaceModel() {
-        if (!Hyprland || !Hyprland.workspaces)
-            return;
-
-        let ids = [];
-        for (let ws of Hyprland.workspaces.values) {
-            if (!ws || ws.id <= 0)
-                continue;
-            const wsOffset = Math.floor((ws.id - 1) / 100) * 100;
-            if (wsOffset === monitorOffset)
-                ids.push(ws.id);
-        }
-
-        if (activeId > 0 && !ids.includes(activeId))
-            ids.push(activeId);
-
-        ids.sort((a, b) => a - b);
-        if (ids.length !== visibleWorkspaceIds.length || ids.some((id, index) => id !== visibleWorkspaceIds[index]))
-            visibleWorkspaceIds = ids;
-    }
-
-    Component.onCompleted: updateWorkspaceModel()
-    onCurrentMonitorChanged: updateWorkspaceModel()
-    onMonitorOffsetChanged: updateWorkspaceModel()
-    onActiveIdChanged: updateWorkspaceModel()
-
-    Timer {
-        id: workspaceUpdateTimer
-        interval: 10
-        onTriggered: root.updateWorkspaceModel()
-    }
-
-    // --- Event Handling ---
-    Connections {
-        target: Hyprland
-        function onRawEvent(event) {
-            if (!event)
-                return;
-            switch (event.name) {
-            case "workspace":
-            case "createworkspace":
-            case "destroyworkspace":
-            case "movewindow":
-            case "openwindow":
-            case "closewindow":
-                workspaceUpdateTimer.restart();
-                break;
-            }
-        }
-    }
 
     // =========================================================================
     // WORKSPACE INDICATOR ROW
@@ -164,11 +113,11 @@ Item {
                 spacing: root.itemSpacing
 
                 Repeater {
-                    model: ScriptModel { values: root.visibleWorkspaceIds }
+                    model: ScriptModel { comparisonMode: ObjectComparison.Identity; values: root.visibleWorkspaces }
                     delegate: Item {
                         id: workspaceItem
-                        required property var modelData
-                        readonly property int workspaceId: Number(modelData)
+                        required property HyprlandWorkspace modelData
+                        readonly property int workspaceId: modelData?.id ?? 0
                         readonly property int displayId: workspaceId - root.monitorOffset
                         readonly property bool isActive: workspaceId === root.activeId
                         width: isActive ? root.activeWidth : root.itemWidth
@@ -203,7 +152,7 @@ Item {
                         TapHandler {
                             onTapped: {
                                 if (!workspaceItem.isActive)
-                                    Hyprland.dispatch("workspace " + workspaceItem.workspaceId);
+                                    workspaceItem.modelData?.activate();
                             }
                         }
 

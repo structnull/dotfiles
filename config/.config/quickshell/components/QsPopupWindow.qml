@@ -13,8 +13,15 @@ PanelWindow {
     property Item anchorItem: null
     property string anchorSide: "left"
     property real contentImplicitHeight: 0
-    property real resolvedLeftMargin: 10
-    property real resolvedTopMargin: Config.barHeight + 10
+    readonly property var anchorWindow: anchorItem ? anchorItem.QsWindow.window : null
+    readonly property point anchorPosition: {
+        if (!anchorItem)
+            return Qt.point(0, 0);
+        const transform = anchorWindow?.windowTransform;
+        const x = anchorItem.x;
+        const y = anchorItem.y;
+        return anchorItem.mapToGlobal(anchorItem.width / 2, anchorItem.height);
+    }
 
     default property alias content: contentContainer.data
 
@@ -32,37 +39,23 @@ PanelWindow {
         left: true
     }
 
-    function recalculatePosition() {
-        const screenWidth = screen ? screen.width : 1920;
-        const screenHeight = screen ? screen.height : 1080;
-        const minPopupTop = Config.barHeight + 10;
-
-        let centerX = 0;
-        let popupTop = Config.barHeight + 10;
-
-        if (anchorItem) {
-            const centerPos = anchorItem.mapToGlobal(anchorItem.width / 2, anchorItem.height);
-            const bottomPos = anchorItem.mapToGlobal(0, anchorItem.height);
-            centerX = centerPos.x;
-            popupTop = bottomPos.y + 8;
-        } else if (anchorSide === "right") {
-            centerX = screenWidth - ((popupWidth / 2) + 10);
-        } else {
-            centerX = (popupWidth / 2) + 10;
-        }
-
-        resolvedLeftMargin = Math.max(10, Math.min(screenWidth - popupWidth - 10, centerX - (popupWidth / 2)));
-        resolvedTopMargin = Math.max(minPopupTop, Math.min(screenHeight - 10, popupTop));
-    }
+    screen: anchorWindow?.screen ?? Quickshell.screens[0] ?? null
 
     margins {
-        top: resolvedTopMargin
-        left: resolvedLeftMargin
-        right: 0
+        top: {
+            const y = root.anchorItem ? root.anchorPosition.y - (root.screen?.y ?? 0) + 8 : Config.barHeight + 10;
+            return Math.max(0, Math.min((root.screen?.height ?? 1080) - root.implicitHeight, y));
+        }
+        left: {
+            const width = root.screen?.width ?? 1920;
+            const x = root.anchorItem ? root.anchorPosition.x - (root.screen?.x ?? 0) - root.implicitWidth / 2
+                : (root.anchorSide === "right" ? width - root.implicitWidth - 10 : 10);
+            return Math.max(5, Math.min(width - root.implicitWidth - 5, x));
+        }
     }
 
-    implicitWidth: popupWidth + (screenMargin * 2)
-    implicitHeight: popupMaxHeight
+    implicitWidth: Math.max(1, Math.min((screen?.width ?? 1920) - 10, popupWidth + (screenMargin * 2)))
+    implicitHeight: Math.min(popupMaxHeight, Math.max(1, (screen?.height ?? 1080) - Config.barHeight - 16))
     visible: false
     color: "transparent"
 
@@ -126,17 +119,8 @@ PanelWindow {
         }
     }
 
-    Timer {
-        id: positionRefreshTimer
-        interval: 1
-        repeat: false
-        onTriggered: root.recalculatePosition()
-    }
-
     onVisibleChanged: {
         if (visible) {
-            recalculatePosition();
-            positionRefreshTimer.restart();
             isClosing = false;
             closeAnimation.stop();
             openProgress = 0;
@@ -151,18 +135,13 @@ PanelWindow {
         }
     }
 
-    onAnchorItemChanged: {
-        if (visible)
-            positionRefreshTimer.restart();
-    }
-
     Item {
         anchors.fill: parent
 
         Rectangle {
             id: background
-            width: root.popupWidth
-            height: Math.min(root.popupMaxHeight, root.contentImplicitHeight + 32)
+            width: Math.min(root.popupWidth, parent.width)
+            height: Math.min(root.implicitHeight, root.contentImplicitHeight + 32)
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             color: Config.backgroundTransparentColor
@@ -173,7 +152,6 @@ PanelWindow {
 
             transformOrigin: Item.Top
 
-            y: (1 - root.openProgress) * -16
             scale: 0.95 + (root.openProgress * 0.05)
             opacity: root.openProgress
 

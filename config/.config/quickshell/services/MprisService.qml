@@ -13,59 +13,17 @@ Singleton {
     property string preferredPlayerKey: ""
     readonly property bool hasPlayer: activePlayer !== null
     readonly property string activePlayerKey: playerKey(activePlayer)
-    property real sampledRawPosition: 0
-    property int playbackTick: 0
     property int progressConsumers: 0
 
     onProgressConsumersChanged: {
-        // The monotonic sample keeps advancing while hidden; publish it before
-        // a newly visible widget paints rather than ticking with no consumers.
         if (progressConsumers > 0)
-            playbackTick++;
+            activePlayer?.positionChanged();
     }
 
-    readonly property string title: {
-        const preferred = ((activePlayer?.trackTitle ?? "") + "").trim();
-        if (preferred !== "")
-            return preferred;
-
-        const fallback = ((activePlayer?.metadata?.["xesam:title"] ?? "") + "").trim();
-        return fallback !== "" ? fallback : "Nothing playing";
-    }
-
-    readonly property string artist: {
-        const preferred = ((activePlayer?.trackArtist ?? "") + "").trim();
-        if (preferred !== "")
-            return preferred;
-
-        const artistMeta = activePlayer?.metadata?.["xesam:artist"];
-        if (Array.isArray(artistMeta) && artistMeta.length > 0)
-            return ((artistMeta[0] ?? "") + "").trim();
-
-        const fallback = ((artistMeta ?? "") + "").trim();
-        return fallback !== "" ? fallback : "Unknown artist";
-    }
-
-    readonly property string album: {
-        const preferred = ((activePlayer?.trackAlbum ?? "") + "").trim();
-        if (preferred !== "")
-            return preferred;
-
-        const fallback = ((activePlayer?.metadata?.["xesam:album"] ?? "") + "").trim();
-        return fallback;
-    }
-
-    readonly property string artUrl: {
-        const fromMetadata = ((activePlayer?.metadata?.["mpris:artUrl"] ?? "") + "").trim();
-        if (fromMetadata !== "")
-            return fromMetadata;
-
-        const fromTrack = ((activePlayer?.trackArtUrl ?? "") + "").trim();
-        if (fromTrack !== "")
-            return fromTrack;
-
-        return "";
-    }
+    readonly property string title: activePlayer?.trackTitle || "Nothing playing"
+    readonly property string artist: activePlayer?.trackArtist || "Unknown artist"
+    readonly property string album: activePlayer?.trackAlbum ?? ""
+    readonly property string artUrl: activePlayer?.trackArtUrl ?? ""
 
     readonly property string playerIdentity: ((activePlayer?.identity ?? "") + "").trim()
     readonly property bool isPlaying: activePlayer?.isPlaying ?? false
@@ -91,85 +49,48 @@ Singleton {
         return Math.max(0, len);
     }
 
-    readonly property real extrapolatedRawPosition: {
-        // Touch this tick so the binding reevaluates at timer cadence while playing.
-        playbackTick;
-        if (!hasProgress)
-            return 0;
-
-        let next = sampledRawPosition;
-        if (isPlaying)
-            next += positionClock.elapsed();
-
-        if (rawLength > 0)
-            next = Math.min(rawLength, next);
-        return Math.max(0, next);
-    }
-
-    readonly property real position: extrapolatedRawPosition
+    readonly property real position: hasProgress ? Math.min(rawLength, rawPosition) : 0
     readonly property real length: rawLength
-    readonly property bool hasProgress: (activePlayer?.lengthSupported ?? false) && rawLength > 0
+    readonly property bool hasProgress: (activePlayer?.lengthSupported ?? false) && (activePlayer?.positionSupported ?? false) && rawLength > 0
     readonly property bool canSeek: (activePlayer?.canSeek ?? false) && hasProgress
     readonly property real progress: {
         if (!hasProgress)
             return 0;
-        return Math.max(0, Math.min(1, extrapolatedRawPosition / rawLength));
+        return Math.max(0, Math.min(1, position / rawLength));
     }
 
-    readonly property string trackKey: {
-        const playerId = ((activePlayer?.dbusName ?? activePlayer?.uniqueId ?? "none") + "").trim();
-        const trackId = ((activePlayer?.metadata?.["mpris:trackid"] ?? "") + "").trim();
-        return playerId + "|" + trackId + "|" + title + "|" + artUrl;
-    }
+    readonly property string trackKey: activePlayer ? activePlayer.dbusName + "|" + activePlayer.uniqueId : ""
 
     readonly property string elapsedText: formatDuration(position)
     readonly property string remainingText: hasProgress ? ("-" + formatDuration(Math.max(0, length - position))) : "--:--"
 
     property var orderedPlayers: []
 
-    onActivePlayerChanged: {
-        updateOrderedList();
-        syncPositionSample(rawPosition);
-    }
-    onRawPositionChanged: syncPositionSample(rawPosition)
-    onTrackKeyChanged: syncPositionSample(rawPosition)
-    onIsPlayingChanged: syncPositionSample(rawPosition)
-    onHasProgressChanged: syncPositionSample(rawPosition)
-
-    ElapsedTimer { id: positionClock }
+    onActivePlayerChanged: updateOrderedList()
 
     Timer {
         interval: 250
         repeat: true
-        running: root.progressConsumers > 0 && root.hasPlayer && root.hasProgress && root.isPlaying
-        onTriggered: root.playbackTick++
+        running: root.progressConsumers > 0 && root.hasProgress && root.isPlaying
+        onTriggered: root.activePlayer?.positionChanged()
     }
 
-    Connections {
-        target: Mpris.players
-        function onValuesChanged() {
-            root.updateActivePlayer();
-            root.updateOrderedList();
-        }
+    function refreshPlayers() {
+        updateActivePlayer();
+        updateOrderedList();
     }
 
     Instantiator {
-        model: Mpris.players.values
+        model: Mpris.players
 
         delegate: QtObject {
-            required property var modelData
-            property bool isPlaying: modelData.isPlaying ?? false
-            onIsPlayingChanged: root.updateActivePlayer()
+            required property MprisPlayer modelData
+            property bool isPlaying: modelData?.isPlaying ?? false
+            onIsPlayingChanged: Qt.callLater(root.refreshPlayers)
         }
 
-        onObjectAdded: {
-            root.updateActivePlayer();
-            root.updateOrderedList();
-        }
-        onObjectRemoved: {
-            root.updateActivePlayer();
-            root.updateOrderedList();
-        }
+        onObjectAdded: Qt.callLater(root.refreshPlayers)
+        onObjectRemoved: Qt.callLater(root.refreshPlayers)
     }
 
     function twoDigits(value) {
@@ -179,7 +100,7 @@ Singleton {
     }
 
     function playerDbusName(player) {
-        return ((player?.dbusName ?? player?.uniqueId ?? "") + "").trim();
+        return ((player?.dbusName ?? "") + "").trim();
     }
 
     function playerKey(player) {
@@ -222,14 +143,6 @@ Singleton {
         if (h > 0)
             return h + ":" + twoDigits(m) + ":" + twoDigits(s);
         return m + ":" + twoDigits(s);
-    }
-
-    function syncPositionSample(candidateRawPosition) {
-        const fallback = Math.max(0, rawPosition);
-        const candidate = Math.max(0, (candidateRawPosition ?? fallback));
-        sampledRawPosition = candidate;
-        positionClock.restart();
-        playbackTick++;
     }
 
     function updateActivePlayer() {
@@ -281,7 +194,6 @@ Singleton {
 
         const clamped = Math.max(0, Math.min(1, value));
         const targetRaw = root.rawLength * clamped;
-        root.syncPositionSample(targetRaw);
         root.activePlayer.position = targetRaw;
     }
 
@@ -320,6 +232,6 @@ Singleton {
         root.preferredPlayerKey = root.playerKey(player);
         root.activePlayer = player;
         root.updateOrderedList();
-        root.syncPositionSample(player?.position ?? root.rawPosition);
+        player.positionChanged();
     }
 }

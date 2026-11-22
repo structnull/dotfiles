@@ -7,6 +7,7 @@ import "../../components/"
 
 BarButton {
     id: root
+    accessibleName: "Grayscale"
 
     active: GrayscaleService.enabled
 

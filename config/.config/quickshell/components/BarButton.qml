@@ -6,9 +6,18 @@ Rectangle {
     id: root
 
     property bool active: false
+    property string accessibleName: ""
     property Item contentItem: null
     readonly property bool hovered: mouseArea.containsMouse
-    readonly property bool highlighted: active || hovered
+    readonly property bool highlighted: active || hovered || activeFocus
+
+    activeFocusOnTab: accessibleName !== ""
+    Accessible.role: Accessible.Button
+    Accessible.name: accessibleName
+    Accessible.onPressAction: root.clicked()
+    Keys.onReturnPressed: root.clicked()
+    Keys.onEnterPressed: root.clicked()
+    Keys.onSpacePressed: root.clicked()
 
     signal clicked
     signal rightClicked
@@ -23,7 +32,7 @@ Rectangle {
         return Qt.rgba(1, 1, 1, active ? 0.14 : 0.09);
     }
     border.width: highlighted ? 1 : 0
-    border.color: highlighted ? Qt.rgba(1, 1, 1, 0.26) : "transparent"
+    border.color: activeFocus ? Config.accentColor : highlighted ? Qt.rgba(1, 1, 1, 0.26) : "transparent"
 
     Behavior on color {
         ColorAnimation {

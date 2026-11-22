@@ -11,54 +11,61 @@ Singleton {
     // --- PUBLIC PROPERTIES (preserved interface) ---
 
     property var accessPoints: []
-    property string connectingSsid: ""
-    property int settingsWindows: 0
-    property bool scanRequested: false
-    property var _scanDevice: null
+    property WifiNetwork pendingNetwork: null
+    property var connectionOwner: null
+    property bool awaitingPassword: false
+    property bool triedPassword: false
+    property string connectionError: ""
+    property int wifiViews: 0
+    property WifiDevice scanDevice: null
 
-    function acquireSettingsWindow() {
-        settingsWindows++;
-        _syncScanner();
-        if (settingsWindows === 1)
+    signal passwordRequired(var owner)
+
+    function acquireWifiView() {
+        if (wifiViews++ === 0) {
+            connectionError = "";
             _rebuildAccessPoints();
+        }
+        _syncScanner();
     }
 
-    function releaseSettingsWindow() {
-        settingsWindows = Math.max(0, settingsWindows - 1);
-        // Keep the user's scan intent for the next popup session, but turn
-        // the native repeating scanner off while all windows are hidden.
+    function releaseWifiView(owner) {
+        wifiViews = Math.max(0, wifiViews - 1);
+        if (connectionOwner === owner) {
+            if (awaitingPassword)
+                finishConnection("");
+            else
+                connectionOwner = null;
+        }
+        if (wifiViews === 0)
+            accessPoints = [];
         _syncScanner();
     }
 
     function _syncScanner() {
-        // Unknown networks disappear from QS's model when scanning stops.
-        // Keep them available until an in-flight connection succeeds or fails.
-        const needed = settingsWindows > 0 || connectingSsid !== "";
-        const nextDevice = scanRequested && needed && wifiEnabled && wifiHardwareEnabled ? liveWifiDevice : null;
-        if (Qt.isQtObject(_scanDevice) && _scanDevice !== nextDevice)
-            _scanDevice.scannerEnabled = false;
-        _scanDevice = nextDevice;
-        if (_scanDevice)
-            _scanDevice.scannerEnabled = true;
-        else if (liveWifiDevice && (!needed || !wifiEnabled || !wifiHardwareEnabled))
-            liveWifiDevice.scannerEnabled = false;
+        // Unknown networks can disappear when discovery stops.
+        const needed = wifiViews > 0 || pendingNetwork !== null;
+        const nextDevice = needed && wifiEnabled && wifiHardwareEnabled ? liveWifiDevice : null;
+        if (scanDevice && scanDevice !== nextDevice)
+            scanDevice.scannerEnabled = false;
+        scanDevice = nextDevice;
+        if (liveWifiDevice)
+            liveWifiDevice.scannerEnabled = nextDevice !== null;
     }
 
     function _radioChanged() {
-        if (!wifiEnabled || !wifiHardwareEnabled)
-            connectingSsid = "";
+        if (pendingNetwork && (!wifiEnabled || !wifiHardwareEnabled || pendingNetwork.device !== liveWifiDevice))
+            finishConnection("Wi-Fi became unavailable.");
         _syncScanner();
     }
 
-    onConnectingSsidChanged: _syncScanner()
+    onPendingNetworkChanged: _syncScanner()
     onWifiEnabledChanged: _radioChanged()
     onWifiHardwareEnabledChanged: _radioChanged()
-
-    onLiveWifiDeviceChanged: {
-        // Native device objects can survive a config reload.
-        if (liveWifiDevice?.scannerEnabled)
-            scanRequested = true;
-        _syncScanner();
+    onLiveWifiDeviceChanged: _radioChanged()
+    Component.onDestruction: {
+        if (scanDevice)
+            scanDevice.scannerEnabled = false;
     }
 
     readonly property var liveDevices: Array.from(Networking.devices.values)
@@ -108,16 +115,13 @@ Singleton {
     // --- FUNCTIONS ---
 
     function getWifiIcon(signal) {
-        if (signal > 0 && signal <= 1)
-            signal *= 100;
-
-        if (signal > 80)
+        if (signal > 0.8)
             return "󰤨";
-        if (signal > 60)
+        if (signal > 0.6)
             return "󰤥";
-        if (signal > 40)
+        if (signal > 0.4)
             return "󰤢";
-        if (signal > 20)
+        if (signal > 0.2)
             return "󰤟";
         return "󰤫";
     }
@@ -126,80 +130,116 @@ Singleton {
         Networking.wifiEnabled = !Networking.wifiEnabled;
     }
 
-    function scan() {
-        scanRequested = true;
-        _syncScanner();
-    }
-
     function disconnect() {
-        if (liveActiveNetwork) {
+        if (liveActiveNetwork)
             liveActiveNetwork.disconnect();
-        } else if (liveWifiDevice) {
-            liveWifiDevice.disconnect();
-        }
+        else
+            liveWifiDevice?.disconnect();
     }
 
-    function connect(ssid, password) {
-        const network = liveWifiNetworks.find(n => n.name === ssid);
-        if (!network) {
-            console.warn("[NetworkService] Network not found: " + ssid);
+    function connectNetwork(network: WifiNetwork, owner: QtObject) {
+        if (!network || network.device !== liveWifiDevice || pendingNetwork || !wifiEnabled || !wifiHardwareEnabled)
             return;
-        }
 
-        root.connectingSsid = ssid;
-
-        if (password && password.length > 0) {
-            network.connectWithPsk(password);
-        } else {
-            network.connect();
-        }
+        connectionError = "";
+        connectionOwner = owner;
+        triedPassword = false;
+        pendingNetwork = network;
+        connectionTimeout.restart();
+        network.connect();
     }
 
-    function forget(ssid) {
-        const network = liveWifiNetworks.find(n => n.name === ssid);
-        if (!network) {
-            console.warn("[NetworkService] Cannot forget unknown network: " + ssid);
+    function submitPassword(owner: QtObject, password: string) {
+        if (!pendingNetwork || connectionOwner !== owner || !awaitingPassword || !password)
             return;
+        awaitingPassword = false;
+        triedPassword = true;
+        connectionError = "";
+        connectionTimeout.restart();
+        pendingNetwork.connectWithPsk(password);
+    }
+
+    function cancelPassword(owner: QtObject) {
+        if (connectionOwner === owner && awaitingPassword)
+            finishConnection("");
+    }
+
+    function finishConnection(error: string) {
+        connectionTimeout.stop();
+        connectionError = error;
+        connectionOwner = null;
+        awaitingPassword = false;
+        pendingNetwork = null;
+    }
+
+    Timer {
+        id: connectionTimeout
+        interval: 45000
+        onTriggered: root.finishConnection("The connection timed out. Try again.")
+    }
+
+    Connections {
+        target: root.pendingNetwork
+
+        function onConnectedChanged() {
+            if (root.pendingNetwork?.connected)
+                root.finishConnection("");
         }
-        network.forget();
+
+        function onConnectionFailed(reason) {
+            const network = root.pendingNetwork;
+            if (!network)
+                return;
+            if (reason === ConnectionFailReason.NoSecrets) {
+                const security = network.security;
+                const supported = security === WifiSecurityType.WpaPsk
+                    || security === WifiSecurityType.Wpa2Psk || security === WifiSecurityType.Sae;
+                if (supported && root.connectionOwner) {
+                    connectionTimeout.stop();
+                    root.connectionError = root.triedPassword ? "The network did not accept that password." : "";
+                    root.awaitingPassword = true;
+                    root.passwordRequired(root.connectionOwner);
+                    return;
+                }
+                if (!supported) {
+                    root.finishConnection("Set up this network's authentication in NetworkManager.");
+                    return;
+                }
+            }
+            root.finishConnection("Could not connect to " + network.name + " (" + ConnectionFailReason.toString(reason) + ").");
+        }
     }
 
     // --- INTERNAL: Build accessPoints from native API ---
 
     function _scheduleAccessPointsUpdate() {
-        if (settingsWindows > 0)
+        if (wifiViews > 0)
             Qt.callLater(root._rebuildAccessPoints);
     }
 
     function _rebuildAccessPoints() {
-        if (settingsWindows === 0)
+        if (wifiViews === 0)
             return;
         const networks = liveWifiNetworks;
-        var tempParams = [];
-        const seen = new Set();
-
+        const rows = [];
         for (let i = 0; i < networks.length; i++) {
             const net = networks[i];
             const ssid = net.name;
 
             if (!ssid)
                 continue;
-            if (seen.has(ssid))
-                continue;
-            seen.add(ssid);
-
-            tempParams.push({
+            rows.push({
+                network: net,
                 ssid: ssid,
-                signal: Math.round((net.signalStrength ?? 0) * 100),
+                signal: net.signalStrength ?? 0,
                 active: net.connected,
                 secure: net.security !== WifiSecurityType.Open,
-                securityType: WifiSecurityType.toString(net.security),
                 saved: net.known,
             });
         }
 
         // Sort: Connected > Saved > Signal
-        tempParams.sort((a, b) => {
+        rows.sort((a, b) => {
             if (a.active !== b.active)
                 return a.active ? -1 : 1;
             if (a.saved && !b.saved)
@@ -209,43 +249,27 @@ Singleton {
             return b.signal - a.signal;
         });
 
-        if (JSON.stringify(root.accessPoints) !== JSON.stringify(tempParams))
-            root.accessPoints = tempParams;
+        root.accessPoints = rows;
     }
 
     // Rebuild whenever the wifi networks list changes
-    onLiveWifiNetworksChanged: _scheduleAccessPointsUpdate()
-
-    // QObject-bound Connections are released with each delegate. Rebuild only
-    // when network data changes, coalescing property bursts into one update.
-    Instantiator {
-        model: ScriptModel { values: root.liveWifiNetworks }
-        delegate: Connections {
-            id: networkSignals
-            required property var modelData
-            target: modelData
-
-            function onConnectionFailed(reason) {
-                console.warn("[NetworkService] Connection failed for " + modelData.name + ": " + reason);
-                if (root.connectingSsid === modelData.name)
-                    root.connectingSsid = "";
-            }
-            readonly property Connections details: Connections {
-                target: networkSignals.modelData
-                enabled: root.settingsWindows > 0
-                function onNameChanged() { root._scheduleAccessPointsUpdate(); }
-                function onSignalStrengthChanged() { root._scheduleAccessPointsUpdate(); }
-                function onConnectedChanged() { root._scheduleAccessPointsUpdate(); }
-                function onKnownChanged() { root._scheduleAccessPointsUpdate(); }
-                function onSecurityChanged() { root._scheduleAccessPointsUpdate(); }
-            }
-        }
+    onLiveWifiNetworksChanged: {
+        if (pendingNetwork && !liveWifiNetworks.includes(pendingNetwork))
+            finishConnection("The network is no longer available.");
+        _scheduleAccessPointsUpdate();
     }
 
-    // Clear connectingSsid when the target network successfully connects
-    onLiveActiveNetworkChanged: {
-        if (liveActiveNetwork && liveActiveNetwork.name === connectingSsid) {
-            root.connectingSsid = "";
+    Instantiator {
+        active: root.wifiViews > 0
+        model: root.liveWifiDevice?.networks ?? null
+        delegate: Connections {
+            required property WifiNetwork modelData
+            target: modelData
+            function onNameChanged() { root._scheduleAccessPointsUpdate(); }
+            function onSignalStrengthChanged() { root._scheduleAccessPointsUpdate(); }
+            function onConnectedChanged() { root._scheduleAccessPointsUpdate(); }
+            function onKnownChanged() { root._scheduleAccessPointsUpdate(); }
+            function onSecurityChanged() { root._scheduleAccessPointsUpdate(); }
         }
     }
 }

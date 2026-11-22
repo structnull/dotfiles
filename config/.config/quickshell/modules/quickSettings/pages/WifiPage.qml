@@ -10,7 +10,7 @@ Item {
     id: root
 
     signal backRequested
-    signal passwordRequested(string ssid)
+    signal connectRequested(var network)
 
     Layout.fillWidth: true
     implicitHeight: 350
@@ -26,13 +26,6 @@ Item {
             title: "Wi-Fi"
             onBackClicked: root.backRequested()
 
-            // Scan Button
-            RefreshButton {
-                visible: NetworkService.wifiEnabled
-                loading: NetworkService.scanning
-                onClicked: NetworkService.scan()
-            }
-
             // On/Off Switch
             QsSwitch {
                 checked: NetworkService.wifiEnabled
@@ -45,6 +38,17 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 1
             color: Config.surface1Color
+        }
+
+        Text {
+            Layout.fillWidth: true
+            visible: text !== ""
+            text: NetworkService.connectionError
+            textFormat: Text.PlainText
+            color: Config.errorColor
+            font.family: Config.font
+            font.pixelSize: Config.fontSizeSmall
+            wrapMode: Text.Wrap
         }
 
         // Network List
@@ -61,10 +65,10 @@ Item {
             delegate: DeviceCard {
                 required property var modelData
 
-                property bool isConnectingThis: NetworkService.connectingSsid === modelData.ssid
+                property bool isConnectingThis: NetworkService.pendingNetwork === modelData.network && !NetworkService.awaitingPassword
 
                 title: modelData.ssid || "Hidden Network"
-                subtitle: modelData.signal + "%"
+                subtitle: Math.round(modelData.signal * 100) + "%"
                 icon: NetworkService.getWifiIcon(modelData.signal)
 
                 active: modelData.active
@@ -122,7 +126,7 @@ Item {
                     } else if (actionId === "connect") {
                         wifiToggleConnect();
                     } else if (actionId === "forget") {
-                        NetworkService.forget(modelData.ssid);
+                        modelData.network?.forget();
                     }
                 }
 
@@ -133,14 +137,7 @@ Item {
                         NetworkService.disconnect();
                         return;
                     }
-                    if (modelData.saved) {
-                        NetworkService.connect(modelData.ssid, "");
-                        return;
-                    }
-                    if (modelData.secure) {
-                        root.passwordRequested(modelData.ssid);
-                    }
-                    NetworkService.connect(modelData.ssid, "");
+                    root.connectRequested(modelData.network);
                 }
             }
 

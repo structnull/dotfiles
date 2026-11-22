@@ -41,8 +41,8 @@ Item {
 
             // Separator dot
             Rectangle {
-                width: 4
-                height: 4
+                implicitWidth: 4
+                implicitHeight: 4
                 radius: 2
                 color: Config.accentColor
                 opacity: 0.4
@@ -228,6 +228,7 @@ Item {
             }
 
             QsSlider {
+                accessibleName: "Volume"
                 icon: AudioService.systemIcon
                 value: AudioService.volume
                 hasDetails: true
@@ -241,6 +242,7 @@ Item {
 
             // Brightness (only shows if available)
             QsSlider {
+                accessibleName: "Brightness"
                 visible: BrightnessService.available
                 icon: BrightnessService.icon
                 value: BrightnessService.brightness

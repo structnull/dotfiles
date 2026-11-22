@@ -9,7 +9,9 @@ Singleton {
     id: root
 
     // Gets the system's default adapter. Can be null if there is no bluetooth.
-    property var adapter: Bluetooth?.defaultAdapter
+    readonly property BluetoothAdapter adapter: Bluetooth.defaultAdapter
+    property BluetoothAdapter scanAdapter: null
+    property var scanOwner: null
 
     // Reactive properties (return false if there is no adapter)
     readonly property bool isPowered: (adapter && adapter.enabled) === true
@@ -47,7 +49,7 @@ Singleton {
         if (count === 1) {
             // If there is only 1, return its name
             const dev = connectedDevices[0];
-            return dev.alias || dev.name || "Unknown";
+            return dev.name || dev.deviceName || "Unknown";
         }
 
         // If there is more than 1, return the count
@@ -80,8 +82,8 @@ Singleton {
                 return 1;
 
             // Finally, alphabetical order by name
-            const nameA = (a.alias || a.name || "").toLowerCase();
-            const nameB = (b.alias || b.name || "").toLowerCase();
+            const nameA = (a.name || a.deviceName || "").toLowerCase();
+            const nameB = (b.name || b.deviceName || "").toLowerCase();
             return nameA.localeCompare(nameB);
         });
     }
@@ -95,38 +97,63 @@ Singleton {
         }
     }
 
-    // Toggle Search (Scan)
-    function toggleScan() {
+    function toggleScan(owner: QtObject) {
+        if (scanOwner === owner)
+            stopScan(owner);
+        else
+            startScan(owner);
+    }
+
+    function startScan(owner: QtObject) {
         if (!adapter)
             return;
+        scanOwner = owner;
+        _syncScan();
+    }
 
-        if (adapter.discovering) {
-            // If the user clicked to stop manually
-            adapter.discovering = false;
-            scanTimer.stop();
-        } else {
-            // If the user clicked to start
-            adapter.discovering = true;
-            scanTimer.restart();
+    function stopScan(owner: QtObject) {
+        if (scanOwner !== owner)
+            return;
+        if (scanAdapter)
+            scanAdapter.discovering = false;
+        scanAdapter = null;
+        scanOwner = null;
+        scanTimer.stop();
+    }
+
+    function _syncScan() {
+        if (scanOwner && adapter?.state === BluetoothAdapterState.Enabled) {
+            if (!scanAdapter) {
+                scanAdapter = adapter;
+                adapter.discovering = true;
+                scanTimer.restart();
+            }
+        } else if (scanAdapter) {
+            stopScan(scanOwner);
         }
     }
 
-    // Timer to automatically stop the Scan
+    onAdapterChanged: stopScan(scanOwner)
+    Connections {
+        target: root.adapter
+        function onStateChanged() { root._syncScan(); }
+    }
+
     Timer {
         id: scanTimer
-        interval: 10000 // 10 Seconds
-        repeat: false
-        onTriggered: {
-            if (root.adapter && root.adapter.discovering) {
-                root.adapter.discovering = false;
-            }
-        }
+        interval: 10000
+        onTriggered: root.stopScan(root.scanOwner)
     }
 
     // Connect/Disconnect
     function toggleConnection(device) {
         if (!device)
             return;
+
+        if (device.pairing) {
+            device.cancelPair();
+            return;
+        }
 
         if (device.connected) {
             device.disconnect();
@@ -160,7 +187,7 @@ Singleton {
 
     // Function to check if the device is trying to connect
     function getIsConnecting(device) {
-        return device.state === BluetoothDeviceState.Connecting;
+        return device.pairing || device.state === BluetoothDeviceState.Connecting;
     }
 
     // Forget device
@@ -177,7 +204,7 @@ Singleton {
 
         // 1. Try to get the official BlueZ icon property and name
         const iconProp = (device.icon || "").toLowerCase();
-        const name = (device.name || device.alias || "").toLowerCase();
+        const name = (device.name || device.deviceName || "").toLowerCase();
 
         const safeName = name || "";
 

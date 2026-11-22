@@ -2,7 +2,6 @@ pragma Singleton
 pragma ComponentBehavior: Bound
 
 import Quickshell
-import Quickshell.Io
 import Quickshell.Services.Pipewire
 import QtQuick
 
@@ -13,42 +12,29 @@ Singleton {
     readonly property PwNode source: Pipewire.defaultAudioSource
 
     PwObjectTracker {
-        objects: {
-            const list = [];
-            if (root.sink) list.push(root.sink);
-            if (root.source) list.push(root.source);
-            const allNodes = Pipewire.nodes.values;
-            if (allNodes) {
-                for (let i = 0; i < allNodes.length; i++) {
-                    const node = allNodes[i];
-                    if (node && !node.isStream && node.audio && node !== root.sink && node !== root.source) {
-                        list.push(node);
-                    }
-                }
-            }
-            return list;
-        }
-    }
-
-    Connections {
-        target: Pipewire.nodes
-        function onValuesChanged() { Qt.callLater(root.rebuildDeviceLists); }
+        objects: root.audioPageConsumers > 0
+            ? Pipewire.nodes.values.filter(node => node && !node.isStream && node.audio)
+            : [root.sink, root.source].filter(node => node)
     }
 
     Instantiator {
+        active: root.audioPageConsumers > 0
         model: ScriptModel {
-            values: Pipewire.nodes.values.filter(node => !node.isStream && node.audio)
+            comparisonMode: ObjectComparison.Identity
+            values: Pipewire.nodes.values.filter(node => node && !node.isStream && node.audio)
         }
         delegate: Connections {
-            required property var modelData
+            required property PwNode modelData
             target: modelData
             function onPropertiesChanged() { Qt.callLater(root.rebuildDeviceLists); }
             function onReadyChanged() { Qt.callLater(root.rebuildDeviceLists); }
         }
+        onObjectAdded: Qt.callLater(root.rebuildDeviceLists)
+        onObjectRemoved: Qt.callLater(root.rebuildDeviceLists)
     }
 
-    readonly property bool sinkReady: sink !== null && sink.audio !== null
-    readonly property bool sourceReady: source !== null && source.audio !== null
+    readonly property bool sinkReady: sink?.ready === true && sink.audio !== null
+    readonly property bool sourceReady: source?.ready === true && source.audio !== null
 
     readonly property bool muted: sinkReady ? (sink.audio.muted ?? false) : false
     property real lastKnownVolume: 0
@@ -96,27 +82,21 @@ Singleton {
         parts.push((sink?.description ?? "") + "");
         parts.push((sink?.nickname ?? "") + "");
         parts.push((sink?.name ?? "") + "");
-        parts.push((sink?.iconName ?? "") + "");
-        parts.push((sink?.mediaClass ?? "") + "");
-        parts.push((sink?.objectName ?? "") + "");
-        parts.push((sink?.activePort?.name ?? "") + "");
-        parts.push((sink?.activePort?.description ?? "") + "");
-        parts.push((sink?.audio?.activePort?.name ?? "") + "");
-        parts.push((sink?.audio?.activePort?.description ?? "") + "");
-        parts.push((sink?.audio?.port?.name ?? "") + "");
-        parts.push((sink?.audio?.port?.description ?? "") + "");
         return parts.join(" ").trim();
     }
     property string outputDeviceType: "speaker"
 
     property int audioPageConsumers: 0
+    onAudioPageConsumersChanged: {
+        if (audioPageConsumers === 0) {
+            outputDevices = [];
+            inputDevices = [];
+        }
+    }
     property var outputDevices: []
     property var inputDevices: []
     property string switchingOutputName: ""
     property string switchingInputName: ""
-    property string switchingInputPortName: ""
-    property string activeInputPortName: ""
-    property var inputPorts: []
 
     // Default names are now derived reactively from native Pipewire bindings.
     readonly property string defaultOutputName: sanitizeText(sink?.name)
@@ -230,66 +210,6 @@ Singleton {
         return "Microphone";
     }
 
-    function inferInputPortType(portName: string, description: string): string {
-        const text = (portName + " " + description).toLowerCase().trim();
-        if (text.includes("headset") || text.includes("headphone") || text.includes("analog-input-headset-mic"))
-            return "headset";
-        if (text.includes("internal") || text.includes("built-in") || text.includes("builtin") || text.includes("analog-input-internal-mic"))
-            return "internal";
-        if (text.includes("front") || text.includes("rear") || text.includes("dock") || text.includes("line"))
-            return "external";
-        return "microphone";
-    }
-
-    function inputPortIcon(type: string): string {
-        if (type === "headset")
-            return "";
-        if (type === "internal")
-            return "󰍬";
-        if (type === "external")
-            return "";
-        return "";
-    }
-
-    function inputPortLabel(type: string, description: string): string {
-        if (type === "headset")
-            return "Headset mic";
-        if (type === "internal")
-            return "Internal mic";
-        const safeDescription = sanitizeText(description, "");
-        return safeDescription !== "" ? safeDescription : "Microphone";
-    }
-
-    function normalizePorts(rawPorts): var {
-        const ports = [];
-        if (Array.isArray(rawPorts)) {
-            rawPorts.forEach(portItem => {
-                if (!portItem)
-                    return;
-                ports.push(portItem);
-            });
-            return ports;
-        }
-        if (rawPorts && typeof rawPorts === "object") {
-            Object.keys(rawPorts).forEach(key => {
-                const portItem = rawPorts[key];
-                if (portItem && typeof portItem === "object") {
-                    ports.push({
-                        name: sanitizeText(portItem.name, key),
-                        description: sanitizeText(portItem.description, key),
-                        availability: sanitizeText(portItem.availability, "")
-                    });
-                } else {
-                    ports.push({
-                        name: key,
-                        description: key
-                    });
-                }
-            });
-        }
-        return ports;
-    }
-
     function sanitizeText(value, fallback): string {
         const fallbackText = ((fallback ?? "") + "").trim();
         const text = ((value ?? "") + "").trim();
@@ -321,44 +241,6 @@ Singleton {
         ].join(" ").trim();
     }
 
-    // Legacy buildDescriptor kept for compatibility — delegates to buildNodeDescriptor for PwNodes,
-    // falls back to old pactl-JSON-object handling otherwise.
-    function buildDescriptor(item): string {
-        // If this looks like a PwNode (has .description and .name as native properties), use the new path.
-        if (item && typeof item.description === "string" && typeof item.name === "string" && item.audio !== undefined)
-            return buildNodeDescriptor(item);
-        const props = item?.properties ?? ({});
-        return [
-            sanitizeText(item?.description),
-            sanitizeText(item?.name),
-            sanitizeText(item?.active_port),
-            sanitizeText(item?.driver),
-            sanitizeText(props["device.description"]),
-            sanitizeText(props["node.description"]),
-            sanitizeText(props["node.nick"]),
-            sanitizeText(props["device.icon_name"]),
-            sanitizeText(props["device.icon-name"]),
-            sanitizeText(props["device.form_factor"]),
-            sanitizeText(props["card.profile.name"]),
-            sanitizeText(props["device.profile.name"]),
-            sanitizeText(props["api.alsa.path"]),
-            sanitizeText(props["api.alsa.pcm.stream"]),
-            sanitizeText(props["media.class"])
-        ].join(" ").trim();
-    }
-
-    function parseJsonArray(raw) {
-        const text = ((raw ?? "") + "").trim();
-        if (text === "")
-            return [];
-        try {
-            const parsed = JSON.parse(text);
-            return Array.isArray(parsed) ? parsed : [];
-        } catch (_error) {
-            return [];
-        }
-    }
-
     // Collect all non-stream audio nodes from native Pipewire.nodes.
     function collectNativeNodes() {
         const sinks = [];
@@ -379,6 +261,8 @@ Singleton {
     }
 
     function rebuildDeviceLists() {
+        if (audioPageConsumers <= 0)
+            return;
         const collected = collectNativeNodes();
         const sinkNodes = collected.sinks;
         const sourceNodes = collected.sources;
@@ -448,12 +332,6 @@ Singleton {
                 return 1;
             return a.name.localeCompare(b.name);
         });
-
-        // Input ports: use the native source node's properties to detect ports.
-        // Since PwNode doesn't expose ports directly, we keep the existing inputPorts
-        // as-is when pactl set-source-port changes them; the port list itself comes from
-        // the last known state set by pactl. If we have no port data yet, we leave it empty.
-        // (Port enumeration has no native Pipewire equivalent in Quickshell.)
 
         if (JSON.stringify(outputDevices) !== JSON.stringify(outputs))
             outputDevices = outputs;
@@ -579,21 +457,6 @@ Singleton {
         switchingInputName = "";
     }
 
-    function setInputPort(portName: string) {
-        if (!portName || setInputPortProc.running)
-            return;
-
-        const sourceName = sanitizeText(defaultInputName, sanitizeText(source?.name, ""));
-        if (sourceName === "")
-            return;
-        if (portName === activeInputPortName)
-            return;
-
-        switchingInputPortName = portName;
-        setInputPortProc.command = ["pactl", "set-source-port", sourceName, portName];
-        setInputPortProc.running = true;
-    }
-
     readonly property string systemIcon: {
         if (!sinkReady || muted)
             return "󰖁";
@@ -679,24 +542,6 @@ Singleton {
         onTriggered: {
             root.refreshPortHintFromProperties();
             root.rebuildDeviceLists();
-        }
-    }
-
-    // The only remaining Process: pactl set-source-port has no native Pipewire equivalent.
-    Process {
-        id: setInputPortProc
-
-        stderr: SplitParser {
-            onRead: data => console.error("[AudioService] " + data)
-        }
-
-        onExited: code => {
-            const targetPort = root.switchingInputPortName;
-            root.switchingInputPortName = "";
-            if (code !== 0)
-                return;
-            root.activeInputPortName = targetPort;
-            root.refreshDevices();
         }
     }
 }

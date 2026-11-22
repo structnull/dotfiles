@@ -111,6 +111,7 @@ Scope {
         PanelWindow {
             id: osdWindow
             visible: OsdService.visible || content.opacity > 0.01
+            screen: OsdService.anchorScreen ?? Quickshell.screens[0] ?? null
 
             anchors {
                 top: true
@@ -120,15 +121,15 @@ Scope {
             margins.left: {
                 const screenWidth = screen ? screen.width : 1920;
                 const screenOffsetX = screen ? screen.x : 0;
-                const localAnchorX = OsdService.anchorX - screenOffsetX;
-                const targetX = OsdService.anchorX > 0 ? localAnchorX - (content.width / 2) : (screenWidth - content.width - 16);
+                const localAnchorX = OsdService.anchor.x - screenOffsetX;
+                const targetX = OsdService.anchorScreen !== null ? localAnchorX - (content.width / 2) : (screenWidth - content.width - 16);
                 return Math.max(10, Math.min(screenWidth - content.width - 10, targetX));
             }
             margins.top: {
                 const screenHeight = screen ? screen.height : 1080;
                 const screenOffsetY = screen ? screen.y : 0;
-                const localAnchorY = OsdService.anchorY - screenOffsetY;
-                const targetY = OsdService.anchorY > 0 ? (localAnchorY + 8) : (Config.barHeight + 10);
+                const localAnchorY = OsdService.anchor.y - screenOffsetY;
+                const targetY = OsdService.anchorScreen !== null ? (localAnchorY + 8) : (Config.barHeight + 10);
                 return Math.max(Config.barHeight + 4, Math.min(screenHeight - content.height - 10, targetY));
             }
 
@@ -185,6 +186,7 @@ Scope {
                     spacing: 10
 
                     QsSlider {
+                        accessibleName: OsdService.type === "brightness" ? "Brightness" : "Volume"
                         id: osdSlider
                         Layout.fillWidth: true
                         value: root.sliderValue

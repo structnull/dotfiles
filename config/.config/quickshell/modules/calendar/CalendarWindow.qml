@@ -88,18 +88,18 @@ QsPopupWindow {
                 id: clockCanvas
                 anchors.fill: parent
                 
-                Connections {
-                    target: TimeService
-                    function onDateChanged() {
-                        clockCanvas.requestPaint();
-                    }
+                SystemClock {
+                    id: gaugeClock
+                    enabled: root.visible
+                    precision: SystemClock.Seconds
+                    onSecondsChanged: clockCanvas.requestPaint()
                 }
 
                 onPaint: {
                     var ctx = getContext("2d");
                     ctx.reset();
                     
-                    var secs = root.today.getSeconds();
+                    var secs = gaugeClock.seconds;
                     
                     var padX = 24;
                     var padY = 10;

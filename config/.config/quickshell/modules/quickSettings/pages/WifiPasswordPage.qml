@@ -14,6 +14,7 @@ Item {
 
     // Received properties
     property string targetSsid: ""
+    property string errorText: ""
 
     signal cancelled
     signal connectClicked(string password)
@@ -62,6 +63,15 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 Layout.maximumWidth: parent.width
             }
+        }
+
+        Text {
+            Layout.fillWidth: true
+            visible: text !== ""
+            text: root.errorText
+            textFormat: Text.PlainText
+            color: Config.errorColor
+            wrapMode: Text.Wrap
         }
 
         // --- Password Field ---
@@ -133,8 +143,10 @@ Item {
             // Enter connects
             onAccepted: {
                 if (text.length > 0) {
-                    root.connectClicked(text);
+                    const password = text;
                     text = "";
+                    showPassToggle.checked = false;
+                    root.connectClicked(password);
                 }
             }
         }
@@ -171,14 +183,14 @@ Item {
                 hoverColor: Qt.darker(Config.accentColor, 1.1)
                 textColor: Config.textReverseColor
                 hoverTextColor: Config.textReverseColor
-                opacity: passInput.text.length >= 8 ? 1.0 : 0.5
+                enabled: passInput.text.length > 0
+                opacity: enabled ? 1.0 : 0.5
 
                 onClicked: {
-                    if (passInput.text.length >= 8) {
-                        root.connectClicked(passInput.text);
-                        passInput.text = "";
-                        showPassToggle.checked = false;
-                    }
+                    const password = passInput.text;
+                    passInput.text = "";
+                    showPassToggle.checked = false;
+                    root.connectClicked(password);
                 }
             }
         }

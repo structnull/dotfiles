@@ -259,8 +259,8 @@ Rectangle {
                             spacing: 6
 
                             Rectangle {
-                                width: 5
-                                height: 5
+                                implicitWidth: 5
+                                implicitHeight: 5
                                 radius: 2.5
                                 color: MprisService.isPlaying ? Config.accentColor : Config.mutedColor
                             }
@@ -356,8 +356,8 @@ Rectangle {
                                         spacing: 6
 
                                         Rectangle {
-                                            width: 5
-                                            height: 5
+                                            implicitWidth: 5
+                                            implicitHeight: 5
                                             radius: 2.5
                                             color: playing ? Config.accentColor : Qt.alpha(Config.mutedColor, 0.6)
                                         }
@@ -521,8 +521,8 @@ Rectangle {
                     // Play/Pause
                     Rectangle {
                         id: playButton
-                        width: 44
-                        height: 32
+                        implicitWidth: 44
+                        implicitHeight: 32
                         radius: 16
                         color: playMouse.containsMouse ? Qt.alpha(Config.accentColor, 0.15) : Qt.alpha(Config.accentColor, 0.08)
                         border.width: 1.5

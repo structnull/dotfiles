@@ -28,19 +28,8 @@ BarButton {
     visible: BatteryService.hasBattery || BatteryService.isPlugged
     contentItem: content
     onClicked: togglePopup()
-    activeFocusOnTab: true
-    border.width: activeFocus || highlighted ? 1 : 0
-    border.color: activeFocus ? Config.accentColor : Qt.alpha(Config.textColor, 0.26)
-    Accessible.role: Accessible.Button
-    Accessible.name: "Battery, " + (BatteryService.hasBattery ? BatteryService.percentage + " percent, " : "")
+    accessibleName: "Battery, " + (BatteryService.hasBattery ? BatteryService.percentage + " percent, " : "")
         + BatteryService.statusText
-    Accessible.onPressAction: togglePopup()
-    Keys.onPressed: event => {
-        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter || event.key === Qt.Key_Space) {
-            togglePopup();
-            event.accepted = true;
-        }
-    }
 
     RowLayout {
         id: content

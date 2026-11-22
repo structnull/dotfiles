@@ -10,6 +10,7 @@ Item {
     property real from: 0
     property real to: 1
     property string icon: ""
+    property string accessibleName: ""
     property bool showPercentage: true
     property bool alwaysShowPercentage: false
     property bool percentageFromRawValue: false
@@ -18,6 +19,34 @@ Item {
     property string detailsIcon: ""
     property real visualValue: 0
     readonly property real clampedValue: clampValue(value)
+
+    activeFocusOnTab: accessibleName !== ""
+    Accessible.role: Accessible.Slider
+    Accessible.name: accessibleName
+    Accessible.onIncreaseAction: stepBy(1)
+    Accessible.onDecreaseAction: stepBy(-1)
+    Keys.onLeftPressed: stepBy(-1)
+    Keys.onRightPressed: stepBy(1)
+    Keys.onDownPressed: stepBy(-1)
+    Keys.onUpPressed: stepBy(1)
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Home)
+            moveTo(from);
+        else if (event.key === Qt.Key_End)
+            moveTo(to);
+        else
+            return;
+        event.accepted = true;
+    }
+
+    function moveTo(nextValue: real) {
+        visualValue = clampValue(nextValue);
+        moved(visualValue);
+    }
+
+    function stepBy(direction: int) {
+        moveTo(visualValue + direction * (to - from) * 0.05);
+    }
 
     Behavior on visualValue {
         enabled: !sliderMouse.pressed
@@ -171,7 +200,7 @@ Item {
                     radius: parent.width / 2
                     color: "transparent"
                     border.width: 1.5
-                    border.color: root.fillColor
+                    border.color: root.activeFocus ? Config.textColor : root.fillColor
 
                     Rectangle {
                         anchors.centerIn: parent
@@ -238,8 +267,7 @@ Item {
                     let percent = mouseX / width;
                     percent = Math.max(0, Math.min(1, percent));
                     let val = root.from + (root.to - root.from) * percent;
-                    root.visualValue = val;
-                    root.moved(val);
+                    root.moveTo(val);
                 }
 
                 preventStealing: true
@@ -250,13 +278,8 @@ Item {
                 }
 
                 onWheel: wheel => {
-                    let step = (root.to - root.from) * 0.05;
-                    if (wheel.angleDelta.y > 0)
-                        root.visualValue = Math.min(root.to, root.visualValue + step);
-                    else
-                        root.visualValue = Math.max(root.from, root.visualValue - step);
-
-                    root.moved(root.visualValue);
+                    if (wheel.angleDelta.y !== 0)
+                        root.stepBy(wheel.angleDelta.y > 0 ? 1 : -1);
                 }
             }
         }

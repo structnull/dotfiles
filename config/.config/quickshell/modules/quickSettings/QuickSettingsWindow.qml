@@ -13,29 +13,52 @@ QsPopupWindow {
     popupMaxHeight: 700
     anchorSide: "right"
     contentImplicitHeight: pageStack.children[pageStack.currentIndex]?.implicitHeight ?? 0
-    property string pendingWifiSsid: ""
+    readonly property bool wifiView: visible && (pageStack.currentIndex === 1 || pageStack.currentIndex === 2)
+    property bool wifiRegistered: false
+    readonly property bool audioView: visible && pageStack.currentIndex === 4
+    property bool audioRegistered: false
 
-    onClosing: pageStack.currentIndex = 0
-    property bool _networkWindowRegistered: false
-
-    function syncNetworkWindow() {
-        if (_networkWindowRegistered === visible)
+    onWifiViewChanged: {
+        if (wifiRegistered === wifiView)
             return;
-        _networkWindowRegistered = visible;
-        if (visible)
-            NetworkService.acquireSettingsWindow();
+        wifiRegistered = wifiView;
+        if (wifiView)
+            NetworkService.acquireWifiView();
         else
-            NetworkService.releaseSettingsWindow();
+            NetworkService.releaseWifiView(root);
+    }
+    onAudioViewChanged: {
+        if (audioRegistered === audioView)
+            return;
+        audioRegistered = audioView;
+        if (audioView) {
+            AudioService.audioPageConsumers++;
+            AudioService.refreshDevices();
+        } else {
+            AudioService.audioPageConsumers--;
+        }
+    }
+    onVisibleChanged: OsdService.suppress(root, visible)
+    Component.onDestruction: {
+        OsdService.suppress(root, false);
+        if (wifiRegistered)
+            NetworkService.releaseWifiView(root);
+        if (audioRegistered)
+            AudioService.audioPageConsumers--;
     }
 
-    onVisibleChanged: {
-        OsdService.suppressed = visible;
-        syncNetworkWindow();
-    }
-    Component.onCompleted: syncNetworkWindow()
-    Component.onDestruction: {
-        if (_networkWindowRegistered)
-            NetworkService.releaseSettingsWindow();
+    Connections {
+        target: NetworkService
+
+        function onPasswordRequired(owner) {
+            if (owner === root && root.wifiView)
+                pageStack.currentIndex = 2;
+        }
+
+        function onPendingNetworkChanged() {
+            if (!NetworkService.pendingNetwork && pageStack.currentIndex === 2)
+                pageStack.currentIndex = 1;
+        }
     }
 
     StackLayout {
@@ -51,7 +74,7 @@ QsPopupWindow {
             implicitHeight: page0Loader.active ? page0Loader.item.implicitHeight : 0
             LazyLoader {
                 id: page0Loader
-                active: pageStack.currentIndex === 0
+                active: root.visible && pageStack.currentIndex === 0
 
                 component: Component {
                     DashboardPage {
@@ -72,7 +95,7 @@ QsPopupWindow {
             implicitHeight: page1Loader.active ? page1Loader.item.implicitHeight : 0
             LazyLoader {
                 id: page1Loader
-                active: pageStack.currentIndex === 1
+                active: root.visible && pageStack.currentIndex === 1
 
                 component: Component {
                     WifiPage {
@@ -80,10 +103,7 @@ QsPopupWindow {
                         width: pageStack.width
                         height: pageStack.height
                         onBackRequested: pageStack.currentIndex = 0
-                        onPasswordRequested: ssid => {
-                            root.pendingWifiSsid = ssid;
-                            pageStack.currentIndex = 2;
-                        }
+                        onConnectRequested: network => NetworkService.connectNetwork(network, root)
                     }
                 }
             }
@@ -97,18 +117,19 @@ QsPopupWindow {
             implicitHeight: page2Loader.active ? page2Loader.item.implicitHeight : 0
             LazyLoader {
                 id: page2Loader
-                active: pageStack.currentIndex === 2
+                active: root.visible && pageStack.currentIndex === 2
 
                 component: Component {
                     WifiPasswordPage {
                         parent: page2Host
                         width: pageStack.width
                         height: pageStack.height
-                        targetSsid: root.pendingWifiSsid
-                        onCancelled: pageStack.currentIndex = 1
+                        targetSsid: NetworkService.pendingNetwork?.name ?? ""
+                        errorText: NetworkService.connectionError
+                        onCancelled: NetworkService.cancelPassword(root)
                         onConnectClicked: password => {
-                            NetworkService.connect(targetSsid, password);
                             pageStack.currentIndex = 1;
+                            NetworkService.submitPassword(root, password);
                         }
                     }
                 }
@@ -123,7 +144,7 @@ QsPopupWindow {
             implicitHeight: page3Loader.active ? page3Loader.item.implicitHeight : 0
             LazyLoader {
                 id: page3Loader
-                active: pageStack.currentIndex === 3
+                active: root.visible && pageStack.currentIndex === 3
 
                 component: Component {
                     BluetoothPage {
@@ -144,7 +165,7 @@ QsPopupWindow {
             implicitHeight: page4Loader.active ? page4Loader.item.implicitHeight : 0
             LazyLoader {
                 id: page4Loader
-                active: pageStack.currentIndex === 4
+                active: root.visible && pageStack.currentIndex === 4
 
                 component: Component {
                     AudioPage {

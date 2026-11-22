@@ -7,6 +7,7 @@ import "../../components/"
 
 BarButton {
     id: root
+    accessibleName: "Notifications"
 
     property bool popupLoaded: false
     readonly property var popupWindow: notificationLoader.active ? notificationLoader.item : null

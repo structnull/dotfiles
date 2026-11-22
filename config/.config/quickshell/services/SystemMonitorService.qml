@@ -36,6 +36,8 @@ Singleton {
 
     readonly property int gpuUsage: internal.gpuUsage
     readonly property int gpuTemp: internal.gpuTemp
+    readonly property bool gpuUsageKnown: internal.gpuUsageKnown
+    readonly property bool gpuTempKnown: internal.gpuTempKnown
     readonly property string gpuType: internal.gpuType // "nvidia", "amd", "intel", "unknown"
     property bool gpuMonitorEnabled: StateService.get("gpuMonitor.enabled", false)
 
@@ -49,6 +51,11 @@ Singleton {
     function toggleGpuMonitor() {
         gpuMonitorEnabled = !gpuMonitorEnabled;
         StateService.set("gpuMonitor.enabled", gpuMonitorEnabled);
+    }
+
+    onGpuMonitorEnabledChanged: {
+        internal.gpuUsageKnown = false;
+        internal.gpuTempKnown = false;
         if (!gpuMonitorEnabled) {
             internal.gpuUsage = 0;
             internal.gpuTemp = 0;
@@ -60,7 +67,7 @@ Singleton {
     function _triggerGpuUpdate() {
         if (!active)
             return;
-        if (internal.gpuType === "nvidia") {
+        if (internal.gpuType === "nvidia" && internal.nvidiaId && !updateNvidiaGpu.running) {
             updateNvidiaGpu.running = true;
         } else if (internal.gpuType === "amd") {
             gpuUsageFile.reload();
@@ -113,6 +120,9 @@ Singleton {
         // GPU
         property int gpuUsage: 0
         property int gpuTemp: 0
+        property bool gpuUsageKnown: false
+        property bool gpuTempKnown: false
+        property string nvidiaId: ""
         property string gpuType: "unknown"
 
         // CPU calculation state
@@ -132,8 +142,7 @@ Singleton {
         // Network
         property string networkDown: "0 B/s"
         property string networkUp: "0 B/s"
-        property real prevRx: 0
-        property real prevTx: 0
+        property var previousInterfaces: new Map()
         property double prevNetworkSampleMs: 0
 
         // Uptime
@@ -152,11 +161,15 @@ Singleton {
 
     onActiveChanged: {
         internal.prevNetworkSampleMs = 0;
+        internal.previousInterfaces = new Map();
+        internal.prevTotal = 0;
+        internal.prevIdle = 0;
         if (active)
             triggerFullUpdate();
     }
 
     function triggerFullUpdate() {
+        _readCpuStats();
         _readCoreStats();
         updateDisk.running = true;
         if (gpuMonitorEnabled)
@@ -166,6 +179,13 @@ Singleton {
     // ========================================================================
     // UPDATE TIMER
     // ========================================================================
+
+    Timer {
+        interval: 1000
+        running: root.active
+        repeat: true
+        onTriggered: root._readCpuStats()
+    }
 
     Timer {
         interval: 4000
@@ -216,13 +236,11 @@ Singleton {
         id: detectSensors
         command: ["bash", "-c", `
             cpu_temp=""
-            intel_temp=""
             for zone in /sys/class/thermal/thermal_zone*/temp; do
                 [ -f "$zone" ] || continue
                 IFS= read -r type < "\${zone%/temp}/type"
                 case "$type" in
                     *cpu*|*x86_pkg*|*coretemp*) [ -n "$cpu_temp" ] || cpu_temp="$zone" ;;
-                    *gpu*|*pch*) [ -n "$intel_temp" ] || intel_temp="$zone" ;;
                 esac
             done
             if [ -z "$cpu_temp" ]; then
@@ -236,30 +254,37 @@ Singleton {
             fi
             [ -n "$cpu_temp" ] || cpu_temp=/sys/class/thermal/thermal_zone0/temp
             printf 'cpu %s\n' "$cpu_temp"
-            if command -v nvidia-smi >/dev/null && nvidia-smi >/dev/null 2>&1; then
-                printf 'gpu nvidia\n'
-                exit
-            fi
             for card in /sys/class/drm/card*/device; do
-                if [ -f "$card/gpu_busy_percent" ]; then
-                    printf 'gpu amd\nusage %s\n' "$card/gpu_busy_percent"
+                [ -f "$card/vendor" ] || continue
+                IFS= read -r vendor < "$card/vendor"
+                if [ "$vendor" = 0x10de ] && command -v nvidia-smi >/dev/null; then
+                    printf '%s\\n' 'gpu nvidia' "nvidia $(basename "$(readlink -f "$card")")"
+                    exit
+                fi
+            done
+            for card in /sys/class/drm/card*/device; do
+                [ -f "$card/vendor" ] || continue
+                IFS= read -r vendor < "$card/vendor"
+                if [ "$vendor" = 0x1002 ] && [ -f "$card/gpu_busy_percent" ]; then
+                    printf 'gpu amd\\nusage %s\\n' "$card/gpu_busy_percent"
                     for temp in "$card"/hwmon/hwmon*/temp1_input; do
-                        [ -f "$temp" ] && { printf 'temp %s\n' "$temp"; break; }
+                        [ -f "$temp" ] && { printf 'temp %s\\n' "$temp"; break; }
                     done
                     exit
                 fi
             done
-            for temp in /sys/class/drm/card*/device/hwmon/hwmon*/temp1_input; do
-                if [ -f "$temp" ]; then
-                    printf 'gpu intel\ntemp %s\n' "$temp"
+            for card in /sys/class/drm/card*/device; do
+                [ -f "$card/vendor" ] || continue
+                IFS= read -r vendor < "$card/vendor"
+                if [ "$vendor" = 0x8086 ]; then
+                    printf 'gpu intel\\n'
+                    for temp in "$card"/hwmon/hwmon*/temp1_input; do
+                        [ -f "$temp" ] && { printf 'temp %s\\n' "$temp"; break; }
+                    done
                     exit
                 fi
             done
-            if [ -d /sys/class/drm/card0/gt ]; then
-                printf 'gpu intel\ntemp %s\n' "\${intel_temp:-/sys/class/thermal/thermal_zone0/temp}"
-            else
-                printf 'gpu unknown\n'
-            fi
+            printf 'gpu unknown\\n'
         `]
         stdout: SplitParser {
             onRead: data => {
@@ -270,6 +295,7 @@ Singleton {
                 else if (key === "usage") root.gpuUsagePath = value;
                 else if (key === "temp") root.gpuTempPath = value;
                 else if (key === "gpu") internal.gpuType = value;
+                else if (key === "nvidia") internal.nvidiaId = value;
             }
         }
         onExited: {
@@ -325,24 +351,23 @@ Singleton {
         }
     }
 
-    function _applyNetworkSnapshot(parts) {
-        if (parts.length < 3)
-            return;
-
-        const rx = parseFloat(parts[1]);
-        const tx = parseFloat(parts[2]);
+    function _applyNetworkSnapshot(interfaces) {
         const nowMs = networkClock.elapsedMs();
-
-        if (internal.prevRx > 0 && internal.prevNetworkSampleMs > 0) {
-            const elapsedSeconds = Math.max(0.001, (nowMs - internal.prevNetworkSampleMs) / 1000.0);
-            const rxDelta = (rx - internal.prevRx) / elapsedSeconds;
-            const txDelta = (tx - internal.prevTx) / elapsedSeconds;
-            internal.networkDown = root._formatBytes(Math.max(0, rxDelta));
-            internal.networkUp = root._formatBytes(Math.max(0, txDelta));
+        if (internal.prevNetworkSampleMs > 0) {
+            let rx = 0;
+            let tx = 0;
+            for (const [name, counters] of interfaces) {
+                const previous = internal.previousInterfaces.get(name);
+                if (previous) {
+                    rx += Math.max(0, counters[0] - previous[0]);
+                    tx += Math.max(0, counters[1] - previous[1]);
+                }
+            }
+            const seconds = Math.max(0.001, (nowMs - internal.prevNetworkSampleMs) / 1000);
+            internal.networkDown = root._formatBytes(rx / seconds);
+            internal.networkUp = root._formatBytes(tx / seconds);
         }
-
-        internal.prevRx = rx;
-        internal.prevTx = tx;
+        internal.previousInterfaces = interfaces;
         internal.prevNetworkSampleMs = nowMs;
     }
 
@@ -367,13 +392,16 @@ Singleton {
         }
     }
 
-    function _readCoreStats() {
+    function _readCpuStats() {
         cpuFile.reload();
+        if (cpuTempPath !== "")
+            cpuTempFile.reload();
+    }
+
+    function _readCoreStats() {
         memFile.reload();
         uptimeFile.reload();
         networkFile.reload();
-        if (cpuTempPath !== "")
-            cpuTempFile.reload();
     }
 
     ElapsedTimer { id: networkClock }
@@ -383,7 +411,10 @@ Singleton {
         printErrors: false
         id: cpuFile
         path: "/proc/stat"
-        onLoaded: root._applyCpuSnapshot(text().split("\n")[0].trim().split(/\s+/))
+        onLoaded: {
+            if (root.active)
+                root._applyCpuSnapshot(text().split("\n")[0].trim().split(/\s+/));
+        }
     }
 
     FileView {
@@ -416,19 +447,17 @@ Singleton {
         id: networkFile
         path: "/proc/net/dev"
         onLoaded: {
-            let rx = 0;
-            let tx = 0;
+            const interfaces = new Map();
             for (const line of text().split("\n")) {
                 const colon = line.indexOf(":");
-                if (colon < 0 || line.slice(0, colon).trim() === "lo")
+                if (colon < 0)
                     continue;
+                const name = line.slice(0, colon).trim();
                 const counters = line.slice(colon + 1).trim().split(/\s+/);
-                if (counters.length >= 9) {
-                    rx += Number(counters[0]);
-                    tx += Number(counters[8]);
-                }
+                if (name !== "lo" && counters.length >= 9)
+                    interfaces.set(name, [Number(counters[0]), Number(counters[8])]);
             }
-            root._applyNetworkSnapshot(["net", rx, tx]);
+            root._applyNetworkSnapshot(interfaces);
         }
     }
 
@@ -439,7 +468,8 @@ Singleton {
         path: root.cpuTempPath
         onLoaded: {
             const value = parseInt(text());
-            if (!isNaN(value)) internal.cpuTemp = Math.round(value / 1000);
+            if (root.active && !isNaN(value))
+                internal.cpuTemp = Math.round(value / 1000);
         }
     }
 
@@ -450,7 +480,11 @@ Singleton {
         path: root.gpuUsagePath
         onLoaded: {
             const value = parseInt(text());
-            if (root.gpuMonitorEnabled && !isNaN(value)) internal.gpuUsage = value;
+            if (root.active && root.gpuMonitorEnabled) {
+                internal.gpuUsageKnown = !isNaN(value);
+                if (internal.gpuUsageKnown)
+                    internal.gpuUsage = value;
+            }
         }
     }
 
@@ -461,7 +495,11 @@ Singleton {
         path: root.gpuTempPath
         onLoaded: {
             const value = parseInt(text());
-            if (root.gpuMonitorEnabled && !isNaN(value)) internal.gpuTemp = Math.round(value / 1000);
+            if (root.active && root.gpuMonitorEnabled) {
+                internal.gpuTempKnown = !isNaN(value);
+                if (internal.gpuTempKnown)
+                    internal.gpuTemp = Math.round(value / 1000);
+            }
         }
     }
 
@@ -494,19 +532,21 @@ Singleton {
 
     Process {
         id: updateNvidiaGpu
-        command: ["nvidia-smi", "--query-gpu=utilization.gpu,temperature.gpu", "--format=csv,noheader,nounits"]
-        stdout: SplitParser {
-            onRead: data => {
-                const parts = data.trim().split(",").map(s => s.trim());
-                if (parts.length >= 2) {
-                    const usage = parseInt(parts[0]);
-                    const temp = parseInt(parts[1]);
-
-                    if (!isNaN(usage)) internal.gpuUsage = usage;
-                    if (!isNaN(temp)) internal.gpuTemp = temp;
-                }
-            }
+        command: ["nvidia-smi", "--id=" + internal.nvidiaId,
+            "--query-gpu=utilization.gpu,temperature.gpu", "--format=csv,noheader,nounits"]
+        stdout: StdioCollector { id: nvidiaOutput }
+        onExited: code => {
+            if (!root.active || !root.gpuMonitorEnabled)
+                return;
+            const parts = code === 0 ? nvidiaOutput.text.trim().split(",") : [];
+            const usage = parseInt(parts[0]);
+            const temp = parseInt(parts[1]);
+            internal.gpuUsageKnown = !isNaN(usage);
+            internal.gpuTempKnown = !isNaN(temp);
+            if (internal.gpuUsageKnown)
+                internal.gpuUsage = usage;
+            if (internal.gpuTempKnown)
+                internal.gpuTemp = temp;
         }
     }
-
 }

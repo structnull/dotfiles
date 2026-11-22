@@ -98,12 +98,14 @@ Scope {
 
                 // --- LEFT ---
                 RowLayout {
+                    id: leftRow
                     anchors.left: parent.left
                     anchors.leftMargin: root.gapOut
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: root.gapIn
 
                     Workspaces {
+                        id: workspaceIndicator
                         Layout.alignment: Qt.AlignVCenter
                     }
                     Item {
@@ -111,12 +113,15 @@ Scope {
                         Layout.alignment: Qt.AlignVCenter
                     }
                     ActiveWindow {
+                        maxWidth: Math.max(0, Math.min(400, centerRow.x - leftRow.x - workspaceIndicator.implicitWidth - 6
+                            - leftRow.spacing * 2 - root.gapOut))
                         Layout.alignment: Qt.AlignVCenter
                     }
                 }
 
                 // --- CENTER ---
                 RowLayout {
+                    id: centerRow
                     anchors.centerIn: parent
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: root.gapIn

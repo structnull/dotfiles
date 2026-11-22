@@ -1,13 +1,9 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Effects
-import QtQuick.Shapes
-import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
-import qs.config
 import qs.services
 
 PanelWindow {
@@ -23,184 +19,135 @@ PanelWindow {
 
   property string imageDirs: Quickshell.env("HOME") + "/Pictures/wallpapers"
   property var allImages: []
-  property int selectedIndex: 0
-  property bool _modelUpdating: false
-  property bool imagesLoaded: false
+  property bool scanFinished: false
+  property bool viewInitialized: false
+  property bool updatingModel: false
   property bool showLabels: true
   property bool filterable: true
   property string filterText: ""
   property color accent: ThemeService.colors.primary || "#798186"
   property color background: ThemeService.colors.surface || "#101315"
   property color foreground: ThemeService.colors.onSurface || "#cacccc"
-  property int expandedWidth: 768
+  property int expandedWidth: Math.min(768, Math.max(sliceWidth, width - 80))
   property int sliceWidth: 108
   property int sliceHeight: 432
   property int sliceSpacing: -30
   property int skewOffset: 28
-  property int preloadRadius: 8
-  property int bottomChromeHeight: showLabels ? (filterable ? 104 : 74) : 30
-
-  function fileUrl(path) {
-    return "file://" + path.split("/").map(encodeURIComponent).join("/")
-  }
-
-  function shellQuote(value) {
-    return "'" + String(value).replace(/'/g, "'\\''") + "'"
-  }
+  readonly property int slicePitch: sliceWidth + sliceSpacing
+  readonly property int bottomChromeHeight: showLabels ? (filterable ? 104 : 74) : 30
+  readonly property var currentImage: imageModel.values[carouselList.currentIndex]
 
   function withAlpha(color, alpha) {
     return Qt.rgba(color.r, color.g, color.b, alpha)
   }
 
-  function currentPath() {
-    if (imageModel.count === 0 || selectedIndex < 0 || selectedIndex >= imageModel.count) return ""
-    return imageModel.get(selectedIndex).filePath
+  function updateFilter(nextFilterText, preferredImage = currentImage) {
+    filterText = nextFilterText
+    if (!viewInitialized) return
+
+    const needle = nextFilterText.toLowerCase()
+    const matches = needle ? allImages.filter(image =>
+      image.searchPath.includes(needle) || image.searchLabel.includes(needle)) : allImages
+
+    updatingModel = true
+    imageModel.values = matches
+    if (matches.length > 0)
+      centerSelection(Math.max(0, matches.indexOf(preferredImage)))
+    updatingModel = false
   }
 
-  function nameForPath(path) {
-    return path.split("/").pop().replace(/\.[^/.]+$/, "")
+  function centerSelection(index) {
+    carouselList.cancelFlick()
+    carouselList.currentIndex = index
+    carouselList.forceLayout()
+    carouselList.positionViewAtIndex(index, ListView.SnapPosition)
+    carouselList.forceLayout()
   }
 
-  function relativePath(path) {
-    var prefix = root.imageDirs.replace(/\/+$/, "") + "/"
-    return path.indexOf(prefix) === 0 ? path.slice(prefix.length) : path
-  }
+  function syncViewport() {
+    if (!scanFinished || carouselList.width <= 0 || carouselList.height <= 0) return
 
-  function labelForPath(path) {
-    return relativePath(path).replace(/\.[^/.]+$/, "").replace(/\//g, " / ").replace(/[-_]+/g, " ").replace(/\b\w/g, function(match) { return match.toUpperCase() })
-  }
-
-  function currentLabel() {
-    var path = currentPath()
-    if (!path) return filterText ? "No matches" : ""
-    return labelForPath(path)
-  }
-
-  function indexForPath(path) {
-    if (!path) return -1
-
-    for (var i = 0; i < imageModel.count; i++) {
-      if (imageModel.get(i).filePath === path) return i
+    if (!viewInitialized) {
+      viewInitialized = true
+      updateFilter(filterText, allImages.find(image => image.path === WallpaperService.current))
+    } else if (carouselList.currentIndex >= 0 && carouselList.count > 0) {
+      updatingModel = true
+      centerSelection(carouselList.currentIndex)
+      updatingModel = false
     }
-    return -1
-  }
-
-  function select(index, immediate) {
-    if (imageModel.count === 0) return
-    if (index < 0) index = 0
-    else if (index >= imageModel.count) index = imageModel.count - 1
-    if (index === selectedIndex && immediate !== true) return
-
-    selectedIndex = index
   }
 
   function selectAdjacent(direction) {
-    select(selectedIndex + direction)
-  }
-
-  function updateFilter(nextFilterText, force) {
-    if (filterText === nextFilterText && !force) return
-    var oldSelectedPath = currentPath()
-    
-    filterText = nextFilterText
-    var needle = filterText.toLowerCase()
-    
-    root._modelUpdating = true
-    imageModel.clear()
-    for (var i = 0; i < allImages.length; i++) {
-      var item = allImages[i]
-      if (!needle || relativePath(item.filePath).toLowerCase().indexOf(needle) !== -1 || labelForPath(item.filePath).toLowerCase().indexOf(needle) !== -1) {
-        imageModel.append(item)
-      }
-    }
-    root._modelUpdating = false
-    
-    if (!force) {
-        var newIdx = indexForPath(oldSelectedPath)
-        if (newIdx >= 0) {
-          selectedIndex = newIdx
-        } else {
-          selectedIndex = 0
-        }
-    }
+    if (carouselList.count > 0)
+      carouselList.currentIndex = Math.max(0, Math.min(carouselList.count - 1, carouselList.currentIndex + direction))
   }
 
   function applySelected() {
-    var path = currentPath()
-    if (!path) {
-      cancel()
-      return
+    if (currentImage) {
+      WallpaperService.set(currentImage.path)
     }
-
-    WallpaperService.set(path)
-    ThemeService.generateFromImage(path)
     WallpaperService.hide()
   }
 
-  function cancel() {
-    WallpaperService.hide()
-  }
-
-  function loadRows(rows) {
-    var paths = rows.split("\n")
-    var newImages = []
-    var seen = {}
-    
-    for (var i = 0; i < paths.length; i++) {
-      var row = paths[i]
-      if (!row) continue
-
-      var columns = row.split("\t")
-      var path = columns[0]
-      if (!path || seen[path]) continue
-      seen[path] = true
-      
-      var fileName = path.split("/").pop()
-      newImages.push({ filePath: path, fileName: fileName, thumbnailPath: columns[1] || path })
-    }
-
-    root._modelUpdating = true
-    root.allImages = newImages
-    root._modelUpdating = false
-    
-    updateFilter(filterText, true)
-
-    var currentIndex = indexForPath(WallpaperService.current)
-    select(currentIndex >= 0 ? currentIndex : 0, true)
-    
-    imagesLoaded = true
-    keyHandler.forceActiveFocus()
-  }
-
-  ListModel { id: imageModel }
-
-  Process {
-    id: loadImagesProc
-    property string output: ""
-    // Always rescan when the picker opens. A manifest based on mtimes can miss
-    // files copied from another location with an older preserved timestamp.
-    command: ["bash", "-lc", "while IFS= read -r dir; do [[ -n $dir && -d $dir ]] && find -L \"$dir\" -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \\) -printf '%p\\t%p\\n'; done <<< " + shellQuote(root.imageDirs) + " | sort"]
-    stdout: SplitParser {
-      onRead: function(data) {
-        loadImagesProc.output += data + "\n"
+  function loadImages(paths) {
+    const directory = root.imageDirs.replace(/\/+$/, "") + "/"
+    allImages = paths.split("\0").filter(path => path).map(path => {
+      const relativePath = path.startsWith(directory) ? path.slice(directory.length) : path
+      const label = relativePath.replace(/\.[^/.]+$/, "").replace(/\//g, " / ")
+        .replace(/[-_]+/g, " ").replace(/\b\w/g, match => match.toUpperCase())
+      return {
+        path: path,
+        url: "file://" + path.split("/").map(encodeURIComponent).join("/"),
+        label: label,
+        searchPath: relativePath.toLowerCase(),
+        searchLabel: label.toLowerCase()
       }
-    }
-    onExited: {
-      root.loadRows(output)
+    })
+    scanFinished = true
+    Qt.callLater(root.syncViewport)
+  }
+
+  ScriptModel {
+    id: imageModel
+    comparisonMode: ObjectComparison.Identity
+    values: []
+  }
+
+  // Rescan on open so newly copied files with older timestamps are included.
+  Process {
+    running: root.visible
+    command: ["bash", "-c",
+      "while IFS= read -r dir; do [[ -n $dir && -d $dir ]] && find -L \"$dir\" -type f \\( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.webp' \\) -print0; done <<< \"$1\" | sort -zu",
+      "wallpaper-picker", root.imageDirs]
+    stdout: StdioCollector {
+      onStreamFinished: root.loadImages(text)
     }
   }
 
   onVisibleChanged: {
-    if (visible) {
-      loadImagesProc.output = ""
-      loadImagesProc.running = true
-    }
+    if (visible)
+      keyHandler.forceActiveFocus()
+  }
+  onWindowConnected: Qt.callLater(root.syncViewport)
+
+  onCurrentImageChanged: {
+    detailPreview.source = ""
+    detailDelay.restart()
   }
 
-  onSelectedIndexChanged: {
-    if (imagesLoaded && typeof carouselList !== "undefined" && carouselList.currentIndex !== selectedIndex) {
-      carouselList.currentIndex = selectedIndex;
-    }
+  Timer {
+    id: detailDelay
+    interval: 100
+    onTriggered: detailPreview.source = root.currentImage?.url ?? ""
+  }
+
+  Image {
+    id: detailPreview
+    visible: false
+    asynchronous: true
+    cache: false
+    sourceSize: Qt.size(root.expandedWidth, root.sliceHeight)
+    readonly property real aspect: status === Image.Ready ? sourceSize.width / sourceSize.height : 0
   }
 
   Rectangle {
@@ -210,12 +157,12 @@ PanelWindow {
 
   MouseArea {
     anchors.fill: parent
-    onClicked: root.cancel()
+    onClicked: WallpaperService.hide()
   }
 
   Item {
     id: card
-    width: Math.min(parent.width - 80, root.expandedWidth + 13 * (root.sliceWidth + root.sliceSpacing) + 40)
+    width: Math.max(0, Math.min(parent.width - 80, root.expandedWidth + 13 * root.slicePitch + 40))
     height: root.sliceHeight + 30 + root.bottomChromeHeight
     anchors.centerIn: parent
 
@@ -228,155 +175,112 @@ PanelWindow {
       anchors.bottom: parent.bottom
       anchors.bottomMargin: root.bottomChromeHeight
       anchors.horizontalCenter: parent.horizontalCenter
-      width: root.expandedWidth + 13 * (root.sliceWidth + root.sliceSpacing)
-      clip: false
+      width: Math.min(parent.width, root.expandedWidth + 13 * root.slicePitch)
 
       ListView {
         id: carouselList
-        anchors.fill: parent
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+        height: parent.height + 12
+        clip: true
         orientation: ListView.Horizontal
         spacing: root.sliceSpacing
-        preferredHighlightBegin: (width - root.expandedWidth) / 2
-        preferredHighlightEnd: (width - root.expandedWidth) / 2
+        preferredHighlightBegin: (width - root.sliceWidth) / 2
+        preferredHighlightEnd: preferredHighlightBegin
         highlightRangeMode: ListView.StrictlyEnforceRange
-        highlightMoveDuration: 180
-        
-        onCurrentIndexChanged: {
-            if (!root._modelUpdating && currentIndex !== -1 && root.selectedIndex !== currentIndex) {
-                root.selectedIndex = currentIndex
-            }
-        }
-
-        cacheBuffer: root.expandedWidth * 2
+        highlightMoveDuration: root.updatingModel ? 0 : 180
+        highlightMoveVelocity: -1
+        snapMode: ListView.SnapToItem
+        boundsBehavior: Flickable.StopAtBounds
+        cacheBuffer: 0
         model: imageModel
+        readonly property int previewRadius: Math.ceil(Math.max(0, width - root.expandedWidth) / (2 * root.slicePitch)) + 1
+
+        onWidthChanged: Qt.callLater(root.syncViewport)
 
         delegate: Item {
-          id: item
+          id: slot
           required property int index
-          required property string filePath
-          required property string fileName
-          required property string thumbnailPath
+          required property var modelData
 
-          readonly property bool selected: index === root.selectedIndex
-          
-          width: selected ? root.expandedWidth : root.sliceWidth
+          // Expand the artwork around the scroll position while keeping every
+          // ListView slot the same size. Neighbors share the extra width in motion.
+          readonly property real offset: (x - carouselList.contentX - carouselList.preferredHighlightBegin) / root.slicePitch
+          readonly property real expansion: Math.max(0, 1 - Math.abs(offset))
+          readonly property real extraWidth: root.expandedWidth - root.sliceWidth
+          readonly property real screenLeft: x - carouselList.contentX + tile.x
+          readonly property real screenRight: screenLeft + tile.width
+          readonly property bool nearViewport: screenRight > -root.slicePitch && screenLeft < carouselList.width + root.slicePitch
+          readonly property bool nearSelection: Math.abs(index - carouselList.currentIndex) <= carouselList.previewRadius
+          readonly property bool selected: index === carouselList.currentIndex
+
+          width: root.sliceWidth
           height: carousel.height
-          z: selected ? 100 : 50 - Math.min(Math.abs(index - root.selectedIndex), 40)
+          z: 1 + expansion
 
-          Behavior on width { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
-
-          readonly property real skAbs: Math.abs(root.skewOffset)
-          readonly property real topLeft: root.skewOffset >= 0 ? skAbs : 0
-          readonly property real topRight: root.skewOffset >= 0 ? width : width - skAbs
-          readonly property real bottomRight: root.skewOffset >= 0 ? width - skAbs : width
-          readonly property real bottomLeft: root.skewOffset >= 0 ? 0 : skAbs
+          Image {
+            id: preview
+            visible: false
+            source: slot.nearViewport || slot.nearSelection ? slot.modelData.url : ""
+            sourceSize: Qt.size(384, 216)
+            asynchronous: true
+            cache: false
+            readonly property real aspect: status === Image.Ready ? sourceSize.width / sourceSize.height : 0
+          }
 
           Item {
-            id: maskShape
-            anchors.fill: parent
-            visible: false
-            layer.enabled: true
+            id: tile
+            x: slot.extraWidth * (Math.min(1, Math.max(0, slot.offset)) - 0.5)
+            width: root.sliceWidth + slot.extraWidth * slot.expansion
+            height: parent.height
+            visible: slot.screenRight > -6 && slot.screenLeft < carouselList.width + 2
 
-            Shape {
+            ShaderEffect {
+              id: artwork
+              x: -2
+              y: -2
+              width: tile.width + 8
+              height: tile.height + 14
+              fragmentShader: "../../shaders/wallpaper-slice.frag.qsb"
+
+              readonly property bool useDetail: slot.selected && slot.expansion > 0.999 && detailPreview.aspect > 0
+                && detailPreview.source.toString() === slot.modelData.url
+              property Image previewImage: useDetail ? detailPreview : preview
+              property vector2d tileSize: Qt.vector2d(tile.width, tile.height)
+              property real imageAspect: useDetail ? detailPreview.aspect : (preview?.aspect ?? 0)
+              property real skew: root.skewOffset
+              property real expansion: slot.expansion
+              property color backgroundColor: root.background
+              property color borderColor: Qt.rgba(
+                root.foreground.r + (root.accent.r - root.foreground.r) * expansion,
+                root.foreground.g + (root.accent.g - root.foreground.g) * expansion,
+                root.foreground.b + (root.accent.b - root.foreground.b) * expansion,
+                0.28 + 0.72 * expansion)
+            }
+
+            MouseArea {
               anchors.fill: parent
-              antialiasing: true
-              preferredRendererType: Shape.CurveRenderer
-              ShapePath {
-                fillColor: "white"
-                strokeColor: "transparent"
-                startX: item.topLeft; startY: 0
-                PathLine { x: item.topRight; y: 0 }
-                PathLine { x: item.bottomRight; y: item.height }
-                PathLine { x: item.bottomLeft; y: item.height }
-                PathLine { x: item.topLeft; y: 0 }
+              cursorShape: Qt.PointingHandCursor
+              onClicked: {
+                if (slot.selected)
+                  root.applySelected()
+                else
+                  carouselList.currentIndex = slot.index
               }
             }
-          }
-
-          Shape {
-            x: item.selected ? 4 : 2
-            y: item.selected ? 10 : 5
-            width: item.width
-            height: item.height
-            opacity: item.selected ? 0.5 : 0.32
-            antialiasing: true
-            preferredRendererType: Shape.CurveRenderer
-            ShapePath {
-              fillColor: root.background
-              strokeColor: "transparent"
-              startX: item.topLeft; startY: 0
-              PathLine { x: item.topRight; y: 0 }
-              PathLine { x: item.bottomRight; y: item.height }
-              PathLine { x: item.bottomLeft; y: item.height }
-              PathLine { x: item.topLeft; y: 0 }
-            }
-          }
-
-          Item {
-            anchors.fill: parent
-            layer.enabled: true
-            layer.smooth: true
-            layer.effect: MultiEffect {
-              maskEnabled: true
-              maskSource: maskShape
-              maskThresholdMin: 0.3
-              maskSpreadAtMin: 0.3
-            }
-
-            Image {
-              id: image
-              anchors.fill: parent
-              source: root.fileUrl(item.thumbnailPath)
-              sourceSize.width: item.selected ? root.expandedWidth : root.sliceWidth + Math.abs(root.skewOffset)
-              sourceSize.height: root.sliceHeight
-              fillMode: Image.PreserveAspectCrop
-              mipmap: false
-              asynchronous: true
-              cache: false
-              smooth: true
-            }
-
-            Rectangle {
-              anchors.fill: parent
-              color: root.withAlpha(root.background, item.selected ? 0 : 0.42)
-              Behavior on color { ColorAnimation { duration: 120 } }
-            }
-          }
-
-          Shape {
-            anchors.fill: parent
-            antialiasing: true
-            preferredRendererType: Shape.CurveRenderer
-            ShapePath {
-              fillColor: "transparent"
-              strokeColor: item.selected ? root.accent : root.withAlpha(root.foreground, 0.28)
-              strokeWidth: item.selected ? 3 : 1
-              startX: item.topLeft; startY: 0
-              PathLine { x: item.topRight; y: 0 }
-              PathLine { x: item.bottomRight; y: item.height }
-              PathLine { x: item.bottomLeft; y: item.height }
-              PathLine { x: item.topLeft; y: 0 }
-            }
-          }
-
-          MouseArea {
-            anchors.fill: parent
-            cursorShape: Qt.PointingHandCursor
-            onClicked: item.selected ? root.applySelected() : root.select(index)
           }
         }
       }
     }
 
     Text {
-        textFormat: Text.PlainText
       id: selectedLabel
+      textFormat: Text.PlainText
       visible: root.showLabels
       anchors.top: carousel.bottom
       anchors.topMargin: 16
       anchors.horizontalCenter: carousel.horizontalCenter
       width: root.expandedWidth
-      text: root.currentLabel()
+      text: root.currentImage?.label ?? (root.filterText ? "No matches" : "")
       color: root.foreground
       style: Text.Outline
       styleColor: root.withAlpha(root.background, 0.7)
@@ -387,14 +291,15 @@ PanelWindow {
     }
 
     Text {
-        textFormat: Text.PlainText
+      textFormat: Text.PlainText
       visible: root.filterable
       anchors.top: selectedLabel.bottom
       anchors.topMargin: 8
       anchors.horizontalCenter: carousel.horizontalCenter
       width: root.expandedWidth
-      text: root.filterText ? ("Filter: " + root.filterText + " (" + imageModel.count + ")") : "Type to filter"
-      color: root.foreground
+      text: root.filterText ? ("Filter: " + root.filterText + " (" + carouselList.count + ")")
+        : (WallpaperService.error || "Type to filter")
+      color: WallpaperService.error && !root.filterText ? (ThemeService.colors.error || "#ff5f57") : root.foreground
       opacity: root.filterText ? 0.85 : 0.55
       style: Text.Outline
       styleColor: root.withAlpha(root.background, 0.7)
@@ -404,17 +309,15 @@ PanelWindow {
     }
   }
 
-  // Focus Grab
   Item {
     id: keyHandler
     focus: true
     Keys.onPressed: function(event) {
       if (event.key === Qt.Key_Escape) {
-        if (root.filterText) {
+        if (root.filterText)
           root.updateFilter("")
-        } else {
-          root.cancel()
-        }
+        else
+          WallpaperService.hide()
         event.accepted = true
       } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
         root.applySelected()
@@ -437,9 +340,8 @@ PanelWindow {
   }
 
   HyprlandFocusGrab {
-      id: focusGrab
-      windows: [root]
-      active: root.visible
-      onCleared: WallpaperService.hide()
+    windows: [root]
+    active: root.visible
+    onCleared: WallpaperService.hide()
   }
 }

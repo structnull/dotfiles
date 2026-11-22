@@ -10,6 +10,7 @@ Item {
     id: root
 
     signal backRequested
+    Component.onDestruction: BluetoothService.stopScan(root)
 
     Layout.fillWidth: true
     implicitHeight: 350
@@ -29,7 +30,7 @@ Item {
             RefreshButton {
                 visible: BluetoothService.isPowered
                 loading: BluetoothService.isDiscovering
-                onClicked: BluetoothService.toggleScan()
+                onClicked: BluetoothService.toggleScan(root)
             }
 
             // Visibility Button
@@ -47,17 +48,11 @@ Item {
                 checked: BluetoothService.isPowered
                 onToggled: {
                     if (!BluetoothService.isPowered)
-                        startScanTimer.restart();
+                        BluetoothService.startScan(root);
+                    else
+                        BluetoothService.stopScan(root);
                     BluetoothService.togglePower();
                 }
-            }
-
-            // Timer to start scanning after turning on bluetooth
-            Timer {
-                id: startScanTimer
-                interval: 300
-                repeat: false
-                onTriggered: BluetoothService.toggleScan()
             }
         }
 
@@ -83,7 +78,7 @@ Item {
             delegate: DeviceCard {
                 required property var modelData
 
-                title: modelData.alias || modelData.name || "Unknown"
+                title: modelData.name || modelData.deviceName || "Unknown"
                 subtitle: modelData.address || ""
                 icon: BluetoothService.getDeviceIcon(modelData)
 
@@ -91,8 +86,10 @@ Item {
                 connecting: BluetoothService.getIsConnecting(modelData)
 
                 statusText: {
+                    if (modelData.pairing)
+                        return "Pairing…";
                     if (connecting)
-                        return "Connecting...";
+                        return "Connecting…";
                     if (active)
                         return "Connected";
                     if (modelData.paired)

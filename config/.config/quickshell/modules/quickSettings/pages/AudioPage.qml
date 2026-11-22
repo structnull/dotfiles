@@ -13,11 +13,6 @@ Item {
 
     Layout.fillWidth: true
     implicitHeight: 480
-    Component.onCompleted: {
-        AudioService.audioPageConsumers++;
-        AudioService.refreshDevices();
-    }
-    Component.onDestruction: AudioService.audioPageConsumers--
 
     ColumnLayout {
         id: main
@@ -280,92 +275,6 @@ Item {
                                 font.family: Config.font
                                 font.pixelSize: Config.fontSizeSmall
                                 Layout.alignment: Qt.AlignVCenter
-                            }
-                        }
-                    }
-
-                    Column {
-                        id: inputPortColumn
-                        visible: AudioService.inputPorts.length > 1
-                        width: parent.width
-                        spacing: 6
-
-                        Text {
-                            textFormat: Text.PlainText
-                            text: "Microphone source"
-                            color: Config.subtextColor
-                            font.family: Config.font
-                            font.pixelSize: Config.fontSizeSmall
-                        }
-
-                        Flickable {
-                            width: inputPortColumn.width
-                            height: 34
-                            clip: true
-                            boundsBehavior: Flickable.StopAtBounds
-                            contentWidth: portPillsRow.implicitWidth
-                            contentHeight: height
-
-                            Row {
-                                id: portPillsRow
-                                y: 1
-                                spacing: 6
-
-                                Repeater {
-                                    model: ScriptModel { comparisonMode: ObjectComparison.Structure; values: AudioService.inputPorts }
-
-                                    Rectangle {
-                                        required property var modelData
-                                        readonly property bool switching: AudioService.switchingInputPortName === modelData.portName
-
-                                        height: 30
-                                        radius: 15
-                                        color: modelData.isActive ? Config.accentColor : Config.surface1Color
-                                        border.width: modelData.isActive ? 0 : 1
-                                        border.color: Config.surface2Color
-                                        width: chipLabel.implicitWidth + chipIcon.implicitWidth + chipStatus.implicitWidth + 28
-
-                                        Row {
-                                            anchors.centerIn: parent
-                                            spacing: 6
-
-                                            Text {
-                                                textFormat: Text.PlainText
-                                                id: chipIcon
-                                                text: modelData.icon
-                                                font.family: Config.font
-                                                font.pixelSize: Config.fontSizeSmall
-                                                color: modelData.isActive ? Config.textReverseColor : Config.textColor
-                                            }
-
-                                            Text {
-                                                textFormat: Text.PlainText
-                                                id: chipLabel
-                                                text: modelData.name
-                                                font.family: Config.font
-                                                font.pixelSize: Config.fontSizeSmall
-                                                font.bold: true
-                                                color: modelData.isActive ? Config.textReverseColor : Config.textColor
-                                            }
-
-                                            Text {
-                                                textFormat: Text.PlainText
-                                                id: chipStatus
-                                                text: switching ? "…" : ""
-                                                font.family: Config.font
-                                                font.pixelSize: Config.fontSizeSmall
-                                                color: modelData.isActive ? Qt.alpha(Config.textReverseColor, 0.85) : Config.subtextColor
-                                            }
-                                        }
-
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            hoverEnabled: true
-                                            cursorShape: Qt.PointingHandCursor
-                                            onClicked: AudioService.setInputPort(modelData.portName)
-                                        }
-                                    }
-                                }
                             }
                         }
                     }

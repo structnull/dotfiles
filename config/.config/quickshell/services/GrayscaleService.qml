@@ -13,7 +13,7 @@ Singleton {
     // STATE
     // =========================================================================
 
-    readonly property string shaderDir: Quickshell.env("HOME") + "/.config/quickshell/shaders"
+    readonly property string shaderDir: Quickshell.shellPath("shaders")
 
     property bool stateLoaded: false
     property bool shaderActive: false
@@ -64,9 +64,8 @@ Singleton {
         // setting a path again can silently do nothing. Hyprland 0.56+
         // parses via the Lua config, so set through hyprctl eval.
         const shader = active ? "grayscale.glsl" : "passthrough.glsl";
-        applyProcess.command = ["bash", "-lc",
-            "hyprctl eval 'hl.config({decoration = {screen_shader = \"" + root.shaderDir + "/" + shader + "\"}})'"];
-        applyProcess.running = true;
+        const shaderPath = JSON.stringify(root.shaderDir + "/" + shader);
+        applyProcess.exec(["hyprctl", "eval", "hl.config({decoration = {screen_shader = " + shaderPath + "}})"]);
     }
 
     // =========================================================================
@@ -78,21 +77,16 @@ Singleton {
         id: statusProbe
         command: ["hyprctl", "getoption", "decoration:screen_shader"]
 
-        property string buffer: ""
-        stdout: SplitParser {
-            onRead: data => statusProbe.buffer += data + "\n"
-        }
+        stdout: StdioCollector { id: shaderStatus }
 
         onExited: (exitCode, exitStatus) => {
             if (exitCode !== 0) {
                 root.shaderActive = false;
                 root.stateLoaded = true;
-                statusProbe.buffer = "";
                 return;
             }
 
-            const text = statusProbe.buffer;
-            statusProbe.buffer = "";
+            const text = shaderStatus.text;
 
             // Check if the output contains the grayscale shader path
             const match = text.match(/^str:\s*(.+)$/m);

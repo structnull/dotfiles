@@ -10,7 +10,7 @@ Singleton {
     id: root
 
     readonly property var mainBattery: UPower.displayDevice
-    readonly property bool hasBattery: (mainBattery && mainBattery.isLaptopBattery && (mainBattery.isPresent ?? true)) === true
+    readonly property bool hasBattery: (mainBattery && mainBattery.ready && mainBattery.isLaptopBattery && (mainBattery.isPresent ?? true)) === true
     readonly property int historyWindowMinutes: Math.max(1, Math.round((internal.maxHistoryPoints * internal.sampleIntervalMs) / 60000))
 
     // Percentage (0 to 100)
@@ -25,53 +25,11 @@ Singleton {
     readonly property bool isPlugged: UPower.onBattery === false
     readonly property bool isLow: hasBattery && percentage < 20 && !isCharging
 
-    // Quickshell maps UPower's `energy-rate` to `changeRate`.
-    readonly property real upowerEnergyRateW: hasBattery ? Math.abs(mainBattery.changeRate) : 0
-    readonly property real chargeRateW: upowerEnergyRateW
-    readonly property real sysfsBatteryRateW: internal.sysfsBatteryRateW
-    readonly property real adapterRateW: internal.adapterRateW
-    readonly property real powerRateW: {
-        if (isCharging && upowerEnergyRateW > 0.05)
-            return upowerEnergyRateW;
-        if (isDischarging && upowerEnergyRateW > 0.05)
-            return upowerEnergyRateW;
-        if (chargeRateW > 0.05)
-            return chargeRateW;
-        if (sysfsBatteryRateW > 0.05)
-            return sysfsBatteryRateW;
-        if (adapterRateW > 0.05)
-            return adapterRateW;
-        return 0;
-    }
-    readonly property string powerRateLabel: {
-        if (isCharging)
-            return "Charge Input";
-        if (isDischarging)
-            return "Battery Draw";
-        if (isPlugged && isFull)
-            return "System Draw";
-        if (isPlugged)
-            return "AC Draw";
-        return "Power Flow";
-    }
-    readonly property string powerRateSource: {
-        if ((isCharging || isDischarging) && upowerEnergyRateW > 0.05)
-            return "UPower energy-rate";
-        if (chargeRateW > 0.05)
-            return "UPower";
-        if (sysfsBatteryRateW > 0.05)
-            return "Battery sensor";
-        if (adapterRateW > 0.05)
-            return "Adapter sensor";
-        if (isPlugged)
-            return "No active flow reported";
-        return "Waiting for sensor data";
-    }
-    readonly property string powerRateText: {
-        if (!hasBattery && !isPlugged)
-            return "--";
-        return powerRateW.toFixed(1) + " W";
-    }
+    // UPower reports battery flow. It cannot measure total AC or system draw.
+    readonly property real powerRateW: hasBattery ? Math.abs(mainBattery.changeRate) : 0
+    readonly property bool powerRateKnown: hasBattery && powerRateW > 0.05
+    readonly property string powerRateLabel: isCharging ? "Battery charge" : (isDischarging ? "Battery draw" : "Battery flow")
+    readonly property string powerRateSource: powerRateKnown ? "UPower energy-rate" : "No battery flow reported"
     readonly property int timeToFullSeconds: hasBattery ? Math.round(mainBattery.timeToFull) : 0
     readonly property int timeToEmptySeconds: hasBattery ? Math.round(mainBattery.timeToEmpty) : 0
     readonly property var powerHistory: internal.powerHistory
@@ -146,8 +104,6 @@ Singleton {
 
         property int sampleIntervalMs: 5000
         property int maxHistoryPoints: 48
-        property real sysfsBatteryRateW: 0
-        property real adapterRateW: 0
         property real maxObservedPowerW: 20
         property var powerHistory: []
         property var percentageHistory: []
@@ -156,7 +112,7 @@ Singleton {
     Timer {
         id: sampleTimer
         interval: internal.sampleIntervalMs
-        running: true
+        running: root.hasBattery
         repeat: true
         onTriggered: {
             root.captureHistorySample();

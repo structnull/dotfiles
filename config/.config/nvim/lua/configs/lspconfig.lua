@@ -8,7 +8,6 @@ local servers = {
   "cssls",
   "html",
   "rust_analyzer",
-  "marksman",
   "jsonls",
 }
 
